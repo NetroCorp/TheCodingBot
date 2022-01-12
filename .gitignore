@@ -7,7 +7,7 @@
 node_modules/
 
 ## -- THECODINGBOT RELATED IGNORES --
-modules/cache/*
-modules/cfg/tokendata.json
-modules/cfg/app.sqlite
+src/modules/cache/*
+src/modules/cfg/tokendata.json
+src/modules/cfg/app.sqlite
 
