@@ -1,33 +1,33 @@
 # TheCodingBot
 Welcome to TheCodingBot. The hobby Discord bot created by TheCodingGuy#6697.
 
-## Version 5 is in HEAVY DEVELOPMENT
-Do not expect anything to work as intended. As if, anything ever worked anyways. :P
+## Version 1
+Yeah, this build is from like 2018. There's like so much spaget code in this. Please remember I was just learning at this time LOL.
 
 ## Get this version goin'!
-- First, you'll need to ensure you have [NodeJS](https://nodejs.org/) installed.
-- Then, download this branch.
-- Afterwards, fire up a terminal and run `npm install`.
-- Now, go to into the `src` folder and run `npm install`, wait for packages to install. Kill some time by proceeding to the next step.
-- Modify the `modules/cfg/tokendata.json.example`.
-  - You'll also need to obtain a Discord token from [here](https://discord.com/developers/applications/).
-  - If you wish to have support for osu! stats and stuff, you'll need to obtain a API key from [here](https://osu.ppy.sh/p/api/).
-  - Save the file.
-  - :warning: **You'll need to rename the file from `tokendata.json.example` to `tokendata.json`.**
+:warning: **IT IS NOT RECOMMENDED YOU DO THIS**
+It serves as a public archive.
 
 ## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Don't.
 
 
-## Version 5 Changelog
+## Version 1 Release Dates
 
-| Version | Release Date |
-| ------- | ------------ |
-| 5.0.0   | ❓ N/A       |
+|   Version    | Release Date |
+| ------------ | ------------ |
+| 1.0.0.0 BETA | 04/27/2018   |
+| 1.0.0.1 BETA | 04/27/2018   |
+| 1.0.0.2 BETA | 04/28/2018   |
+| 1.0.0.3 BETA | 04/30/2018   |
+| 1.0.0.4 BETA | 05/01/2018   |
+| 1.1 BETA     | 05/03/2018   |
+| 1.1-u1 BETA  | 05/03/2018   |
+| 1.2          | 06/19/2018   |
+| 1.2-u1       | 06/20/2018   |
+| 1.2-u2       | 06/29/2018   |
+| 1.3          | 07/31/2018   |
 
-
-## History
-TheCodingBot started off as a small hobby project back in 2018. To date - as of 2022 - TheCodingBot has seen so much happen with Discord. The bot currently has 75+ servers and for some reason will not verify with Discord.
 
 ## Disclaimer
 This bot is licensed under MIT, meaning that this bot is provided "AS IS". For the best experience, always keep your fork up-to-date or utilize the [current bot](https://discord.com/oauth2/authorize?client_id=438532019924893707&permissions=8&scope=applications.commands%20bot).
