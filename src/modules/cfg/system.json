@@ -1,0 +1,151 @@
+{
+	"footerText": "APPNAME, © TMC Software 2018-currYear.",
+	"commandState": "Enabled",
+	"defaultPrefix": "tB/",
+	"rotatingStatus": {
+		"statuses": [
+			"Playing with svrcount servers!",
+			"Playing on Version ver.",
+			"Playing with awesome people!",
+			"Playing Team Fortress 2",
+			"Playing Minecraft",
+			"Playing osu!",
+			"Playing ROBLOX",
+			"Playing Chessmaster 10th Edition",
+			"Playing VirtualBox - Windows 11 (x64)",
+			"Playing VirtualBox - FluxOS (x64)",
+			"Playing Discord",
+			"Playing Connect Port",
+			"Playing The Counting Game: To Infinity (And Beyond)!",
+			"Playing The Counting Game 2: Backwards from Infinity!",
+			"Playing on the interwebs",
+			"Playing on the interweebz",
+			"Playing ｗｉｔｈ　ｖａｐｏｒｗａｖｅ",
+			"Playing 日本語テキスト",
+			"Playing with dreams",
+			"Playing with my meme collection.",
+			"Playing with a bomb.",
+			"Playing <CONTENT REMOVED>",
+			"Playing <DATA EXPUNGED>",
+			"Playing with a microwave. MMMMMMMMMMMMMMMMMMMMMM BEEP. BEEP. BEEP. BEEP.",
+			"Playing with the Bootstrap Paradox...",
+			"Playing with a neko!",
+			"Playing with and throttling the bandwidth.",
+			"Playing with the person reading this.",
+			"Playing the playing of the player in the playing player players' playing status-*crashes*",
+			"Playing with hashes.",
+			"Playing with the FBI -- wait that's illegal.",
+			"Playing in the Danger Zone...",
+			"Playing -- wait, do people actually read this?",
+			"Playing with a meme",
+			"Playing with my existence",
+			"Playing potato",
+			"Playing with the void. Should I say more?",
+			"Playing with your mind.",
+
+			"Watching anime kill hot toast",
+			"Watching アニメ",
+			"Watching my meme librawry.",
+			"Watching MEMES.",
+			"Watching everyone ...",
+			"Watching the entire world.",
+			"Watching my sentient self.",
+			"Watching all of your commands coming in",
+			"Watching time; it's just an illusion.",
+
+			"Listening to Matt's Keyboard AMSR",
+			"Listening to *wholesome sounds*",
+			"Listening to Kobaryo - Cartoon Candy",
+			"Listening to Tyler, the Creator - SWEET / I THOUGHT YOU WANTED TO DANCE"
+
+		],
+		"timeInSec": 120,
+		"enabled": "true"
+	},
+	"embedColors": {
+		"aqua": 1752220,
+		"green": 3066993,
+		"lime": 65280,
+		"blue": 3447003,
+		"purple": 10181046,
+		"gold": 15844367,
+		"orange": 15105570,
+		"red": 15158332,
+		"yellow": 16312092,
+		"gray": 9807270,
+		"navy": 3426654,
+		"pink": 16580705,
+		"light_orange": 16098851,
+		"light_gray": 12370112,
+		"dark_aqua": 1146986,
+		"dark_green": 2067276,
+		"dark_blue": 2123412,
+		"dark_purple": 7419530,
+		"dark_gold": 12745742,
+		"dark_orange": 11027200,
+		"dark_red": 10038562,
+		"dark_gray": 9936031,
+		"darker_gray": 8359053,
+		"dark_navy": 2899536,
+		"dark_pink": 12320855
+	},
+	"emotes": {
+		"lock": "<:tcglock:525805824723910659>",
+		"wait": "<a:aero_busy:525805587460784138>",
+
+		"d_wait": "<a:dload:497945986719809556>",
+		"information": "<:foinformation:709220132563451954>",
+		"warning": "<:fowarning:709220132030906408>",
+		"error": "<:foerror:709220131942694913>",
+		"question": "<:foquestion:709220132769234994>",
+		"success": "<:fosuccess:709220963178250320>",
+
+		"msgup": "<:tcbmupdate:533663947056742411>",
+		"msgdel": "<:tcbmdel:533663947149279242>",
+		"guild": "<:tcbguild:533664426276945922>",
+		"user": "<:tcbuser:533664000689307648>",
+
+		"osu": {
+			"osuLogo": "<:osuTCBLogo:675155242421321728>",
+
+			"hit300": "<:hit300:684504839610171492>",
+			"hit100": "<:hit100:684504839748976762>",
+			"hit50": "<:hit50:684504839350517775>",
+
+			"rankXH": "<:rankingXH:684505581217906742>",
+			"rankSH": "<:rankingSH:684505446769229839>",
+			"rankS": "<:rankingS:684505278930092128>",
+			"rankA": "<:rankingA:684505279261442088>",
+			"rankB": "<:rankingB:684505278829559840>",
+			"rankC": "<:rankingC:684505278833623070>",
+			"rankD": "<:rankingD:684505278921965576>"
+		},
+		"discord": {
+			"online": "<:Online:745093648521101313>",
+			"idle": "<:Idle:745093647942418486>",
+			"dnd": "<:DoNotDisturb:745093648282026085>",
+			"offline": "<:Offline:745093648236019774>"
+
+		},
+
+		"rickroll": "<a:rickroll:778121034367893514>"
+
+	},
+	"logChannels": {
+		"system": "",
+		"messages": "",
+		"guilds": ""
+	},
+
+	"logURL": "https://tcb.nekos.tech/bot/",
+
+
+	"owners": [
+		""
+	],
+
+	"knownIDs": {
+		"main": "your main here",
+		"beta": "your beta here"
+	}
+}

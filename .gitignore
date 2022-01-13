@@ -1,0 +1,13 @@
+## -- DEVELOPMENT RELATED IGNORES --
+
+# Tell VSCode to frick off
+.vscode/
+
+# Let's not forget about node_modules.
+node_modules/
+
+## -- THECODINGBOT RELATED IGNORES --
+src/modules/cache/*
+src/modules/cfg/tokendata.json
+src/modules/cfg/app.sqlite
+
