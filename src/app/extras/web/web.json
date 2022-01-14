@@ -1,0 +1,12 @@
+{
+	"info": {
+		"extraName": "Web",
+		"extraDesc": "Provides a mini API for this bot app.",
+		"extraVers": "1.0.0.1",
+		"extraPubs": "TMC Software",
+		"extraDeps": [ "http" ]
+	},
+	"settings": {
+		"port": 8069
+	}
+}

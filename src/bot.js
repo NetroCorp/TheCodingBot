@@ -3,9 +3,6 @@
 	Created 6/24/2021
 */
 
-const app = require("./modules/cfg/app.js");
-const Web = require("./modules/web/web.js");
-
 // ARGUMENTS ACCEPTED:
 //  - true/false | SETS THE BOT TO DEBUG ON/OFF
 
@@ -18,20 +15,20 @@ async function bot(debug) {
 
     // Do our require
     if (debug) console.log("-> Init: Bootloader");
-    const BootLoader = require("./modules/functions/bootloader.js");
+    const BootLoader = require("./app/functions/bootloader.js");
     const bootloader = new BootLoader();
 
     await bootloader.printLogo(); // Print that healthy logo
 
     if (debug) console.log("-> Init: Logger");
-    const Log = require("./modules/functions/logger.js");
+    const Log = require("./app/functions/logger.js");
     if (debug) console.log("-> Start: Logging");
     logger = new Log();
     logger.log("i", "SYS", `Logging is now enabled!`);
 
 
     if (debug) console.log("-> Init: App");
-    const app = require("./modules/cfg/app.js");
+    const app = require("./app/cfg/app.js");
     app.debugMode = debug;
     app.logger = logger;
     app.bootloader = bootloader;
@@ -55,13 +52,11 @@ async function bot(debug) {
 
 
     if (debug) console.log("-> Init: Configuration");
-    // const configuration = await app.modules.fs.readdirSync("./modules/cfg/", { withFileTypes: true });
-    const configuration = await app.modules.fs.readdirSync('./modules/cfg').filter(file => file.endsWith('.json'));
+    const configuration = await app.modules.fs.readdirSync('./app/cfg').filter(file => file.endsWith('.json'));
     if (debug) console.log(` > Configuration: ${configuration.length}`);
     if (debug) logger.log("i", "SYS", `Configuration files are now ready to load!`);
 
     logger.log("i", "SYS", `Enabling configuration...`);
-    // var results = await bootloader.loadConfiguration(app, configuration);
     var results = await bootloader.loadHandler(app, "configuration", configuration);
 
     if (debug) console.log("-> Init: Discord Client...");
@@ -74,23 +69,14 @@ async function bot(debug) {
     if (debug) console.log(` > New Discord Client created.`);
 
 
+    if (debug) console.log("-> Init: Extras");
+    const extras = await require('./app/extras/extras.json'); // this is probably inefficent, but it works ig
+    app.extras = {};
+    if (debug) console.log(` > Extras: ${extras.length}`);
+    if (debug) logger.log("i", "SYS", `Extras are now ready to load!`);
 
-    if (debug) console.log("-> Init: Web");
-    const Web = require("./modules/web/web.js");
-    if (debug) console.log(` > Port: ${app.config.web.port}`);
-    if (debug) logger.log("i", "SYS", `Web is now ready to load!`);
-
-    if (app.config.web.enabled) {
-        if (app.modules["http"]) {
-            logger.log("i", "SYS", `Enabling Web...`);
-            // var results = await bootloader.loadDependencies(app, dependencies);
-            //var results = await bootloader.loadHandler(app, "dependency", dependencies);
-            const web = new Web();
-            var results = await web.init(app, app.config.web.port);
-        } else { logger.log("X", "SYS", "Web cannot be enabled due to missing package: http"); }
-    };
-
-
+    logger.log("i", "SYS", `Enabling Extras...`);
+    var results = await bootloader.extraHandler(app, extras);
 
     logger.log("i", "SYS", `Enabling database...`);
     var results = await bootloader.loadHandler(app, "database", null);
@@ -98,8 +84,8 @@ async function bot(debug) {
 
 
     if (debug) console.log("-> Init: Events");
-    // const events = await app.modules.fs.readdirSync("./modules/evts/", { withFileTypes: true });
-    const events = await app.modules.fs.readdirSync('./modules/evts').filter(file => file.endsWith('.js'));
+    // const events = await app.modules.fs.readdirSync("./app/evts/", { withFileTypes: true });
+    const events = await app.modules.fs.readdirSync('./app/evts').filter(file => file.endsWith('.js'));
     if (debug) console.log(` > Events: ${events.length}`);
     if (debug) logger.log("i", "SYS", `Events are now ready to load!`);
 
@@ -110,8 +96,8 @@ async function bot(debug) {
 
 
     if (debug) console.log("-> Init: Commands");
-    // const commands = await app.modules.fs.readdirSync("./modules/cmds/", { withFileTypes: true });
-    const commands = await app.modules.fs.readdirSync('./modules/cmds').filter(file => file.endsWith('.js'));
+    // const commands = await app.modules.fs.readdirSync("./app/cmds/", { withFileTypes: true });
+    const commands = await app.modules.fs.readdirSync('./app/cmds').filter(file => file.endsWith('.js'));
     if (debug) console.log(` > Commands: ${commands.length}`);
     if (debug) logger.log("i", "SYS", `Commands are now ready to load!`);
 
@@ -121,8 +107,8 @@ async function bot(debug) {
 
 
     // if (debug) console.log("-> Init: Slash Commands");
-    // // const slashcommands = await app.modules.fs.readdirSync("./modules/cmds/", { withFileTypes: true });
-    // const slashcommands = await app.modules.fs.readdirSync('./modules/cmds/slash').filter(file => file.endsWith('.js'));
+    // // const slashcommands = await app.modules.fs.readdirSync("./app/cmds/", { withFileTypes: true });
+    // const slashcommands = await app.modules.fs.readdirSync('./app/cmds/slash').filter(file => file.endsWith('.js'));
     // if (debug) console.log(` > Slash Commands: ${slashcommands.length}`);
     // if (debug) logger.log("i", "SYS", `Slash Commands are now ready to load!`);
 
