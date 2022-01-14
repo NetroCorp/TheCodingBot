@@ -8,6 +8,9 @@
 # Let's not forget about node_modules.
 node_modules/
 
+# Let's not leak our token either.
+/src/modules/cfg/tokendata.json
+
 ## -- THECODINGBOT RELATED IGNORES --
 src/app/cache/*
 src/app/cfg/tokendata.json
