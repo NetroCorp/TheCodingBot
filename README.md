@@ -9,7 +9,7 @@ Do not expect anything to work as intended. As if, anything ever worked anyways.
 - Then, download this branch.
 - Afterwards, fire up a terminal and run `npm install`.
 - Now, go to into the `src` folder and run `npm install`, wait for packages to install. Kill some time by proceeding to the next step.
-- Modify the `modules/cfg/tokendata.json.example`.
+- Modify the `src/cfg/tokendata.json.example`.
   - You'll also need to obtain a Discord token from [here](https://discord.com/developers/applications/).
   - If you wish to have support for osu! stats and stuff, you'll need to obtain a API key from [here](https://osu.ppy.sh/p/api/).
   - Save the file.
