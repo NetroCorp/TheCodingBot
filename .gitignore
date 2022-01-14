@@ -2,12 +2,13 @@
 
 # Tell VSCode to frick off
 .vscode/
+# and GitHub
+.git/
 
 # Let's not forget about node_modules.
 node_modules/
 
 ## -- THECODINGBOT RELATED IGNORES --
-src/modules/cache/*
-src/modules/cfg/tokendata.json
-src/modules/cfg/app.sqlite
-
+src/app/cache/*
+src/app/cfg/tokendata.json
+src/app/cfg/app.sqlite

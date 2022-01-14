@@ -14,6 +14,8 @@ Do not expect anything to work as intended. As if, anything ever worked anyways.
   - If you wish to have support for osu! stats and stuff, you'll need to obtain a API key from [here](https://osu.ppy.sh/p/api/).
   - Save the file.
   - :warning: **You'll need to rename the file from `tokendata.json.example` to `tokendata.json`.**
+- Run `npm run start` after changing everything that is stated above.
+- Boom, you have a v5 clone.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
