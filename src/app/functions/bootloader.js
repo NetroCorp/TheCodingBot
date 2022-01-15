@@ -13,7 +13,8 @@ class BootLoader {
         console.log(" / / / _ \\/ -_) /__/ _ \\/ _  / / _ \\/ _ `/ _  / _ \\/ __/ ");
         console.log("/_/ /_//_/\\__/\\___/\\___/\\_,_/_/_//_/\\_, /____/\\___/\\__/ ");
         console.log("				   /___/                               ");
-        console.log("           Copyright TMC Software 2018-2021.          ");
+        // console.log("           Copyright TMC Software 2018-2021.          ");
+        console.log("           Copyright TMC Software 2018-" + new Date().getFullYear() + ".          ");
         console.log("\n\n");
     }
 
@@ -39,9 +40,9 @@ class BootLoader {
 
                     var missingDeps = extra.extraCfg.info.extraDeps.filter(function(x) { return !Object.keys(app.modules).includes(x); });
                     if (missingDeps.length > 0)
-                        logger.log("X", "SYS", "Web cannot be enabled due to missing package(s): " + missingDeps.join(", "));
+                        logger.error("SYS", "Web cannot be enabled due to missing package(s): " + missingDeps.join(", "));
                     else {
-                        logger.log("i", "SYS", `Enabling Extra: Web...`);
+                        logger.info("SYS", `Enabling Extra: Web...`);
                         const extraInt = new extra.extraApp;
                         await extraInt.init(app, extra.extraCfg.settings);
 
@@ -54,12 +55,12 @@ class BootLoader {
                 var endTime = new Date();
                 var elapsedMS = (endTime - startTime) / 1000;
                 if (err === false) {
-                    if (!hideLoadingText) app.logger.log("S", "SYS", `Loaded & enabled ${extra.extraName} v${extra.extraCfg.info.extraVers} in ${elapsedMS}ms.`);
+                    if (!hideLoadingText) app.logger.success("SYS", `Loaded & enabled ${extra.extraName} v${extra.extraCfg.info.extraVers} in ${elapsedMS}ms.`);
                     results["success"].push(extra.extraName);
                 } else {
                     results["fail"].push(extra.extraName);
 
-                    app.logger.log("X", "SYS", `Could not load extra ${extra.extraName}.\n Error: ${err}`);
+                    app.logger.error("SYS", `Could not load extra ${extra.extraName}.\n Error: ${err}`);
                     console.log(err.stack);
                 };
 
@@ -86,7 +87,7 @@ class BootLoader {
                     app.db = new Sequelize('database', 'user', 'password', {
                         host: 'localhost',
                         dialect: 'sqlite',
-                        logging: data => { if (app.debugMode) app.logger.log("i", "DB", data); },
+                        logging: data => { if (app.debugMode) app.logger.debug("DB", data); },
                         // SQLite only
                         storage: './app/cfg/app.sqlite',
                     });
@@ -161,10 +162,10 @@ class BootLoader {
                     err = error;
                 } finally {
                     if (err === false && !hideLoadingText) {
-                        app.logger.log("S", "SYS", `Loaded ${varType}.`);
+                        app.logger.success("SYS", `Loaded ${varType}.`);
                     } else {
 
-                        app.logger.log("X", "SYS", `Could not load ${varType}.\n Error: ${err}`);
+                        app.logger.error("SYS", `Could not load ${varType}.\n Error: ${err}`);
                     };
                 }
                 return;
@@ -173,7 +174,7 @@ class BootLoader {
                 try {
                     app.commands = new app.modules["discord.js"].Collection();
                 } catch (err) {
-                    app.logger.log("X", "SYS", `Could not load Discord dependency.\n Error: ${err}`);
+                    app.logger.error("SYS", `Could not load Discord dependency.\n Error: ${err}`);
                     console.log(err.stack);
                     return results;
                 };
@@ -181,7 +182,7 @@ class BootLoader {
                 try {
                     app.slashCommands = new app.modules["discord.js"].Collection();
                 } catch (err) {
-                    app.logger.log("X", "SYS", `Could not load Discord dependency.\n Error: ${err}`);
+                    app.logger.error("SYS", `Could not load Discord dependency.\n Error: ${err}`);
                     console.log(err.stack);
                     return results;
                 };
@@ -193,12 +194,12 @@ class BootLoader {
                 varName = ((varType == "dependency") ? varToUse[i] : ((varType == "configuration") ? varToUse[i].split(".json")[0] : varToUse[i].split(".js")[0]));
             var varSimpleName = ((varType == "dependency") ? varName["name"] : varName);
 
-            if (!hideLoadingText) app.logger.log("i", "SYS", `Loading ${varType}: ${varSimpleName}...`);
+            if (!hideLoadingText) app.logger.info("SYS", `Loading ${varType}: ${varSimpleName}...`);
 
             try {
                 app.functions.clearCache(); // Clear cache :>
 
-                if (!hideLoadingText) app.logger.log("i", "SYS", `Enabling ${varType}: ${varSimpleName}...`); // Lol this is Minecraft now
+                if (!hideLoadingText) app.logger.info("SYS", `Enabling ${varType}: ${varSimpleName}...`); // Lol this is Minecraft now
                 if (varType == "dependency") {
                     app.modules[varSimpleName] = require(varSimpleName);
                 } else if (varType == "configuration") {
@@ -239,19 +240,19 @@ class BootLoader {
                 var endTime = new Date();
                 var elapsedMS = (endTime - startTime) / 1000;
                 if (err === false) {
-                    if (!hideLoadingText) app.logger.log("S", "SYS", `Loaded & enabled ${varSimpleName}${((varType == "dependency") ? ((app.modules[varSimpleName].version) ? " v" + app.modules[varSimpleName].version : "") : "")} in ${elapsedMS}ms.`);
+                    if (!hideLoadingText) app.logger.success("SYS", `Loaded & enabled ${varSimpleName}${((varType == "dependency") ? ((app.modules[varSimpleName].version) ? " v" + app.modules[varSimpleName].version : "") : "")} in ${elapsedMS}ms.`);
                     results["success"].push(varSimpleName);
                 } else {
                     results["fail"].push(varSimpleName);
 
-                    app.logger.log("X", "SYS", `Could not load ${varType} ${varSimpleName}.\n Error: ${err}`);
+                    app.logger.error("SYS", `Could not load ${varType} ${varSimpleName}.\n Error: ${err}`);
                     console.log(err.stack);
                     if (varType == "dependency") {
                         if (varName["required"]) {
-                            if (!hideLoadingText) app.logger.log("X", "SYS", `A required dependency is missing and we are not able to boot.`);
+                            if (!hideLoadingText) app.logger.error("SYS", `A required dependency is missing and we are not able to boot.`);
                             process.exit(1);
                         } else {
-                            if (!hideLoadingText) app.logger.log("X", "SYS", `A dependency is missing but not required; attempting to boot anyways.`);
+                            if (!hideLoadingText) app.logger.error("SYS", `A dependency is missing but not required; attempting to boot anyways.`);
                         };
                     };
                 };

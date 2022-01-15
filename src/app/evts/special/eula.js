@@ -36,7 +36,7 @@ module.exports = async(app, message) => {
                         if (msg.guild)
                             msg.delete();
                     }, 10000));
-                    app.logger.log("i", "DISCORD", `[MESSAGE] ${message.author.id} accepted the TOS!`);
+                    app.logger.info("DISCORD", `[MESSAGE] ${message.author.id} accepted the TOS!`);
 
                     denied = false;
                 } else {

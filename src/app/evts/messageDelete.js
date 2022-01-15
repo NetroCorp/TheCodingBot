@@ -1,6 +1,13 @@
 module.exports = async(app, message) => {
     if (message.partial) message = await message.fetch();
 
+    //
+    // TODO:
+    // Send DMs (including message updates, edits, and deletes
+    // to bot owner.
+    //
+
+    if (message.guild == null) return; // Stop if we not in a guild?
     async function downloadAttachments(attachments) {
         // TODO: Write Attachment handler
         return result;

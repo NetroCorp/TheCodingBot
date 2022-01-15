@@ -101,11 +101,6 @@
         "question": "<:foquestion:709220132769234994>",
         "success": "<:fosuccess:709220963178250320>",
 
-        "msgup": "<:tcbmupdate:533663947056742411>",
-        "msgdel": "<:tcbmdel:533663947149279242>",
-        "guild": "<:tcbguild:533664426276945922>",
-        "user": "<:tcbuser:533664000689307648>",
-
         "osu": {
             "osuLogo": "<:osuTCBLogo:675155242421321728>",
 
@@ -132,21 +127,16 @@
         "rickroll": "<a:rickroll:778121034367893514>"
 
     },
-    "logChannels": {
-        "system": "",
-        "messages": "",
-        "guilds": ""
-    },
 
     "logURL": "https://tcb.nekos.tech/bot/",
 
 
     "owners": [
-        "your id here"
+        "yourUserIDHere"
     ],
 
     "knownIDs": {
-        "main": "your main bot id",
-        "beta": "your beta bot if appliciable"
+        "main": "yourBotIDHere",
+        "beta": "yourBetaBotIDHere(if applicable)"
     }
 }

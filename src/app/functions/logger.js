@@ -28,27 +28,20 @@ const loggingcolors = {
     "BgWhite": "\x1b[47m"
 };
 
+getTimestamp = () => { return `${loggingcolors.Reset}[${loggingcolors.FgCyan}${app.functions.convertTimestamp(new Date().getTime(), true, true)}${loggingcolors.Reset}] `; };
+const knownLocations = { "SYS": loggingcolors.FgGreen, "DISCORD": loggingcolors.FgMagenta, "WEB": loggingcolors.FgBlue, "DB": loggingcolors.FgYellow };
+const knownTypes = { "X": loggingcolors.FgRed, "i": loggingcolors.FgBlue, "!": loggingcolors.FgYellow, "S": loggingcolors.FgGreen, "D": loggingcolors.FgMagenta };
+log = function(type, location, message, useTimeStamp, logToFile) { // no need to = true or = false, we should have the passed already.
+    var typecolor = knownTypes[type] || loggingcolors.FgWhite;
+    var locationcolor = knownLocations[location] || loggingcolors.FgWhite;
+    console.log(`${((useTimeStamp) ? getTimestamp() : "")}${loggingcolors.Reset}[${typecolor}${type}${loggingcolors.Reset}] [${locationcolor}${location}${loggingcolors.Reset}] ${message}`);
+}
 class Logger {
-    log = function(type, location, message, useTimeStamp = true, logToFile = true) {
-        var typecolor = loggingcolors.FgWhite;
-
-        if (type == "X") typecolor = loggingcolors.FgRed;
-        else if (type == "i") typecolor = loggingcolors.FgBlue;
-        else if (type == "!") typecolor = loggingcolors.FgYellow;
-        else if (type == "S") typecolor = loggingcolors.FgGreen;
-
-        var locationcolor = loggingcolors.FgWhite;
-
-        if (location == "SYS") locationcolor = loggingcolors.FgGreen;
-        else if (location == "DISCORD") locationcolor = loggingcolors.FgMagenta;
-        else if (location == "WEB") locationcolor = loggingcolors.FgBlue;
-        else if (location == "DB") locationcolor = loggingcolors.FgYellow;
-
-        var timestamp = "";
-        if (useTimeStamp) timestamp = `${loggingcolors.Reset}[${loggingcolors.FgCyan}${app.functions.convertTimestamp(new Date().getTime(), true, true)}${loggingcolors.Reset}] `;
-
-        console.log(`${timestamp}${loggingcolors.Reset}[${typecolor}${type}${loggingcolors.Reset}] [${locationcolor}${location}${loggingcolors.Reset}] ${message}`);
-    }
+    error = (location, message, useTimeStamp = true, logToFile = true) => { log("X", location, message, useTimeStamp, logToFile); };
+    info = (location, message, useTimeStamp = true, logToFile = true) => { log("i", location, message, useTimeStamp, logToFile); };
+    warn = (location, message, useTimeStamp = true, logToFile = true) => { log("!", location, message, useTimeStamp, logToFile); };
+    success = (location, message, useTimeStamp = true, logToFile = true) => { log("S", location, message, useTimeStamp, logToFile); };
+    debug = (location, message, useTimeStamp = true, logToFile = true) => { if (app.debugMode) log("D", location, message, useTimeStamp, logToFile); };
 
 }
 

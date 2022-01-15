@@ -15,7 +15,7 @@ class Web {
                 const requestStart = Date.now();
 
                 res.on("finish", () => {
-                    if (app.debugMode) app.logger.log("i", "WEB", `[${req.socket.remoteAddress} => ${req.method}] ${req.url} (${res.statusCode} ${res.statusMessage}) in ${Date.now() - requestStart}ms.`);
+                    if (app.debugMode) app.logger.info("WEB", `[${req.socket.remoteAddress} => ${req.method}] ${req.url} (${res.statusCode} ${res.statusMessage}) in ${Date.now() - requestStart}ms.`);
                 });
 
                 switch (req.url) {
@@ -55,7 +55,7 @@ class Web {
                                     res.writeHead(404, { "Content-Type": "application/json" });
                                     res.write(JSON.stringify({ error: "file not found." }));
                                     res.end();
-                                    app.logger.log("X", "WEB", `[${req.socket.remoteAddress} => ${req.method}] ${Ex.message} ${((app.debugMode) ? "\n"+Ex.stack : "")}`);
+                                    app.logger.error("WEB", `[${req.socket.remoteAddress} => ${req.method}] ${Ex.message} ${((app.debugMode) ? "\n"+Ex.stack : "")}`);
 
                                 };
                                 break
@@ -65,7 +65,7 @@ class Web {
                                         res.writeHead(500, { "Content-Type": "application/json" });
                                         res.write(JSON.stringify({ error: "Internal Server Error." }));
                                         res.end();
-                                        app.logger.log("X", "WEB", `[${req.socket.remoteAddress} => ${req.method}] ${err.message} ${((app.debugMode) ? "\n"+err.stack : "")}`);
+                                        app.logger.error("WEB", `[${req.socket.remoteAddress} => ${req.method}] ${err.message} ${((app.debugMode) ? "\n"+err.stack : "")}`);
                                         return;
                                     };
                                     data = data.toString(); // Convert to string
@@ -147,7 +147,7 @@ class Web {
                             res.writeHead(500, { "Content-Type": "application/json" });
                             res.write(JSON.stringify({ error: "Internal Server Error." }));
                             res.end();
-                            app.logger.log("X", "WEB", `[${req.socket.remoteAddress} => ${req.method}] ${Ex.message} ${((app.debugMode) ? "\n"+Ex.stack : "")}`);
+                            app.logger.error("WEB", `[${req.socket.remoteAddress} => ${req.method}] ${Ex.message} ${((app.debugMode) ? "\n"+Ex.stack : "")}`);
                         };
                 }
 
@@ -158,7 +158,7 @@ class Web {
             const server = http.createServer(requestListener);
 
             server.listen(settings.port || 8069);
-            if (app.debugMode) app.logger.log("S", "WEB", `Listening on ${((settings.port) ? settings.port : 8069)}.`);
+            if (app.debugMode) app.logger.success("WEB", `Listening on ${((settings.port) ? settings.port : 8069)}.`);
 
             return "ok";
         } catch (Ex) {

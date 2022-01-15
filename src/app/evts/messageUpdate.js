@@ -1,7 +1,13 @@
 module.exports = async(app, omessage, nmessage) => {
     if (omessage.content == nmessage.content) return;
 
+    //
+    // TODO:
+    // Send DMs (including message updates, edits, and deletes
+    // to bot owner.
+    //
 
+    if (omessage.guild == null) return; // Stop if we not in a guild?
     var serverSettings = await app.DBs.serverSettings.findOne({ where: { serverID: omessage.guild.id } });
     if (!serverSettings) {
         await app.functions.DB.createServer(omessage.guild.id);

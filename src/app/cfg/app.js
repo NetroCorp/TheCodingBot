@@ -48,13 +48,13 @@ const app = {
                     errorCommands: 0,
                     optedOut: false
                 });
-                app.logger.log("S", "DB", `User data for ${id} created in database!`);
+                app.logger.success("DB", `User data for ${id} created in database!`);
 
                 return userSetting;
             },
             deleteUser: async function(id) {
                 const userSetting = await app.DBs.userSettings.destroy({ where: { userID: id } });
-                app.logger.log("!", "DB", `User data for ${id} removed from database!`);
+                app.logger.warn("DB", `User data for ${id} removed from database!`);
 
                 return userSetting;
             },
@@ -66,13 +66,13 @@ const app = {
                     loggingJoinChannel: null,
                     loggingLeaveChannel: null
                 });
-                app.logger.log("S", "DB", `Server data for ${id} created in database!`);
+                app.logger.success("DB", `Server data for ${id} created in database!`);
 
                 return serverSetting;
             },
             deleteServer: async function(id) {
                 const serverSetting = await app.DBs.serverSettings.destroy({ where: { serverID: id } });
-                app.logger.log("!", "DB", `Server data for ${id} removed from database!`);
+                app.logger.warn("DB", `Server data for ${id} removed from database!`);
 
                 return serverSetting;
             }
@@ -242,22 +242,17 @@ const app = {
             };
         },
 
-        msgHandler(message, options, action = 0, doReply = false, callback = null) { // action: 0 = Send, 1 = Reply
-
-
+        msgHandler(message, options, action = 0, doReply = false, callback = null) { // action: 0 = Send, 1 = Edit
             if (action == 0) {
-                if (doReply)
-                    options["reply"] = { messageReference: message.id };
-
-                message.channel.send(options).then(callback);
+                if (doReply) options["reply"] = { messageReference: message.id };
+                message.channel.send(options).then(msg => { if (callback != null) callback(msg); });
             } else if (action == 1)
-                m.edit(options).then(callback);
-
+                message.edit(options).then(msg => { if (callback != null) callback(msg); });
         },
 
         RemoveReactions: function(app, msg) {
             msg.reactions.removeAll().catch(error => {
-                app.logger.log("X", "DISCORD", "Could not remove ALL reactions due to " + error);
+                app.logger.error("DISCORD", "Could not remove ALL reactions due to " + error);
                 msg.channel.send({
                     embeds: [{
                         color: app.config.system.embedColors.red,
@@ -280,7 +275,7 @@ const app = {
                                 footer: { text: app.config.system.footerText }
                             }]
                         });
-                        app.logger.log("X", "DISCORD", "Could not remove my reactions due to " + err);
+                        app.logger.error("DISCORD", "Could not remove my reactions due to " + err);
                     };
                 });
             });

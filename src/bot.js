@@ -1,30 +1,33 @@
 /*
 	THECODINGBOT v5
-	Created 6/24/2021
+	6/24/2021
+
+	Now open-source!
+	Can you believe it Matt 4 years (as of 2022)
+	to open-source his bot projects?
+	Yeah, I know crazy. wait.. why am i talking third-person again?
+
+	https://tcb.nekos.tech/source
+	https://themattchannel.com
 */
 
-// ARGUMENTS ACCEPTED:
-//  - true/false | SETS THE BOT TO DEBUG ON/OFF
-
-const cmdArgs = process.argv.slice(2); // Get args
-
 async function bot(debug) {
+    // ========== PRE-BOOT
     if (debug) console.log("- PRE-BOOT");
-
     if (debug) console.log(` -- App is starting as of ${new Date().toString()} -- `);
 
     // Do our require
     if (debug) console.log("-> Init: Bootloader");
     const BootLoader = require("./app/functions/bootloader.js");
     const bootloader = new BootLoader();
+    await bootloader.printLogo(); // Print that healthy logo. Logo got back
 
-    await bootloader.printLogo(); // Print that healthy logo
 
     if (debug) console.log("-> Init: Logger");
     const Log = require("./app/functions/logger.js");
     if (debug) console.log("-> Start: Logging");
     logger = new Log();
-    logger.log("i", "SYS", `Logging is now enabled!`);
+    logger.info("SYS", `Logging is now enabled!`);
 
 
     if (debug) console.log("-> Init: App");
@@ -32,32 +35,33 @@ async function bot(debug) {
     app.debugMode = debug;
     app.logger = logger;
     app.bootloader = bootloader;
-    logger.log("i", "SYS", `App core successfully loaded!`);
+    logger.info("SYS", `App core successfully loaded!`);
 
 
     if (debug) console.log("-> Init: Dependencies");
     const dependencies = app["dependencies"];
     if (debug) console.log(` > Dependencies: ${dependencies.length}`);
-    if (debug) logger.log("i", "SYS", `Dependencies are now ready to load!`);
+    if (debug) logger.debug("SYS", `Dependencies are now ready to load!`);
 
 
-
+    // ========== BOOT
     if (debug) console.log("-> Start: Boot");
-    logger.log("i", "SYS", `Starting ${app.name} ${app.version.toFullString()}!`);
+    logger.info("SYS", `Starting ${app.name} ${app.version.toFullString()}!`);
 
-    logger.log("i", "SYS", `Enabling dependencies...`);
-    // var results = await bootloader.loadDependencies(app, dependencies);
-    var results = await bootloader.loadHandler(app, "dependency", dependencies);
 
+    logger.info("SYS", `Enabling dependencies...`);
+    await bootloader.loadHandler(app, "dependency", dependencies);
 
 
     if (debug) console.log("-> Init: Configuration");
     const configuration = await app.modules.fs.readdirSync('./app/cfg').filter(file => file.endsWith('.json'));
     if (debug) console.log(` > Configuration: ${configuration.length}`);
-    if (debug) logger.log("i", "SYS", `Configuration files are now ready to load!`);
+    if (debug) logger.debug("SYS", `Configuration files are now ready to load!`);
 
-    logger.log("i", "SYS", `Enabling configuration...`);
-    var results = await bootloader.loadHandler(app, "configuration", configuration);
+
+    logger.info("SYS", `Enabling configuration...`);
+    await bootloader.loadHandler(app, "configuration", configuration);
+
 
     if (debug) console.log("-> Init: Discord Client...");
     const { Client, Intents } = app.modules["discord.js"];
@@ -73,80 +77,62 @@ async function bot(debug) {
     const extras = await require('./app/extras/extras.json'); // this is probably inefficent, but it works ig
     app.extras = {};
     if (debug) console.log(` > Extras: ${extras.length}`);
-    if (debug) logger.log("i", "SYS", `Extras are now ready to load!`);
+    if (debug) logger.debug("SYS", `Extras are now ready to load!`);
 
-    logger.log("i", "SYS", `Enabling Extras...`);
-    var results = await bootloader.extraHandler(app, extras);
 
-    logger.log("i", "SYS", `Enabling database...`);
-    var results = await bootloader.loadHandler(app, "database", null);
+    logger.info("SYS", `Enabling Extras...`);
+    await bootloader.extraHandler(app, extras);
 
+
+    logger.info("SYS", `Enabling database...`);
+    await bootloader.loadHandler(app, "database", null);
 
 
     if (debug) console.log("-> Init: Events");
-    // const events = await app.modules.fs.readdirSync("./app/evts/", { withFileTypes: true });
     const events = await app.modules.fs.readdirSync('./app/evts').filter(file => file.endsWith('.js'));
     if (debug) console.log(` > Events: ${events.length}`);
-    if (debug) logger.log("i", "SYS", `Events are now ready to load!`);
+    if (debug) logger.debug("SYS", `Events are now ready to load!`);
 
-    logger.log("i", "SYS", `Enabling events...`);
-    // var results = await bootloader.loadEvents(app, events);
-    var results = await bootloader.loadHandler(app, "event", events);
 
+    logger.info("SYS", `Enabling events...`);
+    await bootloader.loadHandler(app, "event", events);
 
 
     if (debug) console.log("-> Init: Commands");
-    // const commands = await app.modules.fs.readdirSync("./app/cmds/", { withFileTypes: true });
     const commands = await app.modules.fs.readdirSync('./app/cmds').filter(file => file.endsWith('.js'));
     if (debug) console.log(` > Commands: ${commands.length}`);
-    if (debug) logger.log("i", "SYS", `Commands are now ready to load!`);
+    if (debug) logger.debug("SYS", `Commands are now ready to load!`);
 
-    logger.log("i", "SYS", `Enabling commands...`);
-    // var results = await bootloader.loadCommands(app, commands);
-    var results = await bootloader.loadHandler(app, "command", commands);
+
+    logger.info("SYS", `Enabling commands...`);
+    await bootloader.loadHandler(app, "command", commands);
 
 
     // if (debug) console.log("-> Init: Slash Commands");
-    // // const slashcommands = await app.modules.fs.readdirSync("./app/cmds/", { withFileTypes: true });
     // const slashcommands = await app.modules.fs.readdirSync('./app/cmds/slash').filter(file => file.endsWith('.js'));
     // if (debug) console.log(` > Slash Commands: ${slashcommands.length}`);
-    // if (debug) logger.log("i", "SYS", `Slash Commands are now ready to load!`);
+    // if (debug) logger.debug("SYS", `Slash Commands are now ready to load!`);
 
-    // logger.log("i", "SYS", `Enabling slash commands...`);
-    // // var results = await bootloader.loadCommands(app, slashcommands);
-    // var results = await bootloader.loadHandler(app, "slashCommand", slashcommands);
+    // logger.info("SYS", `Enabling slash commands...`);
+    // await bootloader.loadHandler(app, "slashCommand", slashcommands);
 
+    // I don't know how I want to do slash commands, although this code *kinda* works.
+    // You just gotta tweak around in bootloader to get it to actually load. Otherwise,
+    // this is a waste of bytes. Hmph.
 
+    logger.info("SYS", `Logging in...`);
 
-    logger.log("i", "SYS", `Logging in...`);
-
-    var results = await client.login(app.config.tokendata.discord);
+    await client.login(app.config.tokendata.discord);
 
     // Assume we good
-    logger.log("S", "SYS", `Welcome to ${app.name}.`);
-
-}
-
-
-
-
-
-
-switch (cmdArgs[0]) {
-    case "true":
-        bot(true);
-        break;
-    default:
-        bot();
-        break;
-}; // Just tell the bot to either start with debug or nah :D
-
-
+    logger.success("SYS", `Welcome to ${app.name}.`);
+};
 
 process.stdin.resume(); // Let's not close immediately, thanks.
 
 process.on('exit', exitHandler.bind(null, { cleanup: true })); // Let's catch the app before it exits.
-//process.on('SIGINT', exitHandler.bind(null, {cleanup:true,exit:true})); // Let's catch CTRL+C.
+// process.on('SIGINT', exitHandler.bind(null, { cleanup: true, exit: true })); // Let's catch CTRL+C.
+// For some reason, that's buggy. Don't enable it unless you know its not gonna lurk in your background...
 
 // catches "kill pid" (for example: nodemon restart)
 process.on('SIGUSR1', exitHandler.bind(null, { exit: true }));
@@ -156,11 +142,8 @@ process.on('uncaughtException', exitHandler.bind(null, { exit: false })); // Let
 
 function exitHandler(options, exitCode) {
     var log = function(type, from, msg) {
-        if (typeof logger === "object") {
-            logger.log("i", "SYS", msg);
-        } else {
-            console.log(`[${type}] [${from}] ${msg}`);
-        };
+        if (typeof logger === "object") logger.info("SYS", msg);
+        else console.log(`[${type}] [${from}] ${msg}`);
     }
 
     if (exitCode)
@@ -171,29 +154,9 @@ function exitHandler(options, exitCode) {
 
     process.waitingForCleanup = false;
     if (options.cleanup) {
-        process.waitingForCleanup = true;
-        if (app.client)
-            if (app.client.user != null) {
-                //     if (client.config.system.commandState != "Shutdown") {
-                //         const trueBotOwOner = client.users.cache.get(client.config.system.owners[0]);
-                //         trueBotOwOner.send({
-                //             embed: {
-                //                 title: client.config.system.emotes.error + " **Shutdown**",
-                //                 color: client.config.system.embedColors.red,
-                //                 description: "A shutdown is happening, please check CONSOLE for more details.",
-                //                 fields: [
-                //                     { name: "Process Exit Code", value: "{" + exitCode + "}" }
-                //                 ],
-                //                 footer: { text: client.config.system.footerText }
-                //             }
-                //         }).then(msg => {
-                //             shutdownBot(client, msg, false, "FROMNODEPROCSS");
-                //         });
-                //    };
-            } else
-                process.waitingForCleanup = false;
-        else process.waitingForCleanup = false;
-
+        // process.waitingForCleanup = true;
+        // Maybe something useful in the future, idk.
+        // Probably to destroy the client gracefully.
     };
 
     process.waitingForCleanupTM = setInterval(function() {
@@ -211,9 +174,28 @@ process.on('unhandledRejection', error => {
 
     const msg = ` == UNHANDLED REJECTION THROWN ==\n${errreason}\n${errstack}\n ================================`;
 
-    if (typeof logger === "class") {
-        logger.log("i", "SYS", msg);
-    } else {
-        console.log(`[i] [SYS] ${msg}`);
-    };
+    if (typeof logger === "class") logger.info("SYS", msg);
+    else console.log(`[i] [SYS] ${msg}`);
 }); // Catch all them nasty unhandledRejection errors :/
+
+
+
+
+// ARGUMENTS ACCEPTED:
+//  - true/false | SETS THE BOT TO DEBUG ON/OFF
+
+// WARNING: Debug is really spammy. It's the equivalent
+// of asking "GOOD LORD, WHAT IS HAPPENING IN THERE?"
+const cmdArgs = process.argv.slice(2); // Get args
+switch (cmdArgs[0]) {
+    case "true":
+        bot(true);
+        break;
+    default:
+        bot();
+        break;
+}; // Just tell the bot to either start with debug or nah :D
+
+
+
+// The heck is that all the way down here for? Beats me.

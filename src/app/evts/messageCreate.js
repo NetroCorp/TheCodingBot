@@ -36,14 +36,14 @@ module.exports = async(app, message) => {
             return app.functions.msgHandler(message, { content: `n-nya! My prefix is \`${prefix}\`` }, 0, true);
         else return;
     } else {};
-    app.logger.log("i", "DISCORD", `[MESSAGE] ${message.author.id} triggered prefix. (${prefix})`);
+    app.logger.info("DISCORD", `[MESSAGE] ${message.author.id} triggered prefix. (${prefix})`);
 
 
 
 
     if (app.client.user.id === app.config.system.knownIDs.beta) {
         if (app.client.currentServer.betaStuff["accessToBETA"] == false && prefix != "t/") {
-            app.logger.log("i", "DISCORD", `[MESSAGE] ${message.guild.id} doesn't have BETA access! Big sad.`);
+            app.logger.info("DISCORD", `[MESSAGE] ${message.guild.id} doesn't have BETA access! Big sad.`);
             return app.functions.msgHandler(message, { content: `${app.config.system.emotes.error} **This server lacks the \`BETA\` permissions.**\nIf you are looking for \`BETA\` access, please contact <@222073294419918848> (User Tag: TheCodingGuy#6697 | User ID: 222073294419918848).\n(Oh, if he exists in this server, now he knows.)` }, 0, true);
         };
     };
@@ -55,9 +55,9 @@ module.exports = async(app, message) => {
     if (!command) return app.functions.ErrorHandler(app, userSettings, message, commandName, new Error("Command not found."), "warning");
 
     if (!args)
-        app.logger.log("i", "DISCORD", `[MESSAGE] ${message.author.id} running ${commandName} with no args`);
+        app.logger.info("DISCORD", `[MESSAGE] ${message.author.id} running ${commandName} with no args`);
     else
-        app.logger.log("i", "DISCORD", `[MESSAGE] ${message.author.id} running ${commandName} with args: ${args.join(" ")}`);
+        app.logger.info("DISCORD", `[MESSAGE] ${message.author.id} running ${commandName} with args: ${args.join(" ")}`);
 
 
 
@@ -65,7 +65,7 @@ module.exports = async(app, message) => {
     try {
         if (!app.config.system.owners.includes(message.author.id)) {
             if (app.config.system.commandState == "Disabled") {
-                app.logger.log("i", "DISCORD", `[MESSAGE] Return ${message.author.id} command: Disabled.`);
+                app.logger.info("DISCORD", `[MESSAGE] Return ${message.author.id} command: Disabled.`);
 
                 return app.functions.ErrorHandler(app, userSettings, message, command.name, new Error("Commands are disabled!"), "warning");
 
@@ -95,7 +95,7 @@ module.exports = async(app, message) => {
             };
 
             if (command.guildOnly == true && message.guild == null) {
-                app.logger.log("i", "DISCORD", `[MESSAGE] Return ${message.author.id} command: server-only.`);
+                app.logger.info("DISCORD", `[MESSAGE] Return ${message.author.id} command: server-only.`);
 
                 return app.functions.ErrorHandler(app, userSettings, message, command.name, new Error("Server-only command!"), "warning");
 
@@ -110,11 +110,11 @@ module.exports = async(app, message) => {
                     await command.execute(app, message, args);
                     userSettings.update({ executedCommands: (userSettings.get('executedCommands') + 1) }, { where: { userID: message.author.id } });
                 } catch (err) {
-                    app.logger.log("X", "DISCORD", "[MESSAGE] Whoops! Something went wrong!\n" + err);
+                    app.logger.error("DISCORD", "[MESSAGE] Whoops! Something went wrong!\n" + err);
 
                     return app.functions.ErrorHandler(app, userSettings, message, command.name, err, "error");
                 };
-                app.logger.log("S", "DISCORD", "[MESSAGE] Command execution complete.");
+                app.logger.success("DISCORD", "[MESSAGE] Command execution complete.");
             } else {
 
                 var msg = "You're lacking the proper permission (PERMISSIONS_GO_HERE) to execute this command.";
@@ -135,7 +135,7 @@ module.exports = async(app, message) => {
                 if (lackingPerms.length > 1)
                     msg = msg.replace("permission", "permissions");
 
-                app.logger.log("i", "DISCORD", "[MESSAGE] Return " + message.author.id + " lacking " + msg.split("lacking the ")[1]);
+                app.logger.info("DISCORD", "[MESSAGE] Return " + message.author.id + " lacking " + msg.split("lacking the ")[1]);
 
 
                 return app.functions.ErrorHandler(app, userSettings, message, command.name, msg, "error");
@@ -143,7 +143,7 @@ module.exports = async(app, message) => {
             };
         };
     } catch (err) {
-        app.logger.log("X", "DISCORD", "[MESSAGE] Whoops! Something went wrong!\n" + err);
+        app.logger.error("DISCORD", "[MESSAGE] Whoops! Something went wrong!\n" + err);
 
         return app.functions.ErrorHandler(app, userSettings, message, command.name, err, "error");
     };

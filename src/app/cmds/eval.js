@@ -50,7 +50,7 @@ module.exports = {
                     footer: { text: app.config.system.footerText + " | There was an error." }
                 }]
             });
-            app.logger.log("!", "SYS", `[EVAL] ${err.message}\n${err.stack}`);
+            app.logger.warn("SYS", `[EVAL] ${err.message}\n${err.stack}`);
         };
     }
 };
