@@ -21,6 +21,9 @@ module.exports = (app) => {
     const guildInvites = new Discord.Collection();
     app.client.guildInvites = guildInvites;
 
+    // Broadcast we up
+    app.client.uptimeTimestamp = new Date().getTime();
+    app.logger.debug("SYS", `${app.name} online as of ${new Date(app.client.uptimeTimestamp)}.`);
     setTimeout(function() {
         var test = app.functions.RPSSystem(app, "start"); // Start RPSUpdater
 
@@ -51,8 +54,5 @@ module.exports = (app) => {
 
         }, 3500); // Wait an addition 3.5 seconds
     }, 2000);
-
-    // Broadcast we up
-    app.client.uptimeTimestamp = new Date().getTime();
 
 };

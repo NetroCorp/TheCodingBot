@@ -12,11 +12,11 @@ module.exports = {
     execute: async(app, message, args) => {
         function title(emoji) { var response = app.config.system.emotes[emoji] + "**YouTube Together**"; return response; };
 
-        if (!message.guild) { message.channel.send(`${title("error")}\nYou cannot execute this in DMs!`); return; }
+        if (!message.guild) { app.functions.msgHandler(message, { content: `${title("error")}\nYou cannot execute this in DMs!` }, 0, true); return; }
         var channel = message.member.voice.channel;
-        if (!channel) { message.channel.send(`${title("error")}\nPlease join a voice channel first!!`); return; }
+        if (!channel) { app.functions.msgHandler(message, { content: `${title("error")}\nPlease join a voice channel first!!` }, 0, true); return; }
 
-        message.channel.send(title("wait") + "\nGenerating link, please wait.").then(m => {
+        app.functions.msgHandler(message, { content: title("wait") + "\nGenerating link, please wait." }, 0, true, (m => {
             app.modules["node-fetch"](`https://discord.com/api/v9/channels/${channel.id}/invites`, {
                 method: "POST",
                 body: JSON.stringify({ max_age: 86400, max_uses: 0, target_application_id: "755600276941176913", target_type: 2, temporary: false, validate: null }),
@@ -32,6 +32,6 @@ module.exports = {
                 } else m.edit(`${title("success")}\nLink generated!\nhttps://discord.com/invite/${invite.code}`);
                 return;
             });
-        });
+        }));
     }
 };

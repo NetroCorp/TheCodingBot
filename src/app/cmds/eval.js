@@ -1,7 +1,7 @@
 module.exports = {
     name: "eval",
     description: "JavaScript executor.",
-    category: "General",
+    category: "Owner",
     guildOnly: false,
     authorizedGuilds: [],
     hidden: true,
@@ -10,7 +10,7 @@ module.exports = {
     aliases: [],
     syntax: [" <JSCode>"],
     execute: async(app, message, args) => {
-        function clean(text) {
+        function clean(text) { // gotta sweep sweep sweep
             if (typeof(text) === "string") return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
             else return text;
         };
@@ -22,26 +22,24 @@ module.exports = {
             };
 
             let evaled = eval(code);
-            // let evaled = await eval("(async () => {" + code + "})()")
 
             if (typeof evaled !== "string") evaled = app.modules.util.inspect(evaled);
-
             if (evaled !== "Promise { <pending> }") {
                 var result = [];
                 if (evaled == "")
                     result.push({ name: "Execution Result", value: "```js\n\"\"```" });
                 else
                     result.push({ name: "Execution Result", value: "```js\n" + clean(evaled) + "```" });
-                message.channel.send({
+                app.functions.msgHandler(message, {
                     embeds: [{
                         color: app.config.system.embedColors.aqua,
                         fields: result,
                         footer: { text: app.config.system.footerText }
                     }]
-                });
+                }, 0, true);
             };
         } catch (err) {
-            message.channel.send({
+            app.functions.msgHandler(message, {
                 embeds: [{
                     color: app.config.system.embedColors.red,
                     fields: [
@@ -49,7 +47,7 @@ module.exports = {
                     ],
                     footer: { text: app.config.system.footerText + " | There was an error." }
                 }]
-            });
+            }, 0, true);
             app.logger.warn("SYS", `[EVAL] ${err.message}\n${err.stack}`);
         };
     }

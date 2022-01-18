@@ -42,6 +42,7 @@
             "Playing potato",
             "Playing with the void. Should I say more?",
             "Playing with your mind.",
+            "Playing Share the light ソウジャナイト",
 
             "Watching anime kill hot toast",
             "Watching アニメ",
@@ -57,10 +58,11 @@
             "Listening to Matt's Keyboard AMSR",
             "Listening to *wholesome sounds*",
             "Listening to Kobaryo - Cartoon Candy",
-            "Listening to Tyler, the Creator - SWEET / I THOUGHT YOU WANTED TO DANCE"
+            "Listening to Tyler, the Creator - SWEET / I THOUGHT YOU WANTED TO DANCE",
+            "Listening to Mitsukiyo - Rolling Beat"
 
         ],
-        "timeInSec": 120,
+        "timeInSec": 180,
         "enabled": "true"
     },
     "embedColors": {
@@ -91,15 +93,15 @@
         "dark_pink": 12320855
     },
     "emotes": {
-        "lock": "<:tcglock:525805824723910659>",
-        "wait": "<a:aero_busy:525805587460784138>",
+        "lock": ":lock:",
+        "wait": ":hourglass:",
 
-        "d_wait": "<a:dload:497945986719809556>",
-        "information": "<:foinformation:709220132563451954>",
-        "warning": "<:fowarning:709220132030906408>",
-        "error": "<:foerror:709220131942694913>",
-        "question": "<:foquestion:709220132769234994>",
-        "success": "<:fosuccess:709220963178250320>",
+        "d_wait": ":arrows_counterclockwise:",
+        "information": ":information_source:",
+        "warning": ":warning:",
+        "error": ":x:",
+        "question": ":question:",
+        "success": ":white_check_mark:",
 
         "osu": {
             "osuLogo": "<:osuTCBLogo:675155242421321728>",
@@ -129,14 +131,10 @@
     },
 
     "logURL": "https://tcb.nekos.tech/bot/",
+    "imgAPI": "https://api.themattchannel.com/imgs/",
 
 
     "owners": [
         "yourUserIDHere"
-    ],
-
-    "knownIDs": {
-        "main": "yourBotIDHere",
-        "beta": "yourBetaBotIDHere(if applicable)"
-    }
+    ]
 }

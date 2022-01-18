@@ -1,16 +1,6 @@
-const { MessageActionRow } = require("discord.js");
-const BootLoader = require("../functions/bootloader");
-
 module.exports = async(app, message) => {
 
-    if (!app.client.tosMsgSent) app.client.tosMsgSent = [];
-
-    app.client.currentServer = {
-        betaStuff: {
-            accessToBETA: true
-        }
-    };
-
+    if (!app.client.eulaMsgSent) app.client.eulaMsgSent = [];
     if (message.author.bot) return;
 
     var userSettings = await app.DBs.userSettings.findOne({ where: { userID: message.author.id } });
@@ -38,15 +28,6 @@ module.exports = async(app, message) => {
     } else {};
     app.logger.info("DISCORD", `[MESSAGE] ${message.author.id} triggered prefix. (${prefix})`);
 
-
-
-
-    if (app.client.user.id === app.config.system.knownIDs.beta) {
-        if (app.client.currentServer.betaStuff["accessToBETA"] == false && prefix != "t/") {
-            app.logger.info("DISCORD", `[MESSAGE] ${message.guild.id} doesn't have BETA access! Big sad.`);
-            return app.functions.msgHandler(message, { content: `${app.config.system.emotes.error} **This server lacks the \`BETA\` permissions.**\nIf you are looking for \`BETA\` access, please contact <@222073294419918848> (User Tag: TheCodingGuy#6697 | User ID: 222073294419918848).\n(Oh, if he exists in this server, now he knows.)` }, 0, true);
-        };
-    };
 
     const args = message.content.slice(prefix.length).split(/ +/);
     const commandName = args.shift().toLowerCase();
@@ -77,7 +58,7 @@ module.exports = async(app, message) => {
 
 
             if (userSettings.get('acceptedEULA') === false && command.category != "Moderation" && command.name != "eval") {
-                if (app.client.tosMsgSent.includes(message.author.id))
+                if (app.client.eulaMsgSent.includes(message.author.id))
                     return;
 
                 var eulaFile = `./special/eula.js`;
@@ -89,7 +70,7 @@ module.exports = async(app, message) => {
                     // while (!eulaResult["done"]) { await app.functions.sleep(1000); };
                     if (eulaResult["denied"]) return;
                 } catch (Ex) {
-                    return app.functions.ErrorHandler(app, userSettings, message, command.name, new Error("Nya.. Terms of Service failed to load. How does that even happen..."), "error");
+                    return app.functions.ErrorHandler(app, userSettings, message, command.name, new Error("Nya.. End-User Agreement failed to load. How does that even happen..."), "error");
                 };
 
             };

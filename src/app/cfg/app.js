@@ -123,6 +123,8 @@ const app = {
             return;
         },
 
+        getTicks: () => { return ((new Date().getTime() * 10000) + 621355968000000000); },
+
         convertTimestamp: function(unix_timestamp, getDate, bigHour = false) {
             var date = new Date(unix_timestamp * 1); // Create Date from timestamp
 
@@ -131,13 +133,12 @@ const app = {
             var seconds = "0" + date.getSeconds(); // Seconds part from the timestamp
 
             // Will display time in hh:mm:ss format
-            var formattedTime = ((bigHour) ? ((hours > 12) ? (hours - 12) : hours) : hours) + ':' + minutes.substr(-2) + ':' + seconds.substr(-2) + ((bigHour) ? ((hours < 12) ? " AM" : " PM") : "");
+            var formattedTime = ((bigHour) ? ((hours > 12) ? (hours - 12) : (hours == 0) ? 12 : hours) : hours) + ':' + minutes.substr(-2) + ':' + seconds.substr(-2) + ((bigHour) ? ((hours < 12) ? " AM" : " PM") : "");
 
             if (getDate) {
-                var dd = String(date.getDate()).padStart(2, '0');
-                var mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
-                var yyyy = date.getFullYear();
-
+                var dd = String(date.getDate()).padStart(2, '0'),
+                    mm = String(date.getMonth() + 1).padStart(2, '0'), //January is 0!
+                    yyyy = date.getFullYear();
                 formattedTime = mm + '/' + dd + '/' + yyyy + ' ' + formattedTime;
             };
 
@@ -152,18 +153,26 @@ const app = {
                 delete require.cache[module];
         },
 
+        removeItemAll: function(arr, value) {
+            var i = 0;
+            while (i < arr.length)
+                if (arr[i] === value) arr.splice(i, 1);
+                else ++i;
+            return arr;
+        },
+
         RPSSystem: function(app, action) {
             if (app.client == undefined) { return "RPS failed to attach to client! Create Discord Client first." } else if (app.config == undefined) { return "RPS failed to attach to client: Missing config data."; };
 
             if (action == "start") {
                 if (app.config.system.rotatingStatus.enabled) {
-                    if (app.client.RPS != undefined && app.client.RPS != null) {
-                        if (!app.client.RPS.running) {
-                            app.client.RPS.running = true;
-                            app.client.RPS.intervalSystem = setInterval(function() {
+                    if (app.RPS != undefined && app.RPS != null) {
+                        if (!app.RPS.running) {
+                            app.RPS.running = true;
+                            app.RPS.intervalSystem = setInterval(function() {
                                 app.functions.RPSSystem(app, "update");
                             }, (app.config.system.rotatingStatus.timeInSec * 1000));
-                            app.client.user.setActivity("RPS: RPS v" + app.client.RPS.version + " for " + app.name + ", READY.");
+                            app.client.user.setActivity("RPS: RPS v" + app.RPS.version + " for " + app.name + ", READY.");
 
                             setTimeout(function() {
                                 app.client.user.setActivity("RPS: Loaded " + app.config.system.rotatingStatus.statuses.length + " statuses!");
@@ -179,13 +188,13 @@ const app = {
                     };
                 };
             } else if (action == "update") {
-                if (app.client.RPS != undefined && app.client.RPS != null) {
-                    if (app.client.RPS.running && app.config.system.rotatingStatus.enabled) {
+                if (app.RPS != undefined && app.RPS != null) {
+                    if (app.RPS.running && app.config.system.rotatingStatus.enabled) {
                         var playingstatusarr = app.config.system.rotatingStatus.statuses;
                         var playingstatus = playingstatusarr[Math.floor(Math.random() * playingstatusarr.length)];
 
                         if (playingstatus.includes("svrcount")) playingstatus = "Playing on " + app.client.guilds.cache.size + " servers!";
-                        else if (playingstatus.includes("ver")) playingstatus = `Playing on ${app.version.toFullString()}).`;
+                        else if (playingstatus.includes("ver")) playingstatus = `Playing on ${app.version.toFullString()}.`;
 
                         var playingtype = playingstatus.split(" ")[0];
 
@@ -201,10 +210,10 @@ const app = {
                     return "RPS not ready: call RPSUpdate(client, \"init\")";
                 };
             } else if (action == "stop") {
-                if (app.client.RPS != undefined && app.client.RPS != null) {
-                    if (app.client.RPS.running) {
-                        app.client.RPS.running = false;
-                        clearInterval(app.client.RPS.intervalSystem);
+                if (app.RPS != undefined && app.RPS != null) {
+                    if (app.RPS.running) {
+                        app.RPS.running = false;
+                        clearInterval(app.RPS.intervalSystem);
                     } else {
                         return "RPS not started: call RPSUpdate(client, \"start\")";
                     };
@@ -212,9 +221,9 @@ const app = {
                     return "RPS not ready: not even initialized!";
                 };
             } else if (action == "init") {
-                if (app.client.RPS == undefined || app.client.RPS == null) {
+                if (app.RPS == undefined || app.RPS == null) {
                     if (app.config.system.rotatingStatus.enabled) {
-                        app.client.RPS = {
+                        app.RPS = {
                             "running": false,
                             "lastUpdate": 0,
                             "lastStatus": "",
@@ -228,12 +237,12 @@ const app = {
                     return "RPS already started: call RPSUpdate(client, \"destroy\")";
                 };
             } else if (action == "destroy") {
-                if (app.client.RPS != undefined && app.client.RPS != null) {
-                    if (app.client.RPS.running) {
+                if (app.RPS != undefined && app.RPS != null) {
+                    if (app.RPS.running) {
                         app.functions.RPSSystem(app, "stop");
                     };
 
-                    app.client.RPS = null;
+                    app.RPS = null;
                 } else {
                     return "RPS not ready: not even initialized!";
                 };
@@ -242,7 +251,7 @@ const app = {
             };
         },
 
-        msgHandler(message, options, action = 0, doReply = false, callback = null) { // action: 0 = Send, 1 = Edit
+        msgHandler: async function(message, options, action = 0, doReply = false, callback = null) { // action: 0 = Send, 1 = Edit
             if (action == 0) {
                 if (doReply) options["reply"] = { messageReference: message.id };
                 message.channel.send(options).then(msg => { if (callback != null) callback(msg); });
@@ -253,31 +262,29 @@ const app = {
         RemoveReactions: function(app, msg) {
             msg.reactions.removeAll().catch(error => {
                 app.logger.error("DISCORD", "Could not remove ALL reactions due to " + error);
-                msg.channel.send({
+                app.functions.msgHandler(msg, {
                     embeds: [{
                         color: app.config.system.embedColors.red,
                         description: "Failed to remove all reactions! Will attempt to remove my reactions only...",
                         footer: { text: app.config.system.footerText }
                     }]
-                }).then(async m => {
+                }, 0, true, (async m => {
                     var myID = app.client.user.id;
                     var userReactions = msg.reactions.cache.filter(reaction => reaction.users.cache.has(myID));
                     try {
-                        for (const reaction of userReactions.values()) {
-                            await reaction.users.remove(myID);
-                        };
+                        for (const reaction of userReactions.values()) await reaction.users.remove(myID);
                         m.delete();
                     } catch (err) {
-                        m.edit({
+                        app.functions.msgHandler(m, {
                             embeds: [{
                                 color: app.config.system.embedColors.red,
                                 description: "Failed to remove my reactions! well, that's an F.",
                                 footer: { text: app.config.system.footerText }
                             }]
-                        });
+                        }, 1, true);
                         app.logger.error("DISCORD", "Could not remove my reactions due to " + err);
                     };
-                });
+                }));
             });
         }
     },

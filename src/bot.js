@@ -11,6 +11,8 @@
 	https://themattchannel.com
 */
 
+const app = require("./app/cfg/app.js");
+
 async function bot(debug) {
     // ========== PRE-BOOT
     if (debug) console.log("- PRE-BOOT");
@@ -133,16 +135,15 @@ process.stdin.resume(); // Let's not close immediately, thanks.
 process.on('exit', exitHandler.bind(null, { cleanup: true })); // Let's catch the app before it exits.
 // process.on('SIGINT', exitHandler.bind(null, { cleanup: true, exit: true })); // Let's catch CTRL+C.
 // For some reason, that's buggy. Don't enable it unless you know its not gonna lurk in your background...
+// or whatever reason get stuck???
 
 // catches "kill pid" (for example: nodemon restart)
 process.on('SIGUSR1', exitHandler.bind(null, { exit: true }));
 process.on('SIGUSR2', exitHandler.bind(null, { exit: true }));
 
-process.on('uncaughtException', exitHandler.bind(null, { exit: false })); // Let's catch uncaught exceptions.
-
 function exitHandler(options, exitCode) {
     var log = function(type, from, msg) {
-        if (typeof logger === "object") logger.info("SYS", msg);
+        if (logger !== undefined) logger.info("SYS", msg);
         else console.log(`[${type}] [${from}] ${msg}`);
     }
 
@@ -153,28 +154,46 @@ function exitHandler(options, exitCode) {
             log("i", "SYS", "Process attempted to exit with " + exitCode);
 
     process.waitingForCleanup = false;
+
     if (options.cleanup) {
-        // process.waitingForCleanup = true;
-        // Maybe something useful in the future, idk.
-        // Probably to destroy the client gracefully.
+        if (app !== undefined)
+            if (app.client !== undefined) app.client.destroy();
+
+        process.waitingForCleanup = false;
     };
 
     process.waitingForCleanupTM = setInterval(function() {
         if (!process.waitingForCleanup) {
             clearInterval(process.waitingForCleanupTM);
-            if (options.exit) process.exit();
+
+            if (options.exit) {
+                log("i", "SYS", `${app.name} exiting as of ${new Date()}.`);
+                process.exit();
+            };
         };
-    }, 100);
+    }, 500);
+
 
 }
 
+
+process.on('uncaughtException', error => {
+    const errreason = new Error(error.message);
+    const errstack = ` Caused By:\n  ${error.stack}`;
+
+    const msg = ` == UNCAUGHT EXCEPTION THROWN ==\n${errreason}\n${errstack}\n ================================`;
+
+    if (logger !== undefined) logger.error("SYS", msg);
+    else console.log(`[X] [SYS] ${msg}`);
+}); // Catch all them nasty uncaughtException errors :/
+
 process.on('unhandledRejection', error => {
     const errreason = new Error(error.message);
-    const errstack = ` Caused By:\n${error.stack}`;
+    const errstack = ` Caused By:\n  ${error.stack}`;
 
     const msg = ` == UNHANDLED REJECTION THROWN ==\n${errreason}\n${errstack}\n ================================`;
 
-    if (typeof logger === "class") logger.info("SYS", msg);
+    if (logger !== undefined) logger.info("SYS", msg);
     else console.log(`[i] [SYS] ${msg}`);
 }); // Catch all them nasty unhandledRejection errors :/
 

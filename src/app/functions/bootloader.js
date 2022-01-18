@@ -40,9 +40,9 @@ class BootLoader {
 
                     var missingDeps = extra.extraCfg.info.extraDeps.filter(function(x) { return !Object.keys(app.modules).includes(x); });
                     if (missingDeps.length > 0)
-                        logger.error("SYS", "Web cannot be enabled due to missing package(s): " + missingDeps.join(", "));
+                        logger.error("SYS", `${extra.extraName} cannot be enabled due to missing package(s): ${missingDeps.join(", ")}`);
                     else {
-                        logger.info("SYS", `Enabling Extra: Web...`);
+                        logger.info("SYS", `Enabling Extra: ${extra.extraName}...`);
                         const extraInt = new extra.extraApp;
                         await extraInt.init(app, extra.extraCfg.settings);
 

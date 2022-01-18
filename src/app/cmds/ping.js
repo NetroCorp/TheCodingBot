@@ -11,18 +11,24 @@ module.exports = {
     syntax: [""],
     execute: async(app, message, args) => {
         app.functions.msgHandler(message, {
+            content: "** **", // This just makes it so when it says (edited) it don't look funny.
             embeds: [{
-                color: app.config.system.embedColors.green,
-                description: ":ping_pong: Pinging...",
+                title: app.config.system.emotes.wait + " **Latency Test**",
+                color: app.config.system.embedColors.blue,
+                fields: [
+                    { name: "API", value: ":ping_pong: Pinging...", inline: true },
+                    { name: "Messages", value: ":ping_pong: Pinging...", inline: true }
+                ],
                 footer: { text: app.config.system.footerText }
             }]
         }, 0, true, (msg => {
             app.functions.msgHandler(msg, {
                 embeds: [{
-                    color: app.config.system.embedColors.green,
+                    title: app.config.system.emotes.information + " **Latency Test**",
+                    color: app.config.system.embedColors.blue,
                     fields: [
-                        { name: "Message Latency", value: ((msg.createdTimestamp - message.createdTimestamp) + "ms") },
-                        { name: "Discord Latency", value: app.client.ws.ping + "ms" }
+                        { name: "API", value: app.client.ws.ping + "ms", inline: true },
+                        { name: "Messages", value: ((msg.createdTimestamp - message.createdTimestamp) + "ms"), inline: true }
                     ],
                     footer: { text: app.config.system.footerText }
                 }]

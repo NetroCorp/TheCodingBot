@@ -1,9 +1,12 @@
 module.exports = async(app, omessage, nmessage) => {
+    if (omessage.partial) await omessage.fetch();
+    if (nmessage.partial) await nmessage.fetch();
+
     if (omessage.content == nmessage.content) return;
 
     //
     // TODO:
-    // Send DMs (including message updates, edits, and deletes
+    // Send DMs (including message sent, updates, and deletes
     // to bot owner.
     //
 

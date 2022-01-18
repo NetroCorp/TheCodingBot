@@ -10,7 +10,6 @@ module.exports = {
     aliases: [],
     syntax: [],
     execute: async(app, message, args) => {
-        // message.channel.send(app.config.system.emotes.information + " **Ya, I'm alive.**");
         app.functions.msgHandler(message, { content: "Hello!" }, 0, true);
     }
 };
