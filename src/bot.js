@@ -11,13 +11,20 @@
 	https://themattchannel.com
 */
 
-const app = require("./app/cfg/app.js");
+var logger, app;
 
 async function bot(debug) {
     // ========== PRE-BOOT
     if (debug) console.log("- PRE-BOOT");
     if (debug) console.log(` -- App is starting as of ${new Date().toString()} -- `);
 
+    // Change directory
+    try {
+        if (process.cwd().split("\\").slice(-1) != "src") // attempt to change into 'src'
+            process.chdir(process.cwd() + "/src");
+    } catch (Ex) {}; // Assume it's okay to continue.
+
+    console.log(process.cwd);
     // Do our require
     if (debug) console.log("-> Init: Bootloader");
     const BootLoader = require("./app/functions/bootloader.js");
@@ -28,7 +35,7 @@ async function bot(debug) {
     if (debug) console.log("-> Init: Logger");
     const Log = require("./app/functions/logger.js");
     if (debug) console.log("-> Start: Logging");
-    logger = new Log();
+    const logger = new Log();
     logger.info("SYS", `Logging is now enabled!`);
 
 
@@ -124,7 +131,15 @@ async function bot(debug) {
 
     logger.info("SYS", `Logging in...`);
 
-    await client.login(app.config.tokendata.discord);
+    try {
+        await client.login(app.config.tokendata.discord);
+    } catch (Ex) {
+        if (Ex.message.includes("Cannot read properties of undefined (reading 'discord')"))
+            app.logger.error("SYS", "Hey, you probably forgot to follow the README!\nYou need to ensure 'tokendata.json.example' to 'tokendata.json'.\nIf you've done this, please ensure your JSON is not broken.");
+        else
+            app.logger.error("SYS", "I could not connect to Discord. Sorry about that.");
+        process.exit(-1); // I mean ig this is a good thing to do?
+    };
 
     // Assume we good
     logger.success("SYS", `Welcome to ${app.name}.`);
@@ -143,7 +158,7 @@ process.on('SIGUSR2', exitHandler.bind(null, { exit: true }));
 
 function exitHandler(options, exitCode) {
     var log = function(type, from, msg) {
-        if (logger !== undefined) logger.info("SYS", msg);
+        if (logger) logger.info("SYS", msg);
         else console.log(`[${type}] [${from}] ${msg}`);
     }
 
@@ -183,7 +198,7 @@ process.on('uncaughtException', error => {
 
     const msg = ` == UNCAUGHT EXCEPTION THROWN ==\n${errreason}\n${errstack}\n ================================`;
 
-    if (logger !== undefined) logger.error("SYS", msg);
+    if (logger) logger.error("SYS", msg);
     else console.log(`[X] [SYS] ${msg}`);
 }); // Catch all them nasty uncaughtException errors :/
 
@@ -193,11 +208,9 @@ process.on('unhandledRejection', error => {
 
     const msg = ` == UNHANDLED REJECTION THROWN ==\n${errreason}\n${errstack}\n ================================`;
 
-    if (logger !== undefined) logger.info("SYS", msg);
+    if (logger) logger.info("SYS", msg);
     else console.log(`[i] [SYS] ${msg}`);
 }); // Catch all them nasty unhandledRejection errors :/
-
-
 
 
 // ARGUMENTS ACCEPTED:
