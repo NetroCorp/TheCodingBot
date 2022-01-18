@@ -8,7 +8,7 @@ Do not expect anything to work as intended. As if, anything ever worked anyways.
 - First, you'll need to ensure you have [NodeJS](https://nodejs.org/) installed.
 - Then, download this branch.
 - Afterwards, fire up a terminal/command prompt and run `npm install` in the newly created directory, wait for packages to install. Kill some time by proceeding to the next step.
-  - :information_source: **Wherever `package-lock.json` is, just run that command there.
+  - :information_source: **Wherever `package-lock.json` is, just run that command there.**
 - Modify the `src/cfg/tokendata.json.example`.
   - You'll also need to obtain a Discord token from [here](https://discord.com/developers/applications/).
   - If you wish to have support for osu! stats and stuff, you'll need to obtain a API key from [here](https://osu.ppy.sh/p/api/).
