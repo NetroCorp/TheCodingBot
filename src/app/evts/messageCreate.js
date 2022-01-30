@@ -1,7 +1,8 @@
 module.exports = async(app, message) => {
+    if (message.author.bot) return;
 
     if (!app.client.eulaMsgSent) app.client.eulaMsgSent = [];
-    if (message.author.bot) return;
+    if (!app.client.cooldowns) app.client.cooldowns = {};
 
     var userSettings = await app.DBs.userSettings.findOne({ where: { userID: message.author.id } });
     if (!userSettings) {
@@ -9,9 +10,7 @@ module.exports = async(app, message) => {
         userSettings = await app.DBs.userSettings.findOne({ where: { userID: message.author.id } });
     };
 
-
     var prefix = userSettings.get("prefix");
-
     if (!prefix) {
         prefix = app.config.system.defaultPrefix;
 
@@ -22,7 +21,7 @@ module.exports = async(app, message) => {
     };
 
     if (!message.content.startsWith(prefix)) { // If the user did not include prefix
-        if (message.mentions.has(app.client.user.id)) // And pinged the bot.
+        if (message.mentions.has(app.client.user.id) && !message.reference) // ...and did not reply to & actually pinged the bot.
             return app.functions.msgHandler(message, { content: `n-nya! My prefix is \`${prefix}\`` }, 0, true);
         else return;
     } else {};
@@ -36,7 +35,7 @@ module.exports = async(app, message) => {
     if (!command) return app.functions.ErrorHandler(app, userSettings, message, commandName, new Error("Command not found."), "warning");
 
     if (!args)
-        app.logger.info("DISCORD", `[MESSAGE] ${message.author.id} running ${commandName} with no args`);
+        app.logger.info("DISCORD", `[MESSAGE] ${message.author.id} running ${commandName}`);
     else
         app.logger.info("DISCORD", `[MESSAGE] ${message.author.id} running ${commandName} with args: ${args.join(" ")}`);
 
@@ -44,6 +43,33 @@ module.exports = async(app, message) => {
 
 
     try {
+
+        if (app.client.cooldowns[message.author.id]) {
+            var userCooldown = app.client.cooldowns[message.author.id].filter(item => item.command == command.name);
+            if (userCooldown.length > 0) {
+                var cooldownTime = (userCooldown[0].time - message.createdTimestamp);
+                if (cooldownTime > 1000) {
+                    var responses = [
+                        "I'm not *that* fast! S-Slow it down!", "This is difficult, you know...",
+                        "Never let a computer know you're in a hurry...", "A computer will do what you tell it to do, but that may be much different from what you had in mind. :pensive:",
+                        "L-Let me have my boba tea first!", "I think I am, therefore, I am.... I think.",
+                        "Where there's a will, there's a relative!", "I-I swear I'm not lazy...",
+                        "Are we there yet?", "<elevator music>",
+                        "No need to step on the Gas! Gas! Gas!", "Calm down a bit- p-please!"
+                    ];
+                    return app.functions.msgHandler(message, {
+                        embeds: [{
+                            color: app.config.system.embedColors.red,
+                            description: `${responses[Math.floor(Math.random() * responses.length)]}\n*(You have ${app.functions.TStoHR(cooldownTime)} left)*`
+                        }]
+                    }, 0, true);
+                } else {
+                    app.client.cooldowns[message.author.id] = [userCooldown][0] = null;
+                }
+            };
+
+        };
+
         if (!app.config.system.owners.includes(message.author.id)) {
             if (app.config.system.commandState == "Disabled") {
                 app.logger.info("DISCORD", `[MESSAGE] Return ${message.author.id} command: Disabled.`);
@@ -52,11 +78,9 @@ module.exports = async(app, message) => {
 
             };
         };
-
-        loaded = await app.bootloader.loadHandler(app, "command", [command.name], true, false);
-        if (loaded.success[0] == command.name) {
-
-
+        var eC = command.category + "/" + command.name;
+        loaded = await app.bootloader.loadHandler(app, "command", [eC], true, false);
+        if (loaded.success[0] == eC) {
             if (userSettings.get('acceptedEULA') === false && command.category != "Moderation" && command.name != "eval") {
                 if (app.client.eulaMsgSent.includes(message.author.id))
                     return;
@@ -67,7 +91,6 @@ module.exports = async(app, message) => {
                 var eulaResult = { denied: false, done: false };
                 try {
                     eulaResult = await eula(app, message);
-                    // while (!eulaResult["done"]) { await app.functions.sleep(1000); };
                     if (eulaResult["denied"]) return;
                 } catch (Ex) {
                     return app.functions.ErrorHandler(app, userSettings, message, command.name, new Error("Nya.. End-User Agreement failed to load. How does that even happen..."), "error");
@@ -90,6 +113,11 @@ module.exports = async(app, message) => {
                     command = require(command.file);
                     await command.execute(app, message, args);
                     userSettings.update({ executedCommands: (userSettings.get('executedCommands') + 1) }, { where: { userID: message.author.id } });
+                    if (command.cooldown != null)
+                        if (command.cooldown != 0) {
+                            if (!app.client.cooldowns[message.author.id]) app.client.cooldowns[message.author.id] = [];
+                            app.client.cooldowns[message.author.id].push({ command: command.name, time: (message.createdTimestamp + (command.cooldown * 1000)) })
+                        };
                 } catch (err) {
                     app.logger.error("DISCORD", "[MESSAGE] Whoops! Something went wrong!\n" + err);
 
@@ -122,7 +150,9 @@ module.exports = async(app, message) => {
                 return app.functions.ErrorHandler(app, userSettings, message, command.name, msg, "error");
 
             };
-        };
+        } else {
+            throw new Error("There was an unknown error while loading the command: " + command.name);
+        }
     } catch (err) {
         app.logger.error("DISCORD", "[MESSAGE] Whoops! Something went wrong!\n" + err);
 

@@ -43,8 +43,8 @@ class BootLoader {
                         app.logger.error("SYS", `${extra.extraName} cannot be enabled due to missing package(s): ${missingDeps.join(", ")}`);
                     else {
                         app.logger.info("SYS", `Enabling Extra: ${extra.extraName}...`);
-                        const extraInt = new extra.extraApp;
-                        await extraInt.init(app, extra.extraCfg.settings);
+                        extra.extraApp = new extra.extraApp;
+                        await extra.extraApp.init(app, extra.extraCfg.settings);
 
                     }
 
@@ -75,10 +75,8 @@ class BootLoader {
             console.log("Uh, yeah, the logger is gone. What did you do?!");
 
         if (fromBoot) {
-            if (varType == "dependency")
-                app.modules = {};
-            else if (varType == "configuration")
-                app.config = {};
+            if (varType == "dependency") app.modules = {};
+            else if (varType == "configuration") app.config = {};
             else if (varType == "database") {
                 app.DBs = {};
                 var err = false;
@@ -103,7 +101,8 @@ class BootLoader {
                     app.DBs.userSettings = app.db.define('userSettings', {
                         userID: {
                             type: Sequelize.STRING,
-                            unique: true
+                            unique: true,
+                            primaryKey: true
                         },
                         prefix: {
                             type: Sequelize.STRING,
@@ -133,7 +132,8 @@ class BootLoader {
                     app.DBs.serverSettings = app.db.define('serverSettings', {
                         serverID: {
                             type: Sequelize.STRING,
-                            unique: true
+                            unique: true,
+                            primaryKey: true
                         },
                         loggingDeleteChannel: {
                             type: Sequelize.STRING,
@@ -171,17 +171,13 @@ class BootLoader {
                 return;
             } else if (varType == "event") {} // There's nothing to do for events, app.client handles that.
             else if (varType == "command") {
-                try {
-                    app.commands = new app.modules["discord.js"].Collection();
-                } catch (err) {
+                try { app.commands = new app.modules["discord.js"].Collection(); } catch (err) {
                     app.logger.error("SYS", `Could not load Discord dependency.\n Error: ${err}`);
                     console.log(err.stack);
                     return results;
                 };
             } else if (varType == "slashCommand") {
-                try {
-                    app.slashCommands = new app.modules["discord.js"].Collection();
-                } catch (err) {
+                try { app.slashCommands = new app.modules["discord.js"].Collection(); } catch (err) {
                     app.logger.error("SYS", `Could not load Discord dependency.\n Error: ${err}`);
                     console.log(err.stack);
                     return results;
@@ -194,12 +190,12 @@ class BootLoader {
                 varName = ((varType == "dependency") ? varToUse[i] : ((varType == "configuration") ? varToUse[i].split(".json")[0] : varToUse[i].split(".js")[0]));
             var varSimpleName = ((varType == "dependency") ? varName["name"] : varName);
 
-            if (!hideLoadingText) app.logger.info("SYS", `Loading ${varType}: ${varSimpleName}...`);
+            if (!hideLoadingText) app.logger.debug("SYS", `Loading ${varType}: ${varSimpleName}...`);
 
             try {
                 app.functions.clearCache(); // Clear cache :>
 
-                if (!hideLoadingText) app.logger.info("SYS", `Enabling ${varType}: ${varSimpleName}...`); // Lol this is Minecraft now
+                if (!hideLoadingText) app.logger.debug("SYS", `Enabling ${varType}: ${varSimpleName}...`); // Lol this is Minecraft now
                 if (varType == "dependency") {
                     app.modules[varSimpleName] = require(varSimpleName);
                 } else if (varType == "configuration") {
@@ -212,9 +208,10 @@ class BootLoader {
                     // I think, personally, it's a bit overcomplicated but whatever.
                     // I'm not even a verified bot yet.
 
-                    var fileLocation = process.cwd() + "/app/cmds/" + varSimpleName;
+                    var fileLocation = process.cwd() + "/app/" + ((varSimpleName.split("/")[0] == "cmds") ? varSimpleName : "cmds/" + varSimpleName);
                     var command = require(fileLocation);
                     command.file = fileLocation;
+                    command.category = ((varSimpleName.split("/")[0] == "cmds") ? "" : varSimpleName.split("/")[0]);
                     app.commands.set(command.name, command);
                 } else if (varType == "slashCommand") {
                     // app.client.api.applications(app.client.user.id).commands.post({data: {

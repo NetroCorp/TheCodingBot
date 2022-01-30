@@ -1,6 +1,6 @@
 module.exports = {
-    name: "hug",
-    description: "Hug someone and show wholesomeness!",
+    name: "kiss",
+    description: "Smooooch! Awh, what wholesomeness!",
     category: "Fun",
     guildOnly: false,
     authorizedGuilds: [],
@@ -12,11 +12,11 @@ module.exports = {
     execute: async(app, message, args) => {
         var target = message.mentions.users.first() || args[0],
             sender = message.author;
-        if (!target) return app.functions.msgHandler(message, { content: "You need to tag someone to hug!" }, 0, true);
-        else if (target == sender) return app.functions.msgHandler(message, { content: "There there, here's a personal hug. :)" }, 0, true);
+        if (!target) return app.functions.msgHandler(message, { content: "You need to tag someone to kiss!" }, 0, true);
+        else if (target == sender) return app.functions.msgHandler(message, { content: "There there, here's a personal kiss. :)" }, 0, true);
 
         var img = "error";
-        const res = await app.modules["node-fetch"](app.config.system.imgAPI + "hug");
+        const res = await app.modules["node-fetch"](app.config.system.imgAPI + "kiss");
 
         if (res.status != 200) {
             // In the future, we'll use a "fallback" instance
@@ -32,8 +32,8 @@ module.exports = {
         };
         return app.functions.msgHandler(message, {
             embeds: [{
-                color: app.config.system.embedColors.lime,
-                description: `**${sender}** gave **${target}**, a hug!`,
+                color: app.config.system.embedColors.red,
+                description: `**${sender}** kisses **${target}**!`,
                 image: { url: img },
                 footer: app.config.system.footerText
             }]

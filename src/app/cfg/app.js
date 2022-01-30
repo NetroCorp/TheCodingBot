@@ -37,6 +37,36 @@ const app = {
     },
 
     functions: {
+        splitMulti: function(str, tokens) {
+            var tempChar = tokens[0];
+            for (var i = 1; i < tokens.length; i++) {
+                str = str.split(tokens[i]).join(tempChar);
+            }
+            str = str.split(tempChar);
+            return str;
+        },
+        getFiles: async function(dir, filter = []) {
+            if (filter.length > 2) return "Fliter too powerfuuuuul [startsWith, endsWith] only please, or no fliter.";
+
+            const { resolve } = app.modules["path"];
+            const { readdir } = app.modules["fs"].promises;
+
+            const dirents = await readdir(dir, { withFileTypes: true });
+            const files = await Promise.all(dirents.map((dirent) => {
+                let res = resolve(dir, dirent.name);
+                if (dirent.isDirectory()) return app.functions.getFiles(res, filter);
+                else {
+
+                    if (filter[0] != null || filter[0] != undefined || filter[0] != "")
+                        if (!res.startsWith(filter[0])) return "";
+                    if (filter[1] != null || filter[1] != undefined || filter[0] != "")
+                        if (!res.endsWith(filter[1])) return "";
+                    res = app.functions.splitMulti(res, ['\\', '\\\\', '/', '//'])
+                    return res.slice((res.length - 2), res.length).join("/");
+                };
+            }));
+            return files.flat().filter(Boolean);
+        },
         DB: {
             createUser: async function(id) {
                 const userSetting = await app.DBs.userSettings.create({
@@ -125,6 +155,24 @@ const app = {
 
         getTicks: () => { return ((new Date().getTime() * 10000) + 621355968000000000); },
 
+        TStoHR: function(TS) {
+            let totalSeconds = (TS / 1000);
+            let hours = Math.floor(totalSeconds / 3600);
+            totalSeconds %= 3600;
+            let minutes = Math.floor(totalSeconds / 60);
+            let seconds = totalSeconds % 60;
+            let HR = `**${hours} hours, ${minutes} minutes and ${Math.round(seconds)} seconds**`;
+
+            if (hours == 0) HR = HR.replace(hours + " hours, ", "");
+            else if (hours == 1) HR = HR.replace("hours", "hour");
+
+            if (minutes == 0) HR = HR.replace(minutes + " minutes and ", "");
+            else if (minutes == 1) HR = HR.replace("minutes", "minute");
+
+            if (Math.round(seconds) == 1) HR = HR.replace("seconds", "second");
+
+            return HR;
+        },
         convertTimestamp: function(unix_timestamp, getDate, bigHour = false) {
             var date = new Date(unix_timestamp * 1); // Create Date from timestamp
 

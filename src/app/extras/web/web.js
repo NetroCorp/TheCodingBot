@@ -4,7 +4,7 @@
 */
 
 
-
+var server;
 class Web {
     init = function(app, settings) {
         try {
@@ -155,11 +155,23 @@ class Web {
             }
             let messages = ["You are great!", "You can accomplish anything!", "Success is in your future!"];
 
-            const server = http.createServer(requestListener);
+            server = http.createServer(requestListener);
 
             server.listen(settings.port || 8069);
             if (app.debugMode) app.logger.success("WEB", `Listening on ${((settings.port) ? settings.port : 8069)}.`);
 
+            return "ok";
+        } catch (Ex) {
+            throw Ex;
+        }
+    }
+
+    uninit = function(app) {
+        try {
+            if (server !== undefined) {
+                server.close();
+                if (app.debugMode) app.logger.success("WEB", `Unloaded server.`);
+            };
             return "ok";
         } catch (Ex) {
             throw Ex;

@@ -24,8 +24,24 @@ module.exports = (app) => {
     // Broadcast we up
     app.client.uptimeTimestamp = new Date().getTime();
     app.logger.debug("SYS", `${app.name} online as of ${new Date(app.client.uptimeTimestamp)}.`);
-    setTimeout(function() {
-        var test = app.functions.RPSSystem(app, "start"); // Start RPSUpdater
+    setTimeout(async function() {
+        await app.functions.RPSSystem(app, "start"); // Start RPSUpdater
+        if (app.lastMessageID != null) {
+            await app.client.channels.fetch(app.lastMessageID.split("-")[0]).then(channel => {
+
+                channel.messages.fetch(app.lastMessageID.split("-")[1]).then(msg => {
+                    app.functions.msgHandler(msg, {
+                        embeds: [{
+                            title: `${app.config.system.emotes.success} **Restart complete**`,
+                            color: app.config.system.embedColors.lime,
+                            description: "Restart was successful!",
+                            footer: { text: app.config.system.footerText }
+                        }]
+                    }, 1, true);
+                }).catch(err => app.logger.debug("DISCORD", err));
+            }).catch(err => app.logger.debug("DISCORD", err));
+            app.lastMessageID = null;
+        };
 
         setTimeout(async function() {
 

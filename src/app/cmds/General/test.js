@@ -1,7 +1,6 @@
 module.exports = {
     name: "test",
     description: "Testing testing, is this thing on?",
-    category: "General",
     guildOnly: false,
     authorizedGuilds: [],
     hidden: false,

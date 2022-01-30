@@ -43,6 +43,8 @@
             "Playing with the void. Should I say more?",
             "Playing with your mind.",
             "Playing Share the light ソウジャナイト",
+            "Playing bonk",
+            "Playing Never Gonna Give You Up",
 
             "Watching anime kill hot toast",
             "Watching アニメ",
@@ -59,7 +61,8 @@
             "Listening to *wholesome sounds*",
             "Listening to Kobaryo - Cartoon Candy",
             "Listening to Tyler, the Creator - SWEET / I THOUGHT YOU WANTED TO DANCE",
-            "Listening to Mitsukiyo - Rolling Beat"
+            "Listening to Mitsukiyo - Rolling Beat",
+            "Listening to Rick Astley - Never Gonna Give You Up"
 
         ],
         "timeInSec": 180,
@@ -112,11 +115,11 @@
 
             "rankXH": "<:rankingXH:684505581217906742>",
             "rankSH": "<:rankingSH:684505446769229839>",
-            "rankS": "<:rankingS:684505278930092128>",
-            "rankA": "<:rankingA:684505279261442088>",
-            "rankB": "<:rankingB:684505278829559840>",
-            "rankC": "<:rankingC:684505278833623070>",
-            "rankD": "<:rankingD:684505278921965576>"
+            "rankS": ":regional_indicator_s:",
+            "rankA": ":regional_indicator_a:",
+            "rankB": ":regional_indicator_b:",
+            "rankC": ":regional_indicator_c:",
+            "rankD": ":regional_indicator_d:"
         },
         "discord": {
             "online": "<:Online:745093648521101313>",
