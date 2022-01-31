@@ -4,21 +4,3 @@
 .vscode/
 # and GitHub
 .git/
-
-# Let's not forget about node_modules.
-node_modules/
-
-## -- THECODINGBOT RELATED IGNORES --
-src/app/cache/*
-src/app/cfg/tokendata.json
-src/app/cfg/app.sqlite
-
-## -- OTHER --
-#my/life
-#memes/
-# Let's commit those, actually.
-# Or do we?
-#
-#
-# It's quite crazy what funnies I could be hiding
-# but all my funnies won't be just in this file.

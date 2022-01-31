@@ -1,284 +1,242 @@
 /*
-	THECODINGBOT v5
-	6/24/2021
-
-	Now open-source!
-	Can you believe it Matt 4 years (as of 2022)
-	to open-source his bot projects?
-	Yeah, I know crazy. wait.. why am i talking third-person again?
-
-	https://tcb.nekos.tech/source
-	https://themattchannel.com
+ TheCodingBot Version 4.
+ Main bot script.
+ 
+ Created: Apr. 4th, 2020 10:54 AM.
+ Last Update: May 2nd, 2021
+ -----------------------------------
 */
 
-var logger;
-process.waitingForCleanup = false;
-async function bot(debug, lastMessageID = null) {
-
-
-    // ========== PRE-BOOT
-    if (debug) console.log("- PRE-BOOT");
-    if (debug) console.log(` -- App is starting as of ${new Date().toString()} -- `);
-
-    // Change directory
-    try {
-        if (process.cwd().split("\\").slice(-1) != "src") // attempt to change into 'src'
-            process.chdir(process.cwd() + "/src");
-    } catch (Ex) {}; // Assume it's okay to continue.
-
-    // Do our require
-    if (debug) console.log("-> Init: Bootloader");
-    const BootLoader = require("./app/functions/bootloader.js");
-    const bootloader = new BootLoader();
-    await bootloader.printLogo(); // Print that healthy logo. Logo got back
-
-
-    if (debug) console.log("-> Init: Logger");
-    const Log = require("./app/functions/logger.js");
-    if (debug) console.log("-> Start: Logging");
-    logger = new Log();
-    logger.info("SYS", `Logging is now enabled!`);
-
-
-    if (debug) console.log("-> Init: App");
-    const app = require("./app/cfg/app.js");
-    app.debugMode = debug;
-    app.logger = logger;
-    app.bootloader = bootloader;
-    app.botStart = (lastMessage) => bot(debug, lastMessage);
-    if (lastMessageID != null) app.lastMessageID = lastMessageID;
-    logger.info("SYS", `App core successfully loaded!`);
-
-
-    async function exitHandler(options, exitCode) {
-        // if (process.waitingForCleanup) return; // stops from trying to keep process a million times
-        process.waitingForCleanup = false;
-
-        var app = ((options) ? options.app : app) || app;
-
-        var log = function(type, from, msg) {
-            if (logger) logger.info("SYS", msg);
-            else console.log(`[${type}] [${from}] ${msg}`);
-        }
-
-        if (exitCode)
-            if (!isNaN(exitCode))
-                log("i", "SYS", "Process is about to exit with code {" + exitCode + "}");
-            else
-                log("i", "SYS", "Process attempted to exit with " + exitCode);
-
-        var appName = ((app !== undefined) ? app.name : "Now");
-
-        if (options.cleanup && !process.waitingForCleanup) {
-            process.waitingForCleanup = true;
-            if (app !== undefined) {
-                if (app.client !== undefined) { // Close Discord
-                    log("i", "SYS", "Logging out...");
-                    try {
-                        await app.client.destroy();
-                    } catch (err) {
-                        log('X', 'SYS', err);
-                    };
-
-                    var events = Object.keys(app.client._events)
-                    if (events)
-                        for (var i = 0; i < events.length; i++) {
-                            log("i", "SYS", "Unloading event " + events[i]);
-                            await app.client.removeListener(events[i], () => {});
-                        };
-
-                    app.client = null;
-                };
-                if (app.db !== undefined) { // Close DBs
-                    log("i", "SYS", "Closing databases...");
-                    try {
-                        await app.db.close();
-                    } catch (err) {
-                        log('X', 'SYS', err);
-                    };
-
-                    app.db = null;
-                };
-                if (app.extras !== undefined) { // Close extras
-                    log("i", "SYS", "Unloading extras...");
-                    try {
-                        for (var extra in app.extras) {
-                            extra = app.extras[extra];
-                            await extra.extraApp.uninit(app);
-                        };
-                    } catch (err) {
-                        log('X', 'SYS', err);
-                    };
-
-                    app.extras = null;
-                };
-
-                app = null;
-            };
-
-            process.waitingForCleanup = false;
-        };
-
-        process.waitingForCleanupTM = setInterval(function() {
-            if (!process.waitingForCleanup) {
-                clearInterval(process.waitingForCleanupTM);
-
-                if (options.exit) {
-                    log("i", "SYS", `${appName} exiting as of ${new Date()}.`);
-
-                    process.exit(0);
-                };
-            };
-        }, 500);
-
-
-    }
-    process.exitHandler = (options, exitCode) => exitHandler(options, exitCode);
-
-    // Kinda dumb how I had to shove it into the bot function but it's whatever.
-    process.stdin.resume(); // Let's not close immediately, thanks.
-
-    process.once('exit', exitHandler.bind(null, { cleanup: true, exit: true })); // Let's catch the app before it exits.
-    process.once('SIGINT', exitHandler.bind(null, { app: app, exit: true, cleanup: true })); // Let's catch CTRL+C.
-    // catches "kill pid" (for example: nodemon restart)
-    process.once('SIGUSR1', exitHandler.bind(null, { exit: true }));
-    process.once('SIGUSR2', exitHandler.bind(null, { exit: true }));
-
-    process.on('uncaughtException', error => {
-        const errreason = new Error(error.message);
-        const errstack = ` Caused By:\n  ${error.stack}`;
-
-        const msg = ` == UNCAUGHT EXCEPTION THROWN ==\n${errreason}\n${errstack}\n ================================`;
-
-        if (logger) logger.error("SYS", msg);
-        else console.log(`[X] [SYS] ${msg}`);
-    }); // Catch all them nasty uncaughtException errors :/
-
-    process.on('unhandledRejection', error => {
-        const errreason = new Error(error.message);
-        const errstack = ` Caused By:\n  ${error.stack}`;
-
-        const msg = ` == UNHANDLED REJECTION THROWN ==\n${errreason}\n${errstack}\n ================================`;
-
-        if (logger) logger.info("SYS", msg);
-        else console.log(`[i] [SYS] ${msg}`);
-    }); // Catch all them nasty unhandledRejection errors :/
-
-    if (debug) console.log("-> Init: Dependencies");
-    const dependencies = app["dependencies"];
-    if (debug) console.log(` > Dependencies: ${dependencies.length}`);
-    if (debug) logger.debug("SYS", `Dependencies are now ready to load!`);
-
-
-    // ========== BOOT
-    if (debug) console.log("-> Start: Boot");
-    logger.info("SYS", `Starting ${app.name} ${app.version.toFullString()}!`);
-
-
-    logger.info("SYS", `Enabling dependencies...`);
-    if (!process.waitingForCleanup) await bootloader.loadHandler(app, "dependency", dependencies);
-
-
-    if (debug) console.log("-> Init: Configuration");
-    const configuration = await app.modules.fs.readdirSync('./app/cfg').filter(file => file.endsWith('.json'));
-    if (debug) console.log(` > Configuration: ${configuration.length}`);
-    if (debug) logger.debug("SYS", `Configuration files are now ready to load!`);
-
-
-    logger.info("SYS", `Enabling configuration...`);
-    if (!process.waitingForCleanup) await bootloader.loadHandler(app, "configuration", configuration);
-
-
-    if (debug) console.log("-> Init: Discord Client...");
-    const { Client, Intents } = app.modules["discord.js"];
-    const client = new Client({
-        partials: ["MESSAGE", "CHANNEL", "REACTION", "GUILD_MEMBER", "USER"],
-        intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_PRESENCES]
-    });
-    app.client = client;
-    if (debug) console.log(` > New Discord Client created.`);
-
-
-    if (debug) console.log("-> Init: Extras");
-    const extras = await require('./app/extras/extras.json'); // this is probably inefficent, but it works ig
-    app.extras = {};
-    if (debug) console.log(` > Extras: ${extras.length}`);
-    if (debug) logger.debug("SYS", `Extras are now ready to load!`);
-
-
-    logger.info("SYS", `Enabling Extras...`);
-    if (!process.waitingForCleanup) await bootloader.extraHandler(app, extras);
-
-
-    logger.info("SYS", `Enabling database...`);
-    if (!process.waitingForCleanup) await bootloader.loadHandler(app, "database", null);
-
-
-    if (debug) console.log("-> Init: Events");
-    const events = await app.modules.fs.readdirSync('./app/evts').filter(file => file.endsWith('.js'));
-    if (debug) console.log(` > Events: ${events.length}`);
-    if (debug) logger.debug("SYS", `Events are now ready to load!`);
-
-
-    logger.info("SYS", `Enabling events...`);
-    if (!process.waitingForCleanup) await bootloader.loadHandler(app, "event", events);
-
-
-    if (debug) console.log("-> Init: Commands");
-    // const commands = await app.modules.fs.readdirSync('./app/cmds').filter(file => file.endsWith('.js'));
-    const commands = await app.functions.getFiles('./app/cmds', ["", ".js"]);
-    if (debug) console.log(` > Commands: ${commands.length}`);
-    if (debug) logger.debug("SYS", `Commands are now ready to load!`);
-
-
-    logger.info("SYS", `Enabling commands...`);
-    if (!process.waitingForCleanup) await bootloader.loadHandler(app, "command", commands);
-
-    // if (debug) console.log("-> Init: Slash Commands");
-    // const slashcommands = await app.modules.fs.readdirSync('./app/cmds/slash').filter(file => file.endsWith('.js'));
-    // if (debug) console.log(` > Slash Commands: ${slashcommands.length}`);
-    // if (debug) logger.debug("SYS", `Slash Commands are now ready to load!`);
-
-    // logger.info("SYS", `Enabling slash commands...`);
-    // await bootloader.loadHandler(app, "slashCommand", slashcommands);
-
-    // I don't know how I want to do slash commands, although this code *kinda* works.
-    // You just gotta tweak around in bootloader to get it to actually load. Otherwise,
-    // this is a waste of bytes. Hmph.
-
-    try {
-        logger.info("SYS", `Logging in...`);
-        if (!process.waitingForCleanup) await client.login(app.config.tokendata.discord);
-
-        // Assume we good
-        logger.success("SYS", `Welcome to ${app.name}.`);
-    } catch (Ex) {
-        if (Ex.message.includes("Cannot read properties of undefined (reading 'discord')"))
-            app.logger.error("SYS", "Hey, you probably forgot to follow the README!\nYou need to ensure 'tokendata.json.example' to 'tokendata.json'.\nIf you've done this, please ensure your JSON is not broken.\nIf it's not, please open an issue on the GitHub.");
-        else if (Ex.stack.includes("DISALLOWED_INTENTS"))
-            app.logger.error("SYS", "Hey, you need to allow intents for your bot!\nIntents required: 'PRESENCE', 'SERVER MEMBERS', 'MESSAGE CONTENT'.\nPlease view the README for more information and how to enable intents for " + app.name + ".\nIf you've done this, please open an issue on the GitHub.");
-        else
-            app.logger.error("SYS", "I could not connect to Discord. Sorry about that.\nI can't provide much help, but if this issue is caused by programming not by you, please open a GitHub issue with the following information:\n" + Ex);
-        process.exit(-1); // I mean ig this is a good thing to do?
-    };
-
+//const message = require("./bot_modules/evts/message.js");
+
+// We depend on: fs [FileSystem] & Discord, and now Sequelize [as of TCB v4.2]
+var fs = null, Discord = null, Sequelize = null;
+
+// Discord depends on: client [Discord Bot Client], config [Configuration], botname [Bot Name]
+var client = null, config = null, botname = "TheCodingBot";
+
+// Colors
+var colors = { 
+	"Reset": "\x1b[0m",
+
+	"FgBlack": "\x1b[30m",
+	"FgRed": "\x1b[31m",
+	"FgGreen": "\x1b[32m",
+	"FgYellow": "\x1b[33m",
+	"FgBlue": "\x1b[34m",
+	"FgMagenta": "\x1b[35m",
+	"FgCyan": "\x1b[36m",
+	"FgWhite": "\x1b[37m",
+
+	"BgBlack": "\x1b[40m",
+	"BgRed": "\x1b[41m",
+	"BgGreen": "\x1b[42m",
+	"BgYellow": "\x1b[43m",
+	"BgBlue": "\x1b[44m",
+	"BgMagenta": "\x1b[45m",
+	"BgCyan": "\x1b[46m",
+	"BgWhite": "\x1b[47m"
 };
 
-// ARGUMENTS ACCEPTED:
-//  - true/false | SETS THE BOT TO DEBUG ON/OFF
+// ================================
+//			FUNCTIONS
+// ================================
 
-// WARNING: Debug is really spammy. It's the equivalent
-// of asking "GOOD LORD, WHAT IS HAPPENING IN THERE?"
-const cmdArgs = process.argv.slice(2); // Get args
-switch (cmdArgs[0]) {
-    case "true":
-        bot(true);
-        break;
-    default:
-        bot();
-        break;
-}; // Just tell the bot to either start with debug or nah :D
+function boot() {
+	showAmazingBootLoader();
+
+	console.log(`[${colors.FgBlue}i${colors.Reset}] [${colors.FgGreen}SYS${colors.Reset}] Loading in the functions...`);
+
+	require("./bot_modules/config/functions.js")();
 
 
+	// FS Handler
+	log("i", "SYS", "Loading FS...");
+	fs = require("fs");
+	log("i", "SYS", "Enabling FS...");
 
-// The heck is that all the way down here for? Beats me.
+	// Discord.JS Handler
+	log("i", "SYS", "Loading Discord.JS...");
+	Discord = require("discord.js");
+	log("i", "SYS", "Enabling Discord.JS...");
+	client = new Discord.Client();
+	client.commands = new Discord.Collection();
+	client.config = {};
+	client.bytes = {};
+
+	log("i", "SYS", "Loading Sequelize...");
+	Sequelize = require('sequelize');
+	// Sequelize Handler
+	log("i", "SYS", "Enabling Sequelize...");
+	client.sequelize = new Sequelize({
+		dialect: 'sqlite',
+		storage: 'bot_modules/config/db.sqlite',
+		logging: false
+	});
+
+
+	// Other stuff
+	secToWait = .6; // This is in seconds, not miliseconds.
+
+
+	if (typeof load === "function") {
+		log("i", "SYS", "Call load(config).");
+		if (load(client, "config")["error"] != "none") {
+			msg = "~";
+			log("X", "SYS", "Could not load in configuration, bot cannot continue.");
+			process.exit(-1);
+		} else {
+			log("S", "SYS", "Call load(config) complete.");
+
+		};
+		setTimeout(function () {
+			log("i", "SYS", "Call load(commands).");
+			if (load(client, "commands")["error"] != "none") {
+				msg = "~";
+				log("X", "SYS", "Could not load in commands, bot will continue no with commands~");
+			} else {
+				log("S", "SYS", "Call load(commands) complete.");
+
+			};
+
+			setTimeout(function () {
+				log("i", "SYS", "Call load(events).");
+				if (load(client, "events")["error"] != "none") {
+					msg = "~";
+					log("X", "SYS", "Could not load in events, bot cannot continue.");
+					process.exit(-1);
+				} else {
+					log("S", "SYS", "Call load(events) complete.");
+		
+				};
+				setTimeout(async() => {
+					log("i", "SYS", "Connect to Discord.");
+					client.connections = {
+						startupTime: 0,
+						attempts: {
+							total: 4,
+							remaining: 0
+						},
+						updateTime: null,
+						success: false
+					};
+					client.connections.attempts.remaining = client.connections.attempts.total;
+					client.connections.updateTime = setInterval(function() { client.connections.startupTime += 1; }, 1);
+					while (!client.connections.success && client.connections.attempts.remaining > 0) {
+						client.connections.attempts.remaining = (client.connections.attempts.remaining - 1);
+						log("i", "DISCORD", "Connecting to Discord... (Attempt " + (client.connections.attempts.total - client.connections.attempts.remaining) + "/" + client.connections.attempts.total + ")");
+						await client.login(client.config.tokendata.discord).then(test => {
+							log("S", "SYS", "Connected to Discord.");
+
+						}).catch(err => {
+							log("X", "DISCORD", "Failed to connect to Discord: " + err.message);
+						});
+						await sleep(15000);
+					};
+					if (!client.connections.success) {
+						log("X", "SYS", "Failed to connect to Discord. Bot will now restart.");
+						process.exit(-1);
+					} else {
+						// This logs AFTER await sleep() is done, and it wouldn't look right in console, so
+						// it's left commented out
+						// ~TCG 10:00 AM 5/11/2020
+						//log("S", "SYS", "Call to Connect to Discord completed.");
+						client.connections = {
+							startupTime: 0,
+							attempts: {
+								total: 4,
+								remaining: 0
+							},
+							updateTime: null,
+							success: false
+						};
+					};
+				}, secToWait + 1.0 * 1000);
+			}, secToWait * 1000);
+		}, secToWait * 1000);
+	} else {
+		msg = "Could not load the load function, bot will now terminate~";
+		if (typeof log === "function") {
+			log("X", "SYS", msg);
+		} else {
+			console.log(`[${colors.FgRed}i${colors.Reset}] [${colors.FgGreen}SYS${colors.Reset}] ${msg}`);
+		};
+		process.exit(-1);
+	};
+};
+
+function showAmazingBootLoader() {
+	console.log(`${colors.FgMagenta}==[ ${colors.FgYellow}${botname} ${colors.FgRed}BootLoader ${colors.FgMagenta}]==${colors.Reset}`);
+	console.log(`${colors.FgMagenta}== Based on the ${colors.FgRed}TCBBL ${colors.FgMagenta}by ${colors.FgGreen}TMC Software${colors.FgMagenta}. ==${colors.Reset}`);
+	console.log(`${colors.FgRed}TheCodingBot BootLoader ${colors.FgMagenta}(c) ${colors.FgGreen}TMC Software ${colors.FgMagenta}2020.${colors.Reset}`);
+	console.log(`${colors.FgRed}BootLoader ${colors.FgMagenta}Version: ${colors.FgGreen}4.0${colors.Reset}\n\n`);
+}
+
+
+// ================================
+//			MAIN BOT~
+// ================================
+
+boot(); // Tell the boot funciton we ready to boot!
+
+process.stdin.resume(); // Let's not close immediately, thanks.
+
+process.on('exit', exitHandler.bind(null,{cleanup:true})); // Let's catch the app before it exits.
+//process.on('SIGINT', exitHandler.bind(null, {cleanup:true,exit:true})); // Let's catch CTRL+C.
+
+// catches "kill pid" (for example: nodemon restart)
+process.on('SIGUSR1', exitHandler.bind(null, {exit:true}));
+process.on('SIGUSR2', exitHandler.bind(null, {exit:true}));
+
+process.on('uncaughtException', exitHandler.bind(null, {exit:false})); // Let's catch uncaught exceptions.
+
+function exitHandler(options, exitCode) {
+
+	if (exitCode)
+		if (!isNaN(exitCode))
+			log("i", "SYS", "Process is about to exit with code {" + exitCode + "}");
+		else
+			log("i", "SYS", "Process was about to exit with a non-number exit code. We cancelled that action.\nHere's what was happening: " + exitCode);
+
+	process.waitingForCleanup = false;
+	if (options.cleanup) {
+		process.waitingForCleanup = true;
+		if (client && client.user != null) {
+			if (client.config.system.commandState != "Shutdown") {
+				const trueBotOwOner = client.users.cache.get(client.config.system.owners[0]);
+				trueBotOwOner.send({ embed: {
+					title: client.config.system.emotes.error + " **Shutdown**",
+					color: client.config.system.embedColors.red,
+					description: "A shutdown is happening, please check CONSOLE for more details.",
+					fields: [
+						{ name: "Process Exit Code", value: "{" + exitCode + "}"}
+					],
+					footer: { text: client.config.system.footerText }
+				}}).then(msg => {
+					shutdownBot(client, msg, false, "FROMNODEPROCSS");
+				});
+			};
+		} else
+			process.waitingForCleanup = false;
+	};
+
+	process.waitingForCleanupTM = setInterval(function() {
+		if (!process.waitingForCleanup) {
+			clearInterval(process.waitingForCleanupTM);
+			if (options.exit) process.exit();
+		};
+	}, 100);
+
+}
+
+process.on('unhandledRejection', error => {
+	const errreason = new Error(error.message);
+	const errstack = ` Caused By:\n${error.stack}`;
+
+	const msg = ` == UNHANDLED REJECTION THROWN ==\n${errreason}\n${errstack}\n ================================`;
+	if (typeof log === "function") {
+		log("i", "SYS", msg);
+	} else {
+		console.log(`[${colors.FgBlue}i${colors.Reset}] [${colors.FgGreen}SYS${colors.Reset}] ${msg}`);
+	};
+}); // Catch all them nasty unhandledRejection errors :/
