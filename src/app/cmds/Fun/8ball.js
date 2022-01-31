@@ -11,6 +11,19 @@ module.exports = {
     syntax: [" <Question>"],
     execute: async(app, message, args) => {
         let question = args.slice(0).join(" ");
+        
+        if (!question)
+        {
+            app.functions.msgHandler(message, {
+                embeds: [{
+                    color: app.config.system.embedColors.red,
+                    title: `${app.config.system.emotes.error} Error`,
+                    description: "You need to ask a question!",
+                    footer: { text: app.config.system.footerText + " | An error occurred." }
+                }]
+            })
+        } else {
+        
         var responses = {
             "Yes!": "lime",
             "For sure": "lime",
@@ -27,7 +40,6 @@ module.exports = {
         }
         var responsePick = Object.keys(responses)[Math.floor(Math.random() * Object.keys(responses).length)];
         
-    
         app.functions.msgHandler(message, {
             embeds: [{
             color: app.config.system.embedColors[responses[responsePick]],
@@ -40,4 +52,4 @@ module.exports = {
             footer: { text: app.config.system.footerText }
         }]
     });
-}}
+}}}
