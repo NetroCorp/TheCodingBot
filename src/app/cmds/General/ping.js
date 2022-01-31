@@ -6,7 +6,7 @@ module.exports = {
     authorizedGuilds: [],
     hidden: false,
     permissions: ["DEFAULT"],
-    cooldown: 0,
+    cooldown: 2,
     aliases: [],
     syntax: [],
     execute: async(app, message, args) => {
