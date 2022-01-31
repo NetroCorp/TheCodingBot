@@ -11,19 +11,16 @@ module.exports = {
     syntax: [" <Question>"],
     execute: async(app, message, args) => {
         let question = args.slice(0).join(" ");
-        
-        if (!question)
-        {
-            app.functions.msgHandler(message, {
-                embeds: [{
-                    color: app.config.system.embedColors.red,
-                    title: `${app.config.system.emotes.error} Error`,
-                    description: "You need to ask a question!",
-                    footer: { text: app.config.system.footerText + " | An error occurred." }
-                }]
-            })
-        } else {
-        
+
+        if (!question) return app.functions.msgHandler(message, {
+            embeds: [{
+                title: `${app.config.system.emotes.error} Error`,
+                color: app.config.system.embedColors.red,
+                description: "You need to ask a question!",
+                footer: { text: app.config.system.footerText + " | An error occurred." }
+            }]
+        });
+
         var responses = {
             "Yes!": "lime",
             "For sure": "lime",
@@ -39,17 +36,18 @@ module.exports = {
             "Just like the future, I'm uncertain on what to answer.": "purple"
         }
         var responsePick = Object.keys(responses)[Math.floor(Math.random() * Object.keys(responses).length)];
-        
+
         app.functions.msgHandler(message, {
             embeds: [{
-            color: app.config.system.embedColors[responses[responsePick]],
-            title: ":8ball: 8Ball",
-            description: "Some magic, please!",
-            fields: [
-                { name: "Question", value: question},
-                { name: "Answer", value: responsePick}
-            ],
-            footer: { text: app.config.system.footerText }
-        }]
-    });
-}}}
+                title: ":8ball: 8Ball",
+                color: app.config.system.embedColors[responses[responsePick]],
+                description: "Some magic, please!",
+                fields: [
+                    { name: "Question", value: question },
+                    { name: "Answer", value: responsePick }
+                ],
+                footer: { text: app.config.system.footerText }
+            }]
+        });
+    }
+};
