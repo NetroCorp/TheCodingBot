@@ -1,0 +1,41 @@
+{
+	"allServerSettings": {
+		"customServers": {
+		},
+		"default": {
+			"betaStuff": {
+				"accessToBETA": false,
+				"channelID": ""
+			},
+			"logChannels": {
+				"joins": "",
+				"leaves": "",
+				"edits": "",
+				"deletes": "",
+				"enabled": "false"
+			},
+			"prefix": "t/",
+			"moderation": {
+				"warns": {},
+				"mutes": {},
+				"kicks": {},
+				"bans": {},
+				"notes": {}
+			},
+			"coolThings": {
+				"members": {
+					"joinChannel": "",
+					"joinMsg": "Let's all welcome **%user%** to the server!",
+					"leaveChannel": "",
+					"leaveMsg": "**%user%** has departed out of the server!"
+				},
+				"verification": {
+					"users": {},
+					"channel": "",
+					"codeLength": 8,
+					"enabled": "false"
+				}
+			}
+		}
+	}
+}

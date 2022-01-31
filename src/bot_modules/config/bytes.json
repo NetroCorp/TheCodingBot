@@ -1,0 +1,21 @@
+{
+	"bytes": {
+		"state": "Enabled",
+		"timely": {
+			"hourly": 10,
+			"hourlyStreakMulti": 2,
+			"daily": 500,	
+			"dailyStreakMulti": 2
+		},
+		"start": 500,
+		"users": {
+			"default": {
+				"bytes": 0,
+				"timely": {
+					"hourlyTimestamp": "0",
+					"dailyTimestamp": "0"
+				}
+			}
+		}
+	}
+}
