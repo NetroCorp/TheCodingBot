@@ -13,7 +13,7 @@ I mean, if you want to, try it out? I'm not going to provide support for anythin
 Don't. Unless you really want to ig. This version will be decommissioned once stable v5 is released.
 
 
-## Version 1 Release Dates
+## Version 4 Release Dates
 
 |   Version    | Release Date |
 | ------------ | ------------ |
