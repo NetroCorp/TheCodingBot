@@ -4,6 +4,15 @@ module.exports = async(app, message) => {
     if (!app.client.eulaMsgSent) app.client.eulaMsgSent = [];
     if (!app.client.cooldowns) app.client.cooldowns = {};
 
+    var serverSettings = null;
+    if (message.guild) {
+        serverSettings = await app.DBs.serverSettings.findOne({ where: { serverID: message.guild.id } });
+        if (!serverSettings) {
+            await app.functions.DB.createServer(message.guild.id);
+            serverSettings = await app.DBs.serverSettings.findOne({ where: { serverID: message.guild.id } });
+        };
+    };
+
     var userSettings = await app.DBs.userSettings.findOne({ where: { userID: message.author.id } });
     if (!userSettings) {
         await app.functions.DB.createUser(message.author.id);
@@ -60,7 +69,7 @@ module.exports = async(app, message) => {
                     return app.functions.msgHandler(message, {
                         embeds: [{
                             color: app.config.system.embedColors.red,
-                            description: `${responses[Math.floor(Math.random() * responses.length)]}\n*(You have ${app.functions.TStoHR(cooldownTime)} left)*`
+                            description: `${responses[Math.floor(Math.random() * responses.length)]}\n*(On cooldown for ${app.functions.TStoHR(cooldownTime)})*`
                         }]
                     }, 0, true);
                 } else {
@@ -87,9 +96,9 @@ module.exports = async(app, message) => {
 
                 var eulaFile = `./special/eula.js`;
                 await app.functions.clearCache(eulaFile);
-                var eula = require(eulaFile);
                 var eulaResult = { denied: false, done: false };
                 try {
+                    var eula = require(eulaFile);
                     eulaResult = await eula(app, message);
                     if (eulaResult["denied"]) return;
                 } catch (Ex) {
@@ -100,9 +109,7 @@ module.exports = async(app, message) => {
 
             if (command.guildOnly == true && message.guild == null) {
                 app.logger.info("DISCORD", `[MESSAGE] Return ${message.author.id} command: server-only.`);
-
                 return app.functions.ErrorHandler(app, userSettings, message, command.name, new Error("Server-only command!"), "warning");
-
             };
             if (command.permissions == "DEFAULT" ||
                 command.permissions == "BOT_OWNER" && app.config.system.owners.includes(message.author.id) ||
@@ -113,43 +120,24 @@ module.exports = async(app, message) => {
                     command = require(command.file);
                     await command.execute(app, message, args);
                     userSettings.update({ executedCommands: (userSettings.get('executedCommands') + 1) }, { where: { userID: message.author.id } });
-                    if (command.cooldown != null)
+                    if (command.cooldown != null) {
+                        if (command.cooldown < 0) { // how do you even have a negative cooldown??
+                            var defaultCooldown = 2;
+                            app.logger.info("SYS", `Command ${command.name} has a cooldown of ${command.cooldown} (expected 0 or higher); it's been set to ${defaultCooldown}.`);
+                            command.cooldown = defaultCooldown;
+                        };
                         if (command.cooldown != 0) {
                             if (!app.client.cooldowns[message.author.id]) app.client.cooldowns[message.author.id] = [];
                             app.client.cooldowns[message.author.id].push({ command: command.name, time: (message.createdTimestamp + (command.cooldown * 1000)) })
                         };
+                    };
                 } catch (err) {
                     app.logger.error("DISCORD", "[MESSAGE] Whoops! Something went wrong!\n" + err);
 
                     return app.functions.ErrorHandler(app, userSettings, message, command.name, err, "error");
                 };
                 app.logger.success("DISCORD", "[MESSAGE] Command execution complete.");
-            } else {
-
-                var msg = "You're lacking the proper permission (PERMISSIONS_GO_HERE) to execute this command.";
-
-                var lackingPerms = [];
-                if (command.permissions == "BOT_OWNER")
-                    lackingPerms.push("`BOT_OWNER`");
-                else {
-                    for (var i = 0; i < command.permissions.length; i++) {
-                        if (!message.channel.permissionsFor(message.author).has(command.permissions[i])) {
-                            lackingPerms.push("`" + command.permissions[i] + "`");
-                        };
-                    };
-                };
-                msg = msg.replace("PERMISSIONS_GO_HERE", lackingPerms.join(", "));
-
-
-                if (lackingPerms.length > 1)
-                    msg = msg.replace("permission", "permissions");
-
-                app.logger.info("DISCORD", "[MESSAGE] Return " + message.author.id + " lacking " + msg.split("lacking the ")[1]);
-
-
-                return app.functions.ErrorHandler(app, userSettings, message, command.name, msg, "error");
-
-            };
+            } else return app.functions.missingPerms(message, "execute the " + command.name + " command", command);
         } else {
             throw new Error("There was an unknown error while loading the command: " + command.name);
         }

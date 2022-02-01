@@ -10,18 +10,15 @@ module.exports = async(app, omessage, nmessage) => {
     // to bot owner.
     //
 
-    if (omessage.guild == null) return; // Stop if we not in a guild?
+    if (omessage.guild == null ||
+        omessage.author.bot) return; // Stop if we in a guild - and stop if we getting data from a bot.
+
     var serverSettings = await app.DBs.serverSettings.findOne({ where: { serverID: omessage.guild.id } });
-    if (!serverSettings) {
-        await app.functions.DB.createServer(omessage.guild.id);
-        serverSettings = await app.DBs.serverSettings.findOne({ where: { serverID: omessage.guild.id } });
+    if (!serverSettings) return;
 
-        return;
-    };
+    var channelID = serverSettings.get("loggingMessageChannel");
 
-    var serverID = serverSettings.get("loggingEditChannel");
-
-    var channel = app.client.channels.cache.get(serverID);
+    var channel = app.client.channels.cache.get(channelID);
     if (!channel) return; // Something's wrong here?
 
     channel.send({

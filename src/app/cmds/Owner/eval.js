@@ -1,7 +1,6 @@
 module.exports = {
     name: "eval",
     description: "JavaScript executor.",
-    category: "Owner",
     guildOnly: false,
     authorizedGuilds: [],
     hidden: true,

@@ -1,8 +1,11 @@
 /*
-	THECODINGBOT v5 APP
-	Created 6/24/2021
-*/
+	THECODINGBOT v5
+	App
+	6/24/2021
 
+	https://tcb.nekos.tech/source
+	https://themattchannel.com
+*/
 
 
 const app = {
@@ -22,12 +25,9 @@ const app = {
         },
         toBuildString: function() {
             var buildType = app.version.buildType;
-            if (buildType == "A")
-                buildType = "ALPHA";
-            else if (buildType == "B")
-                buildType = "BETA";
-            else if (buildType == "R")
-                buildType = "RELEASE";
+            if (buildType == "A") buildType = "ALPHA";
+            else if (buildType == "B") buildType = "BETA";
+            else if (buildType == "R") buildType = "RELEASE";
 
             return buildType;
         },
@@ -112,6 +112,39 @@ const app = {
             return new Promise(resolve => setTimeout(resolve, ms));
         },
 
+        hasPermissions: function(message, command) {
+            return (command.permissions == "DEFAULT" ||
+                message.channel.type.toLowerCase() == "dm" && command.guildOnly ||
+                command.permissions == "BOT_OWNER" && app.config.system.owners.includes(message.author.id) ||
+                app.config.system.owners.includes(message.author.id) && app.client.bypassEnabled ||
+                command.permissions != "BOT_OWNER" && message.member.permissions.has(command.permissions))
+        },
+
+        missingPerms: function(message, cantdo, command) {
+            var lackedPerms = [];
+            if (command) {
+                if (command.permissions == "BOT_OWNER") lackingPerms.push("`BOT_OWNER`");
+                else {
+                    for (var i = 0; i < command.permissions.length; i++) {
+                        if (!message.channel.permissionsFor(message.author).has(command.permissions[i]))
+                            lackingPerms.push("`" + command.permissions[i] + "`");
+                    };
+                };
+
+                lackedPerms = lackedPerms.join(", ");
+                app.logger.info("DISCORD", `[MESSAGE] Return ${message.author.id} lacking ${lackedPerms}`);
+            } else lackedPerms = "permission";
+
+            return app.functions.msgHandler(message, {
+                embeds: [{
+                    title: `${app.config.system.emotes.error} **Missing Permissions**`,
+                    color: app.config.system.embedColors.red,
+                    description: `You're lacking ${lackedPerms} to ${cantdo}.\nSorry about that...`,
+                    footer: { text: app.config.system.footerText }
+                }]
+            }, 0, true);
+        },
+
         ErrorHandler: function(app, userSettings, message, command, err, type) {
             var embedTitle = (type == "error") ? app.config.system.emotes.error + " **Error!**" : app.config.system.emotes.warning + " **Warning!**";
             var embedColor = (type == "error") ? app.config.system.embedColors.red : app.config.system.embedColors.yellow;
@@ -130,19 +163,24 @@ const app = {
                     }]
                 }
             else {
+                var msg = ((err.message && err.message != "") ? "js\n" + err.message : (err && err != "") ? err : "Unknown Error.");
                 data = {
                     embeds: [{
                         title: embedTitle,
                         color: embedColor,
                         description: `Failed to execute \`${((command.name) ? command.name : command)}\`!`,
                         fields: [
-                            { name: "Error Details", value: "```" + ((err.message) ? "js\n" + err.message : err) + "```" }
+                            { name: "Error Details", value: "```" + msg + "```" }
 
                         ],
                         footer: { text: app.config.system.footerText }
                     }]
                 };
-                if (err.stack) {
+                if (type == "error" && err.stack) {
+                    var stack = err.stack,
+                        maxLength = 2000,
+                        msg = "(continued)";
+                    if (stack.length > maxLength) stack = stack.match(new RegExp('.{1,' + (maxLength - msg.length) + '}', 'g'))[0] + msg;
                     data.embeds[0].fields.push({ name: "Stacktrace", value: "```js\n" + err.stack + "```" });
                     userSettings.update({ executedCommands: (userSettings.get('errorCommands') + 1) }, { where: { userID: message.author.id } });
                 };
@@ -157,11 +195,16 @@ const app = {
 
         TStoHR: function(TS) {
             let totalSeconds = (TS / 1000);
+            let days = Math.floor(totalSeconds / 86400);
+            totalSeconds %= 86400;
             let hours = Math.floor(totalSeconds / 3600);
             totalSeconds %= 3600;
             let minutes = Math.floor(totalSeconds / 60);
             let seconds = totalSeconds % 60;
-            let HR = `**${hours} hours, ${minutes} minutes and ${Math.round(seconds)} seconds**`;
+            let HR = `**${days} days, ${hours} hours, ${minutes} minutes and ${Math.round(seconds)} seconds**`;
+
+            if (days == 0) HR = HR.replace(days + " days, ", "");
+            else if (days == 1) HR = HR.replace("days", "day");
 
             if (hours == 0) HR = HR.replace(hours + " hours, ", "");
             else if (hours == 1) HR = HR.replace("hours", "hour");

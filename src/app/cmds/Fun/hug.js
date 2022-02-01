@@ -1,14 +1,13 @@
 module.exports = {
     name: "hug",
     description: "Hug someone and show wholesomeness!",
-    category: "Fun",
     guildOnly: false,
     authorizedGuilds: [],
     hidden: false,
     permissions: ["DEFAULT"],
-    cooldown: 2,
+    cooldown: 3,
     aliases: [],
-    syntax: [""],
+    syntax: [],
     execute: async(app, message, args) => {
         var target = message.mentions.users.first() || args[0],
             sender = message.author;

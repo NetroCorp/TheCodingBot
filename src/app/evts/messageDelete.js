@@ -10,6 +10,9 @@ module.exports = async(app, message) => {
     if (message.guild == null ||
         message.author.bot) return; // Stop if we in a guild - and stop if we getting data from a bot.
 
+    var serverSettings = await app.DBs.serverSettings.findOne({ where: { serverID: message.guild.id } });
+    if (!serverSettings) return;
+
     if (app.client.waitingForMessageToDelete == undefined) app.client.waitingForMessageToDelete = [];
 
     async function downloadAttachments(attachments) {
@@ -49,17 +52,9 @@ module.exports = async(app, message) => {
         return result;
     };
 
-    var serverSettings = await app.DBs.serverSettings.findOne({ where: { serverID: message.guild.id } });
-    if (!serverSettings) {
-        await app.functions.DB.createServer(message.guild.id);
-        serverSettings = await app.DBs.serverSettings.findOne({ where: { serverID: message.guild.id } });
+    var channelID = serverSettings.get("loggingMessageChannel");
 
-        return;
-    };
-
-    var serverID = serverSettings.get("loggingDeleteChannel");
-
-    var channel = app.client.channels.cache.get(serverID);
+    var channel = app.client.channels.cache.get(channelID);
     if (!channel) return; // Something's wrong here?
 
     var msgAttachments;

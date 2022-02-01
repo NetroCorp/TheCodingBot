@@ -1,6 +1,10 @@
 /*
-	THECODINGBOT v5 BOOTLOADER
-	Created 6/24/2021
+	THECODINGBOT v5
+	Bootloader
+	6/24/2021
+
+	https://tcb.nekos.tech/source
+	https://themattchannel.com
 */
 
 
@@ -125,32 +129,31 @@ class BootLoader {
                             defaultValue: 0,
                             allowNull: false
                         },
-                        optedOut: Sequelize.BOOLEAN
+                        optedOut: {
+                            type: Sequelize.BOOLEAN,
+                            defaultValue: 0,
+                            allowNull: false
+                        }
                     });
                     app.DBs.userSettings.sync();
 
                     app.DBs.serverSettings = app.db.define('serverSettings', {
-                        serverID: {
+                        serverID: { // The executing channel
                             type: Sequelize.STRING,
                             unique: true,
                             primaryKey: true
-                        },
-                        loggingDeleteChannel: {
+                        }, // Message Update/Deletes
+                        loggingMessageChannel: {
                             type: Sequelize.STRING,
                             defaultValue: null,
                             allowNull: true
-                        },
-                        loggingEditChannel: {
+                        }, // Member Joins/Updates/Leaves
+                        loggingMemberChannel: {
                             type: Sequelize.STRING,
                             defaultValue: null,
                             allowNull: true
-                        },
-                        loggingJoinChannel: {
-                            type: Sequelize.STRING,
-                            defaultValue: null,
-                            allowNull: true
-                        },
-                        loggingLeaveChannel: {
+                        }, // Role Adds/Updates/Deletes, Emoji Adds/Updates/Deletes, Channel Adds/Updates/Deletes
+                        loggingGuildChannel: {
                             type: Sequelize.STRING,
                             defaultValue: null,
                             allowNull: true
@@ -211,7 +214,7 @@ class BootLoader {
                     var fileLocation = process.cwd() + "/app/" + ((varSimpleName.split("/")[0] == "cmds") ? varSimpleName : "cmds/" + varSimpleName);
                     var command = require(fileLocation);
                     command.file = fileLocation;
-                    command.category = ((varSimpleName.split("/")[0] == "cmds") ? "" : varSimpleName.split("/")[0]);
+                    command.category = ((varSimpleName.split("/")[0] == "cmds") ? "" : varSimpleName.split("/")[0]) || "Uncategorized";
                     app.commands.set(command.name, command);
                 } else if (varType == "slashCommand") {
                     // app.client.api.applications(app.client.user.id).commands.post({data: {

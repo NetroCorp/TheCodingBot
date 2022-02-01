@@ -1,7 +1,6 @@
 module.exports = {
     name: "botcontrols",
     description: "Bot Control.",
-    category: "Owner",
     guildOnly: false,
     authorizedGuilds: [],
     hidden: true,

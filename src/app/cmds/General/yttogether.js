@@ -1,16 +1,15 @@
 module.exports = {
     name: "yttogether",
     description: "Generate a YouTube Together [BETA] link!",
-    category: "General",
     guildOnly: true,
     authorizedGuilds: [],
     hidden: false,
     permissions: ["STREAM"],
-    cooldown: 0,
+    cooldown: 30,
     aliases: ["ytnchill", "watchyt"],
-    syntax: [""],
+    syntax: [],
     execute: async(app, message, args) => {
-        function title(emoji) { var response = app.config.system.emotes[emoji] + "**YouTube Together**"; return response; };
+        function title(emoji) { var response = app.config.system.emotes[emoji] + " **YouTube Together**"; return response; };
 
         if (!message.guild) { app.functions.msgHandler(message, { content: `${title("error")}\nYou cannot execute this in DMs!` }, 0, true); return; }
         var channel = message.member.voice.channel;

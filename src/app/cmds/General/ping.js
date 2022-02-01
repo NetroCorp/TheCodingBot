@@ -1,7 +1,6 @@
 module.exports = {
     name: "ping",
     description: "Check bot latency!",
-    category: "General",
     guildOnly: false,
     authorizedGuilds: [],
     hidden: false,

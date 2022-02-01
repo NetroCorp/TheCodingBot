@@ -19,7 +19,7 @@ module.exports = {
                 description: "You need to ask a question!",
                 footer: { text: app.config.system.footerText + " | An error occurred." }
             }]
-        });
+        }, 0, true);
 
         var responses = {
             "Yes!": "lime",
@@ -48,6 +48,6 @@ module.exports = {
                 ],
                 footer: { text: app.config.system.footerText }
             }]
-        });
+        }, 0, true);
     }
 };

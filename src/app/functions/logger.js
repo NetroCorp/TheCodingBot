@@ -1,6 +1,10 @@
 /*
-	THECODINGBOT v5 LOGGER
-	Created 6/24/2021
+	THECODINGBOT v5
+	Logger
+	6/24/2021
+
+	https://tcb.nekos.tech/source
+	https://themattchannel.com
 */
 
 
