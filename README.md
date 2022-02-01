@@ -6,6 +6,8 @@ Version 4. The current version of the bot.
 
 ## Get this version goin'!
 Eh... you can run this. Run `start.sh` or `start.bat` from `src` folder. It is not optimized to run like v5 does.
+Plus, there's a lot of refernces to my UserID in the code; it's best to just let this serve as a public archive.
+I mean, if you want to, try it out? I'm not going to provide support for anything other than v5. kthx.
 
 ## Contributing
 Don't. Unless you really want to ig. This version will be decommissioned once stable v5 is released.
