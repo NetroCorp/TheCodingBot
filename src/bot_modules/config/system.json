@@ -1,7 +1,7 @@
 {
 	"system": {
 		"footerText": "TheCodingBot, © TMC Software 2018-currYear.",
-		"version": { "build": "4.2.0", "branchS": "B", "branch": "BETA" },
+		"version": { "build": "4.2.2", "branchS": "B", "branch": "BETA" },
 		"commandState": "Enabled",
 		"rotatingStatus": {
 			"statuses": [
