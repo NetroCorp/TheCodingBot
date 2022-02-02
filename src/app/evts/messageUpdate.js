@@ -11,13 +11,12 @@ module.exports = async(app, omessage, nmessage) => {
     //
 
     if (omessage.guild == null ||
-        omessage.author.bot) return; // Stop if we in a guild - and stop if we getting data from a bot.
+        omessage.author.bot) return; // Stop if we not in a guild - and stop if we getting data from a bot.
 
     var serverSettings = await app.DBs.serverSettings.findOne({ where: { serverID: omessage.guild.id } });
     if (!serverSettings) return;
 
     var channelID = serverSettings.get("loggingMessageChannel");
-
     var channel = app.client.channels.cache.get(channelID);
     if (!channel) return; // Something's wrong here?
 

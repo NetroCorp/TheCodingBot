@@ -37,35 +37,53 @@ const app = {
     },
 
     functions: {
-        splitMulti: function(str, tokens) {
-            var tempChar = tokens[0];
-            for (var i = 1; i < tokens.length; i++) {
-                str = str.split(tokens[i]).join(tempChar);
-            }
-            str = str.split(tempChar);
-            return str;
+        sleep: function(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
         },
-        getFiles: async function(dir, filter = []) {
-            if (filter.length > 2) return "Fliter too powerfuuuuul [startsWith, endsWith] only please, or no fliter.";
+        getTicks: () => { return ((new Date().getTime() * 10000) + 621355968000000000); },
 
-            const { resolve } = app.modules["path"];
-            const { readdir } = app.modules["fs"].promises;
+        TStoHR: function(TS) {
+            let totalSeconds = (TS / 1000);
+            let days = Math.floor(totalSeconds / 86400);
+            totalSeconds %= 86400;
+            let hours = Math.floor(totalSeconds / 3600);
+            totalSeconds %= 3600;
+            let minutes = Math.floor(totalSeconds / 60);
+            let seconds = totalSeconds % 60;
+            let HR = `**${days} days, ${hours} hours, ${minutes} minutes and ${Math.round(seconds)} seconds**`;
 
-            const dirents = await readdir(dir, { withFileTypes: true });
-            const files = await Promise.all(dirents.map((dirent) => {
-                let res = resolve(dir, dirent.name);
-                if (dirent.isDirectory()) return app.functions.getFiles(res, filter);
-                else {
+            if (days == 0) HR = HR.replace(days + " days, ", "");
+            else if (days == 1) HR = HR.replace("days", "day");
 
-                    if (filter[0] != null || filter[0] != undefined || filter[0] != "")
-                        if (!res.startsWith(filter[0])) return "";
-                    if (filter[1] != null || filter[1] != undefined || filter[0] != "")
-                        if (!res.endsWith(filter[1])) return "";
-                    res = app.functions.splitMulti(res, ['\\', '\\\\', '/', '//'])
-                    return res.slice((res.length - 2), res.length).join("/");
-                };
-            }));
-            return files.flat().filter(Boolean);
+            if (hours == 0) HR = HR.replace(hours + " hours, ", "");
+            else if (hours == 1) HR = HR.replace("hours", "hour");
+
+            if (minutes == 0) HR = HR.replace(minutes + " minutes and ", "");
+            else if (minutes == 1) HR = HR.replace("minutes", "minute");
+
+            if (Math.round(seconds) == 1) HR = HR.replace("seconds", "second");
+
+            return HR;
+        },
+        convertTimestamp: function(unix_timestamp, getDate, bigHour = false) {
+            var date = new Date(unix_timestamp * 1); // Create Date from timestamp
+
+            var hours = date.getHours(); // Hours part from the timestamp
+            var minutes = "0" + date.getMinutes(); // Minutes part from the timestamp
+            var seconds = "0" + date.getSeconds(); // Seconds part from the timestamp
+
+            // Will display time in hh:mm:ss format
+            var formattedTime = ((bigHour) ? ((hours > 12) ? (hours - 12) : (hours == 0) ? 12 : hours) : hours) + ':' + minutes.substr(-2) + ':' + seconds.substr(-2) + ((bigHour) ? ((hours < 12) ? " AM" : " PM") : "");
+
+            if (getDate) {
+                var dd = String(date.getDate()).padStart(2, '0'),
+                    mm = String(date.getMonth() + 1).padStart(2, '0'), //January is 0!
+                    yyyy = date.getFullYear();
+                formattedTime = mm + '/' + dd + '/' + yyyy + ' ' + formattedTime;
+            };
+
+            // Return that bad boy
+            return formattedTime;
         },
         DB: {
             createUser: async function(id) {
@@ -107,9 +125,43 @@ const app = {
                 return serverSetting;
             }
         },
+        downloadAttachments: async function(message, attachments) {
+            if (app.client.waitingForMessageToDelete == undefined) app.client.waitingForMessageToDelete = [];
 
-        sleep: function(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
+            var result = { failed: [], succeed: [] };
+            app.client.waitingForMessageToDelete.push(message.id);
+
+            for (var attachment of attachments) {
+                var attachment = attachment[1]; // For some reason, doing it this way, we go into an array? [0] = id, [1] = MessageAttachment
+                var msgAttachURL = ((attachment.proxyURL == null || attachment.proxyURL == "") ? attachment.url : attachment.proxyURL),
+                    file = attachment.name;
+                var fileext = file.slice((file.lastIndexOf(".") - 1 >>> 0) + 2);
+                var filename = file.replace("." + fileext, "");
+                // someone tell me if there is a better write to write this.
+
+                var postURL = `${app.config.system.logURL}TCB_Post.php?rand=${app.functions.getTicks()}&type=logging&url=${msgAttachURL}&guildID=${message.guild.id}&channelID=${message.channel.id}&messageID=${message.id}&filename=${filename}&fileext=${fileext}&size=${attachment.size}&return=JSON`;
+                try {
+                    const res = await app.modules["node-fetch"](postURL);
+
+
+                    if (res.status != 200) {
+                        throw new Error(res.status);
+                    } else {
+                        const body = await res.json();
+                        if (body["return"]["success"] == "true" && body["return"]["error"] == "none")
+                            result["succeed"].push(`${app.config.system.logURL}${body["return"]["imgUrl"]}`);
+                        else
+                            result["failed"].push(`[WEBSERVER] ${body["return"]["error"]}`);
+                    };
+                } catch (err) {
+                    app.logger.error("SYS", "[EVENTS] [MESSAGE DELETE] Whoops! Something went wrong! Downloading the file went OOF!\n" + err.message);
+                    if (attachment.proxyURL != null) result["failed"].push(`${attachment}`);
+                    else result["failed"](`[MEDIA_PROXY] ${msgAttachURL}`);
+                };
+            };
+
+            app.client.waitingForMessageToDelete = app.functions.removeItemAll(app.client.waitingForMessageToDelete, message.id);
+            return result;
         },
 
         hasPermissions: function(message, command) {
@@ -144,7 +196,42 @@ const app = {
                 }]
             }, 0, true);
         },
+        msgHandler: async function(message, options, action = 0, doReply = false, callback = null) { // action: 0 = Send, 1 = Edit
+            if (action == 0) {
+                if (doReply) options["reply"] = { messageReference: message.id };
+                message.channel.send(options).then(msg => { if (callback != null) callback(msg); });
+            } else if (action == 1)
+                message.edit(options).then(msg => { if (callback != null) callback(msg); });
+        },
 
+        RemoveReactions: function(app, msg) {
+            msg.reactions.removeAll().catch(error => {
+                app.logger.error("DISCORD", "Could not remove ALL reactions due to " + error);
+                app.functions.msgHandler(msg, {
+                    embeds: [{
+                        color: app.config.system.embedColors.red,
+                        description: "Failed to remove all reactions! Will attempt to remove my reactions only...",
+                        footer: { text: app.config.system.footerText }
+                    }]
+                }, 0, true, (async m => {
+                    var myID = app.client.user.id;
+                    var userReactions = msg.reactions.cache.filter(reaction => reaction.users.cache.has(myID));
+                    try {
+                        for (const reaction of userReactions.values()) await reaction.users.remove(myID);
+                        m.delete();
+                    } catch (err) {
+                        app.functions.msgHandler(m, {
+                            embeds: [{
+                                color: app.config.system.embedColors.red,
+                                description: "Failed to remove my reactions! well, that's an F.",
+                                footer: { text: app.config.system.footerText }
+                            }]
+                        }, 1, true);
+                        app.logger.error("DISCORD", "Could not remove my reactions due to " + err);
+                    };
+                }));
+            });
+        },
         ErrorHandler: function(app, userSettings, message, command, err, type) {
             var embedTitle = (type == "error") ? app.config.system.emotes.error + " **Error!**" : app.config.system.emotes.warning + " **Warning!**";
             var embedColor = (type == "error") ? app.config.system.embedColors.red : app.config.system.embedColors.yellow;
@@ -191,51 +278,6 @@ const app = {
             return;
         },
 
-        getTicks: () => { return ((new Date().getTime() * 10000) + 621355968000000000); },
-
-        TStoHR: function(TS) {
-            let totalSeconds = (TS / 1000);
-            let days = Math.floor(totalSeconds / 86400);
-            totalSeconds %= 86400;
-            let hours = Math.floor(totalSeconds / 3600);
-            totalSeconds %= 3600;
-            let minutes = Math.floor(totalSeconds / 60);
-            let seconds = totalSeconds % 60;
-            let HR = `**${days} days, ${hours} hours, ${minutes} minutes and ${Math.round(seconds)} seconds**`;
-
-            if (days == 0) HR = HR.replace(days + " days, ", "");
-            else if (days == 1) HR = HR.replace("days", "day");
-
-            if (hours == 0) HR = HR.replace(hours + " hours, ", "");
-            else if (hours == 1) HR = HR.replace("hours", "hour");
-
-            if (minutes == 0) HR = HR.replace(minutes + " minutes and ", "");
-            else if (minutes == 1) HR = HR.replace("minutes", "minute");
-
-            if (Math.round(seconds) == 1) HR = HR.replace("seconds", "second");
-
-            return HR;
-        },
-        convertTimestamp: function(unix_timestamp, getDate, bigHour = false) {
-            var date = new Date(unix_timestamp * 1); // Create Date from timestamp
-
-            var hours = date.getHours(); // Hours part from the timestamp
-            var minutes = "0" + date.getMinutes(); // Minutes part from the timestamp
-            var seconds = "0" + date.getSeconds(); // Seconds part from the timestamp
-
-            // Will display time in hh:mm:ss format
-            var formattedTime = ((bigHour) ? ((hours > 12) ? (hours - 12) : (hours == 0) ? 12 : hours) : hours) + ':' + minutes.substr(-2) + ':' + seconds.substr(-2) + ((bigHour) ? ((hours < 12) ? " AM" : " PM") : "");
-
-            if (getDate) {
-                var dd = String(date.getDate()).padStart(2, '0'),
-                    mm = String(date.getMonth() + 1).padStart(2, '0'), //January is 0!
-                    yyyy = date.getFullYear();
-                formattedTime = mm + '/' + dd + '/' + yyyy + ' ' + formattedTime;
-            };
-
-            // Return that bad boy
-            return formattedTime;
-        },
 
         clearCache: function(module) {
             if (module == null)
@@ -243,7 +285,36 @@ const app = {
             else
                 delete require.cache[module];
         },
+        getFiles: async function(dir, filter = []) {
+            if (filter.length > 2) return "Fliter too powerfuuuuul [startsWith, endsWith] only please, or no fliter.";
 
+            const { resolve } = app.modules["path"];
+            const { readdir } = app.modules["fs"].promises;
+
+            const dirents = await readdir(dir, { withFileTypes: true });
+            const files = await Promise.all(dirents.map((dirent) => {
+                let res = resolve(dir, dirent.name);
+                if (dirent.isDirectory()) return app.functions.getFiles(res, filter);
+                else {
+
+                    if (filter[0] != null || filter[0] != undefined || filter[0] != "")
+                        if (!res.startsWith(filter[0])) return "";
+                    if (filter[1] != null || filter[1] != undefined || filter[0] != "")
+                        if (!res.endsWith(filter[1])) return "";
+                    res = app.functions.splitMulti(res, ['\\', '\\\\', '/', '//'])
+                    return res.slice((res.length - 2), res.length).join("/");
+                };
+            }));
+            return files.flat().filter(Boolean);
+        },
+        splitMulti: function(str, tokens) {
+            var tempChar = tokens[0];
+            for (var i = 1; i < tokens.length; i++) {
+                str = str.split(tokens[i]).join(tempChar);
+            }
+            str = str.split(tempChar);
+            return str;
+        },
         removeItemAll: function(arr, value) {
             var i = 0;
             while (i < arr.length)
@@ -251,7 +322,6 @@ const app = {
                 else ++i;
             return arr;
         },
-
         RPSSystem: function(app, action) {
             if (app.client == undefined) { return "RPS failed to attach to client! Create Discord Client first." } else if (app.config == undefined) { return "RPS failed to attach to client: Missing config data."; };
 
@@ -340,43 +410,6 @@ const app = {
             } else {
                 return "The RPS SYSTEM is confused on what you told it to do.";
             };
-        },
-
-        msgHandler: async function(message, options, action = 0, doReply = false, callback = null) { // action: 0 = Send, 1 = Edit
-            if (action == 0) {
-                if (doReply) options["reply"] = { messageReference: message.id };
-                message.channel.send(options).then(msg => { if (callback != null) callback(msg); });
-            } else if (action == 1)
-                message.edit(options).then(msg => { if (callback != null) callback(msg); });
-        },
-
-        RemoveReactions: function(app, msg) {
-            msg.reactions.removeAll().catch(error => {
-                app.logger.error("DISCORD", "Could not remove ALL reactions due to " + error);
-                app.functions.msgHandler(msg, {
-                    embeds: [{
-                        color: app.config.system.embedColors.red,
-                        description: "Failed to remove all reactions! Will attempt to remove my reactions only...",
-                        footer: { text: app.config.system.footerText }
-                    }]
-                }, 0, true, (async m => {
-                    var myID = app.client.user.id;
-                    var userReactions = msg.reactions.cache.filter(reaction => reaction.users.cache.has(myID));
-                    try {
-                        for (const reaction of userReactions.values()) await reaction.users.remove(myID);
-                        m.delete();
-                    } catch (err) {
-                        app.functions.msgHandler(m, {
-                            embeds: [{
-                                color: app.config.system.embedColors.red,
-                                description: "Failed to remove my reactions! well, that's an F.",
-                                footer: { text: app.config.system.footerText }
-                            }]
-                        }, 1, true);
-                        app.logger.error("DISCORD", "Could not remove my reactions due to " + err);
-                    };
-                }));
-            });
         }
     },
 
