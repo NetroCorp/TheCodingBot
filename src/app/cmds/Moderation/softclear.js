@@ -1,6 +1,6 @@
 module.exports = {
     name: "softclear",
-    description: "Soft clears a chat - by sending several lines of empty characters.",
+    description: "Soft clears a chat - by sending several lines of emptiness.",
     guildOnly: true,
     authorizedGuilds: [],
     hidden: false,

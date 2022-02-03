@@ -30,7 +30,7 @@ module.exports = async(app, message) => {
     };
 
     if (!message.content.startsWith(prefix)) { // If the user did not include prefix
-        if (message.mentions.has(app.client.user.id) && !message.reference) // ...and did not reply to & actually pinged the bot.
+        if (message.mentions.has(app.client.user.id) && !message.mentions.everyone && !message.reference) // ...and did not reply to & actually pinged the bot.
             return app.functions.msgHandler(message, { content: `n-nya! My prefix is \`${prefix}\`` }, 0, true);
         else return;
     } else {};
