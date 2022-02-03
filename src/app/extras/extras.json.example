@@ -1,6 +1,0 @@
-[{
-	"extraName": "Web",
-	"extraCfg": "web/web.json",
-	"extraApp": "web/web.js",
-	"extraEnab": true
-}]
