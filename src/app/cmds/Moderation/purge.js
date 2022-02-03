@@ -20,12 +20,12 @@ module.exports = {
                     return message.channel.bulkDelete(msgsPrune).then(prunedMsgs => {
                         app.functions.msgHandler(message, {
                             embeds: [{
-                                title: `${app.config.system.emotes.success} Purge Successfull`,
+                                title: `${app.config.system.emotes.success} Purge Successful!`,
                                 color: app.config.system.embedColors.lime,
-                                description: `Successfully purged ${prunedMsgs.size} messages!`,
+                                description: `Successfully purged ${prunedMsgs.size} spicy messages!`,
                                 footer: { text: app.config.system.footerText }
                             }]
-                            }, 0, true);
+                            });
                 });
             });
                 } catch (e) {
