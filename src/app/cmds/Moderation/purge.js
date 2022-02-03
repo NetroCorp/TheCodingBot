@@ -32,7 +32,7 @@ module.exports = {
                         embeds: [{
                             title: `${app.config.system.emotes.error} Uh-Oh! Something went wrong!`,
                             color: app.config.system.embedColors.red,
-                            description: `e.message`,
+                            description: `Could not purge messages due to: **${e.message}**`,
                             footer: { text: app.config.system.footerText + " | An error occurred."}
                         }]
                     });
