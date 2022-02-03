@@ -3,9 +3,9 @@
 	6/24/2021
 
 	Now open-source!
-	Can you believe it Matt 4 years (as of 2022)
+	Can you believe it took Matt 4 years (as of 2022)
 	to open-source his bot projects?
-	Yeah, I know crazy. wait.. why am i talking third-person again?
+	Yeah, I know crazy. wait.. why am I talking third-person again?
 
 	https://tcb.nekos.tech/source
 	https://themattchannel.com
