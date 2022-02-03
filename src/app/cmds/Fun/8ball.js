@@ -1,7 +1,6 @@
 module.exports = {
     name: "8ball",
     description: "The magic 8ball will answer *the* question.",
-    category: "Fun",
     guildOnly: false,
     authorizedGuilds: [],
     hidden: false,

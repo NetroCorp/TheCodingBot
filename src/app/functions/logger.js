@@ -46,7 +46,12 @@ class Logger {
     warn = (location, message, useTimeStamp = true, logToFile = true) => { log("!", location, message, useTimeStamp, logToFile); };
     success = (location, message, useTimeStamp = true, logToFile = true) => { log("S", location, message, useTimeStamp, logToFile); };
     debug = (location, message, useTimeStamp = true, logToFile = true) => { if (app.debugMode) log("D", location, message, useTimeStamp, logToFile); };
-
+    warnAboutDebug = async(debug) => {
+        if (debug) {
+            console.log(`${getTimestamp()}${loggingcolors.BgRed}WARNING: Debug messages are spammy!${loggingcolors.Reset} (They really are...)`);
+            await app.functions.sleep(1069);
+        };
+    }
 }
 
 module.exports = Logger;

@@ -175,12 +175,14 @@ const app = {
         missingPerms: function(message, cantdo, command) {
             var lackedPerms = [];
             if (command) {
-                if (command.permissions == "BOT_OWNER") lackingPerms.push("`BOT_OWNER`");
-                else {
-                    for (var i = 0; i < command.permissions.length; i++) {
-                        if (!message.channel.permissionsFor(message.author).has(command.permissions[i]))
-                            lackingPerms.push("`" + command.permissions[i] + "`");
-                    };
+                for (var i = 0; i < command.permissions.length; i++) {
+                    permission = command.permissions[i];
+                    if (permission == "BOT_OWNER" ||
+                        permission == "DEFAULT"
+                    )
+                        lackedPerms.push("`" + permission + "`");
+                    else if (!message.member.permissions.has(permission))
+                        lackedPerms.push("`" + permission + "`");
                 };
 
                 lackedPerms = lackedPerms.join(", ");

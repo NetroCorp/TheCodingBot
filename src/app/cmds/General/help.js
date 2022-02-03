@@ -16,7 +16,7 @@ module.exports = {
             var cmds = {},
                 fields = [];
             app.commands.forEach(cmd => {
-                if (app.functions.hasPermissions(message, cmd)) {
+                if (app.functions.hasPermissions(message, cmd) || !cmd.hidden) {
                     var category = cmd.category || "Uncategorized";
                     if (cmds[category] == undefined) cmds[category] = [];
                     cmds[category].push("`" + cmd.name + "`");
@@ -44,7 +44,7 @@ module.exports = {
             app.commands.forEach(cmd => {
                 var category = cmd.category || "Uncategorized";
                 console.log(category)
-                if (category == categoryName && app.functions.hasPermissions(message, cmd))
+                if (category == categoryName && app.functions.hasPermissions(message, cmd) && !cmd.hidden)
                     commands.push("`" + cmd.name + "`");
             });
             if (commands.length < 1) { return app.functions.missingPerms("view help on " + categoryName, command); };
