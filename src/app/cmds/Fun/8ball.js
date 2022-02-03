@@ -7,7 +7,7 @@ module.exports = {
     hidden: false,
     permissions: ["DEFAULT"],
     cooldown: 2,
-    aliases: [""],
+    aliases: [],
     syntax: [" <Question>"],
     execute: async(app, message, args) => {
         let question = args.slice(0).join(" ");
