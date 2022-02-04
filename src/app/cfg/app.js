@@ -422,7 +422,6 @@ const app = {
         { name: "node-fetch", required: true },
         { name: "discord.js", required: true },
         { name: "sequelize", required: true },
-        { name: "systeminformation", required: true},
         { name: "os", required: true},
         { name: "canvas", required: false }
     ]
