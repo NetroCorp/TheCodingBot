@@ -423,7 +423,7 @@ const app = {
         { name: "discord.js", required: true },
         { name: "sequelize", required: true },
         { name: "systeminformation", required: true},
-        { name: "http", required: false },
+        { name: "os", required: true},
         { name: "canvas", required: false }
     ]
 }
