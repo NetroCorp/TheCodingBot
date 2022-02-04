@@ -9,7 +9,6 @@ module.exports = {
     aliases: ["botinfo", "aboutme"],
     syntax: [],
     execute: async(app, message, args) => {
-            var si = require('systeminformation');
             app.functions.msgHandler(message, {
                     embeds: [{
                         title: app.config.system.emotes.information + ` All about your favorite bot, **${app.client.user.tag}**!`,
