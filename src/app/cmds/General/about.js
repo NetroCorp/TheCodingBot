@@ -1,6 +1,6 @@
 module.exports = {
     name: "about",
-    description: "Get info about me, ${app.client.user.tag}!",
+    description: `Get info about me, ${app.client.user.tag}!`,
     guildOnly: false,
     authorizedGuilds: [],
     hidden: false,
