@@ -9,6 +9,9 @@ module.exports = {
     aliases: ["botinfo", "aboutme"],
     syntax: [],
     execute: async(app, message, args) => {
+    const os = app.modules["os"]
+    // Welcome to os(u)~!
+    const si = app.modules["systeminformation"]
             app.functions.msgHandler(message, {
                     embeds: [{
                         title: app.config.system.emotes.information + ` All about your favorite bot, **${app.client.user.tag}**!`,
@@ -29,7 +32,12 @@ module.exports = {
                         { name: "Node Version", value: `${process.version}`, inline: true },
                         { name: "Node Uptime", value: app.functions.TStoHR(process.uptime()* 1000), inline: true },
                         { name: "Node Execution Path", value: `${process.execPath}`, inline: true},
-                        ]
+                        { name: "Process PID", value: `${process.pid}`, inline: true},
+                        { name: "System Platform", value: `${process.platform}`, inline: true},
+                        { name: ((process.platform == "linux") ? "Kernel Version" : "System Version"), value: os.version(), inline: true }
+                        // I'd like to have this show the current CPU usage, I'm open to ideas on how to get it to work. - IDeletedSystem64
+                     ],
+                     footer: { text: app.config.system.footerText }
                     }]
                 });
             }
