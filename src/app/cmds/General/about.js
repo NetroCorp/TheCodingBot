@@ -9,9 +9,7 @@ module.exports = {
     aliases: ["botinfo", "aboutme"],
     syntax: [],
     execute: async(app, message, args) => {
-    const os = app.modules["os"]
-    // Welcome to os(u)~!
-    const si = app.modules["systeminformation"]
+    const os = app.modules["os"]; // Welcome to os(u)~!
             app.functions.msgHandler(message, {
                     embeds: [{
                         title: app.config.system.emotes.information + ` All about your favorite bot, **${app.client.user.tag}**!`,
