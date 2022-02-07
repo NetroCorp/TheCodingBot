@@ -50,7 +50,7 @@ const app = {
             totalSeconds %= 3600;
             let minutes = Math.floor(totalSeconds / 60);
             let seconds = totalSeconds % 60;
-            let HR = `**${days} days, ${hours} hours, ${minutes} minutes and ${Math.round(seconds)} seconds**`;
+            let HR = `${days} days, ${hours} hours, ${minutes} minutes and ${Math.round(seconds)} seconds`;
 
             if (days == 0) HR = HR.replace(days + " days, ", "");
             else if (days == 1) HR = HR.replace("days", "day");
@@ -422,7 +422,8 @@ const app = {
         { name: "node-fetch", required: true },
         { name: "discord.js", required: true },
         { name: "sequelize", required: true },
-        { name: "http", required: false },
+        { name: "os", required: true},
+        { name: "node-os-utils", required: true},
         { name: "canvas", required: false }
     ]
 }
