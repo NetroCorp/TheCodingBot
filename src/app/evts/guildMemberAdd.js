@@ -12,16 +12,19 @@ module.exports = async(app, member) => {
     var channel = app.client.channels.cache.get(channelID);
     if (!channel) return; // Something's wrong here?
 
+    function nth(n) { return ["st", "nd", "rd"][((n + 90) % 100 - 10) % 10 - 1] || "th" };
+    const memberNth = nth(guild.members.cache.size);
+
     channel.send({
         embeds: [{
             thumbnail: { url: member.user.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) },
-            title: `${(member.user.bot) ? "Bot Removed" : "User Left"}`,
-            color: app.config.system.embedColors.cyan,
-            description: `There are now ${guild.members.cache.size} members.`,
+            title: `${(member.user.bot) ? "Bot Added" : "User Joined"}`,
+            color: app.config.system.embedColors.lime,
+            description: `They are the ${memberNth} member.`,
             fields: [
                 { name: "Full Tag", value: member.user.tag, inline: true },
                 { name: "ID", value: member.user.id, inline: true },
-                { name: "Joined", value: new Date(member.joinedTimestamp).toString() }
+                { name: "Created", value: new Date(member.createdTimestamp).toString() }
             ],
             footer: { text: app.config.system.footerText }
         }]

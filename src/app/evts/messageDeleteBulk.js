@@ -1,7 +1,10 @@
 module.exports = async(app, messages) => {
     const firstMsg = messages.first() || null;
     if (!firstMsg) return;
-    else if (firstMsg.guild == null) return; // Stop if the firstMsg is empty, and if we not in a guild
+    else if (firstMsg.guild == null) // Stop if we not in a guild.
+        return;
+    else if (firstMsg.guild != null && firstMsg.author) // Or stop if we are in a guild and the author exists.
+        if (firstMsg.author.bot) return; // - and stop if we getting data from a bot.
 
     var serverSettings = await app.DBs.serverSettings.findOne({ where: { serverID: messages.first().guild.id } });
     if (!serverSettings) return;
@@ -65,11 +68,11 @@ module.exports = async(app, messages) => {
         await app.functions.sleep(1000);
 
         channel.send(options);
-        channel.send({ files: [fileToExportTo] });
+        channel.send({ files: [fileToExportTo] }).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Message in bulk deleted but an error occurred when trying to send log! Error: ${err.message}`) });
     } catch (Ex) {
         console.log(Ex);
         options["embeds"][0]["fields"].unshift({ name: "Contents (First-Last)", value: ((msgData) ? ((msgData.length > 0) ? msgData.join("\n") : "No messages fetched. Bummer.") : "Something went wrong?") });
-        channel.send(options);
+        channel.send(options).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Messages in bulk deleted but an error occurred when trying to send log! Error: ${err.message}`) });
     };
 
 

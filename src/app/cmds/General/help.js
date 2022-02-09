@@ -47,7 +47,7 @@ module.exports = {
                 if (category == categoryName && app.functions.hasPermissions(message, cmd) && !cmd.hidden)
                     commands.push("`" + cmd.name + "`");
             });
-            if (commands.length < 1) { return app.functions.missingPerms("view help on " + categoryName, command); };
+            if (commands.length < 1) { return app.functions.missingPerms(message, 0, "view help on " + categoryName, command); };
 
             fields.push({ name: categoryName, value: commands.join(", ") });
 
@@ -65,7 +65,7 @@ module.exports = {
         function commandHelp(commandName) {
             var command = app.commands.get(commandName) || app.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
-            if (!app.functions.hasPermissions(message, command)) { return app.functions.missingPerms("view help on " + commandName, command); };
+            if (!app.functions.hasPermissions(message, command)) { return app.functions.missingPerms(message, 0, "view help on " + commandName, command); };
             var fields = [
                 { name: "Category", value: command.category || "Uncategorized", inline: true },
                 { name: "Server Only?", value: (command.guildOnly ? "Yes" : "No"), inline: true },

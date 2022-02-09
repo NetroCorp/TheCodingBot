@@ -33,12 +33,16 @@ module.exports = async(app, message) => {
         if (message.mentions.has(app.client.user.id) && !message.mentions.everyone && !message.reference) // ...and did not reply to & actually pinged the bot.
             return app.functions.msgHandler(message, { content: `n-nya! My prefix is \`${prefix}\`` }, 0, true);
         else return;
-    } else {};
-    app.logger.info("DISCORD", `[MESSAGE] ${message.author.id} triggered prefix. (${prefix})`);
-
+    };
 
     const args = message.content.slice(prefix.length).split(/ +/);
     const commandName = args.shift().toLowerCase();
+
+
+    if (!commandName) {
+        app.logger.info("DISCORD", `[MESSAGE] ${message.author.id} just triggered prefix. (${prefix})`);
+        return;
+    };
 
     var command = app.commands.get(commandName) || app.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
     if (!command) return app.functions.ErrorHandler(app, userSettings, message, commandName, new Error("Command not found."), "warning");
@@ -111,15 +115,13 @@ module.exports = async(app, message) => {
                 app.logger.info("DISCORD", `[MESSAGE] Return ${message.author.id} command: server-only.`);
                 return app.functions.ErrorHandler(app, userSettings, message, command.name, new Error("Server-only command!"), "warning");
             };
-            if (command.permissions == "DEFAULT" ||
-                command.permissions == "BOT_OWNER" && app.config.system.owners.includes(message.author.id) ||
-                app.config.system.owners.includes(message.author.id) && app.client.bypassEnabled ||
-                command.permissions != "BOT_OWNER" && message.member.permissions.has(command.permissions)) {
+            if (app.functions.hasPermissions(message, command)) {
                 try {
                     await app.functions.clearCache(command.file); // Clear cache :>
                     command = require(command.file);
                     await command.execute(app, message, args);
-                    userSettings.update({ executedCommands: (userSettings.get('executedCommands') + 1) }, { where: { userID: message.author.id } });
+                    if (!userSettings.get('optedOut'))
+                        userSettings.update({ executedCommands: (userSettings.get('executedCommands') + 1) }, { where: { userID: message.author.id } });
                     if (command.cooldown != null) {
                         if (command.cooldown < 0) { // how do you even have a negative cooldown??
                             var defaultCooldown = 2;
@@ -137,7 +139,7 @@ module.exports = async(app, message) => {
                     return app.functions.ErrorHandler(app, userSettings, message, command.name, err, "error");
                 };
                 app.logger.success("DISCORD", "[MESSAGE] Command execution complete.");
-            } else return app.functions.missingPerms(message, "execute the " + command.name + " command", command);
+            } else return app.functions.missingPerms(message, 0, "execute the " + command.name + " command", command);
         } else {
             throw new Error("There was an unknown error while loading the command: " + command.name);
         }

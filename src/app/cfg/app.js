@@ -123,6 +123,24 @@ const app = {
                 app.logger.warn("DB", `Server data for ${id} removed from database!`);
 
                 return serverSetting;
+            },
+
+            createVerification: async function(serverID, userID, messageID, codeGenerated) {
+                const verificationSetting = await app.DBs.verification.create({
+                    serverID: serverID,
+                    userID: userID,
+                    messageID: messageID,
+                    userCode: codeGenerated
+                });
+                app.logger.success("DB", `Verification started for ${userID} in ${serverID} with code ${codeGenerated}!`);
+
+                return verificationSetting;
+            },
+            deleteVerification: async function(serverID, userID) {
+                const verificationSetting = await app.DBs.verification.destroy({ where: { userID: userID, serverID: serverID } });
+                app.logger.warn("DB", `Verification data for ${userID} in ${serverID} removed from database!`);
+
+                return verificationSetting;
             }
         },
         downloadAttachments: async function(message, attachments) {
@@ -172,7 +190,7 @@ const app = {
                 command.permissions != "BOT_OWNER" && message.member.permissions.has(command.permissions))
         },
 
-        missingPerms: function(message, cantdo, command) {
+        missingPerms: function(message, edit, cantdo, command) { // 0 = Send, 1 = Edit
             var lackedPerms = [];
             if (command) {
                 for (var i = 0; i < command.permissions.length; i++) {
@@ -196,14 +214,23 @@ const app = {
                     description: `You're lacking ${lackedPerms} to ${cantdo}.\nSorry about that...`,
                     footer: { text: app.config.system.footerText }
                 }]
-            }, 0, true);
+            }, edit, true);
         },
         msgHandler: async function(message, options, action = 0, doReply = false, callback = null) { // action: 0 = Send, 1 = Edit
+            if (options["author"] != null) {
+                var author = options["author"];
+                if (author.id)
+                    options.embeds[0]["author"] = { name: `Hello, ${author.tag}!`, icon_url: author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) };
+                delete options["author"];
+            };
+
             if (action == 0) {
                 if (doReply) options["reply"] = { messageReference: message.id };
                 message.channel.send(options).then(msg => { if (callback != null) callback(msg); });
-            } else if (action == 1)
-                message.edit(options).then(msg => { if (callback != null) callback(msg); });
+            } else if (action == 1) {
+                if (message.edit) message.edit(options).then(msg => { if (callback != null) callback(msg); });
+                else if (message.update) message.update(options).then(msg => { if (callback != null) callback(msg); });
+            };
         },
 
         RemoveReactions: function(app, msg) {
@@ -280,6 +307,13 @@ const app = {
             return;
         },
 
+        generateRandomCode: function(length, random = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") { // random could be set to "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"@#$%^&()-=+[{]}"
+            var code = "";
+            for (var i = 0; i < length; i++) { code += random.charAt(Math.floor(Math.random() * random.length)); };
+            return code;
+        },
+        getID: function(string) { return string.replace(/[<#@&!>]/g, ''); },
+        doesArrayStartsWith: function(string, array) { return array.findIndex((item) => { return item.startsWith(string); }, string) != -1; },
 
         clearCache: function(module) {
             if (module == null)
@@ -323,6 +357,16 @@ const app = {
                 if (arr[i] === value) arr.splice(i, 1);
                 else ++i;
             return arr;
+        },
+        getParameters: function(array, chars) {
+            if (typeof array != "object" || !array.length) return "gimme a array, not whatever that was!";
+            else if (typeof chars != "string" || !chars) return "What am I supposed to split?? Gimme a string!";
+            var parameters = [];
+            for (var i = 0; i < array.length; i++) {
+                var parameter = array[i].split(chars)[1];
+                if (parameter) parameters.push(parameter);
+            };
+            return parameters;
         },
         RPSSystem: function(app, action) {
             if (app.client == undefined) { return "RPS failed to attach to client! Create Discord Client first." } else if (app.config == undefined) { return "RPS failed to attach to client: Missing config data."; };
@@ -422,9 +466,9 @@ const app = {
         { name: "node-fetch", required: true },
         { name: "discord.js", required: true },
         { name: "sequelize", required: true },
-        { name: "os", required: true},
-        { name: "node-os-utils", required: true},
-        { name: "canvas", required: false }
+        { name: "http", required: false },
+        { name: "canvas", required: false },
+        { name: "os", required: true }
     ]
 }
 

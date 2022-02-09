@@ -4,14 +4,10 @@ module.exports = async(app, omessage, nmessage) => {
 
     if (omessage.content == nmessage.content) return;
 
-    //
-    // TODO:
-    // Send DMs (including message sent, updates, and deletes
-    // to bot owner.
-    //
-
-    if (omessage.guild == null ||
-        omessage.author.bot) return; // Stop if we not in a guild - and stop if we getting data from a bot.
+    if (omessage.guild == null) // Stop if we not in a guild.
+        return;
+    else if (omessage.guild != null && omessage.author) // Or stop if we are in a guild and the author exists.
+        if (omessage.author.bot) return; // - and stop if we getting data from a bot.
 
     var serverSettings = await app.DBs.serverSettings.findOne({ where: { serverID: omessage.guild.id } });
     if (!serverSettings) return;
@@ -32,5 +28,5 @@ module.exports = async(app, omessage, nmessage) => {
             ],
             footer: { text: app.config.system.footerText }
         }]
-    });
+    }).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Message edited but an error occurred when trying to send log! Error: ${err.message}`) });
 }
