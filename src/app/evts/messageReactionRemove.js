@@ -24,15 +24,17 @@ module.exports = async(app, reaction, user) => {
                     for (var i = 0; i < reactionRoles.length; i++) {
                         try {
                             var data = reactionRoles[i];
-                            if (data["emoji"] === reactionThing) {
+                            if (data["emoji"]["name"] === reactionThing || data["emoji"]["id"] == reactionThing) {
                                 const member = guild.members.cache.get(user.id),
                                     role = guild.roles.cache.get(data["roleID"]);
-                                member.roles.remove(role).catch(err => {});
+                                member.roles.remove(role, "Reaction Role").catch(err => {});
+
+                                return;
                             };
                         } catch (Ex) {
-                            app.logger.error("SYS", `Unable to remove user ${user.id} from role ${data["roleID"]}...`)
+                            app.logger.error("SYS", `Unable to remove user ${user.id} from role ${data["roleID"]}...`);
+                            return;
                         };
-                        return;
                     };
                 };
             };

@@ -320,6 +320,18 @@ const app = {
             for (var i = 0; i < length; i++) { code += random.charAt(Math.floor(Math.random() * random.length)); };
             return code;
         },
+        getEmoji: function(app, emojiID, full = false) {
+            var emoji = app.client.emojis.cache.find(e => e.id === emojiID) || null;
+
+            var theEmoji = emoji;
+            if (emoji && full) {
+                theEmoji = "<";
+                if (emoji.animated)
+                    emoji += ":a";
+                theEmoji += ":" + emoji["name"] + ":" + emoji["id"] + ">";
+            };
+            return theEmoji || null;
+        },
         getID: function(string) { return string.replace(/[<#@&!>]/g, ''); },
         doesArrayStartsWith: function(string, array) { return array.findIndex((item) => { return item.startsWith(string); }, string) != -1; },
 

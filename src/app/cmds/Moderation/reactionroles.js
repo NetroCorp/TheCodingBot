@@ -22,13 +22,15 @@ module.exports = {
             try {
                 if (!serverSettings) throw new Error("No server in database"); // How did they even do this command?
                 var cData = [];
-                await message.guild.channels.cache.forEach(channel => {
-                    if (channel.type == "GUILD_TEXT")
-                        cData.push({
-                            label: "#" + ((channel["id"] == message.channel.id) ? `${channel["name"]} (This channel)` : channel["name"]),
-                            description: channel["topic"] || "No topic.",
-                            value: channel["id"]
-                        });
+                var bigChannelSize = (message.guild.channels.cache.size > 25),
+                    filteredChannels = await message.guild.channels.cache.filter(c => c.type == "GUILD_TEXT").map(x => ({ x, r: Math.random() })).sort((a, b) => a.r - b.r).map(a => a.x).slice(0, 25);
+                await filteredChannels.forEach(channel => {
+                    var topic = (channel["topic"]) ? channel["topic"].match(/.{1,100}/g)[0] : "No topic.";
+                    cData.push({
+                        label: "#" + ((channel["id"] == message.channel.id) ? `${channel["name"]} (This channel)` : channel["name"]),
+                        description: topic,
+                        value: channel["id"]
+                    });
                 });
 
                 var channelID = 0,
@@ -38,11 +40,13 @@ module.exports = {
                     customDesc = "";
 
 
+                var warning = (bigChannelSize) ? app.config.system.emotes.warning + "**You have more than the amount of channels we can show (25).** The list is random. If you do not see your desired channel, send `cancel` and rerun this command." : "";
+
                 await app.functions.msgHandler(msg, {
                     embeds: [{
                         title: `${app.config.system.emotes.question} Reaction Roles - Select Channel`,
                         color: app.config.system.embedColors.purple,
-                        description: "Alright - from the dropdown - What channel are we going to be setting this up in?"
+                        description: "Alright - from the dropdown - What channel are we going to be setting this up in?\n" + warning,
                     }],
                     components: [new MessageActionRow()
                         .addComponents(
@@ -141,8 +145,6 @@ module.exports = {
                     const filter = m => { return m.author.id === message.author.id };
                     const collector = message.channel.createMessageCollector({ filter, time: 90000, errors: ["time"] });
 
-                    var reactionroles = [];
-
                     collector.on("collect", async m => {
                         if (m.content == "done") {
                             collector.stop("done");
@@ -158,7 +160,7 @@ module.exports = {
                             }, 1, true, (async() => {
                                 var channel = message.guild.channels.cache.get(channelID),
                                     reactionsList = [];
-                                for (var reaction in reactions) { reactionsList.push(reactions[reaction]["emoji"] + " " + reactions[reaction]["roleMsg"]); };
+                                for (var reaction in reactions) { reactionsList.push((app.functions.getEmoji(app, reactions[reaction]["emoji"]["id"], true) || reactions[reaction]["emoji"]["name"]) + " " + reactions[reaction]["roleMsg"]); };
                                 await channel.send({
                                     embeds: [{
                                         title: customTitle,
@@ -167,7 +169,7 @@ module.exports = {
                                 }).then(msg => {
                                     messageID = msg.id;
 
-                                    for (var reaction in reactions) { msg.react(reactions[reaction]["emoji"]); };
+                                    for (var reaction in reactions) { msg.react(reactions[reaction]["emoji"]["id"]); };
                                 }).catch(err => new Error(err));
 
                                 var data = JSON.parse(serverSettings["reactionRoles"]) || {};
@@ -205,11 +207,33 @@ module.exports = {
                                 roleMsg = splitMsg[1],
                                 roleID = app.functions.getID(splitMsg[2]) || splitMsg[2];
 
+                            console.log(emoji);
+                            if (emoji.startsWith("<:") || emoji.startsWith(":")) {
+                                emoji = app.functions.getID(emoji);
+                                if (emoji.startsWith("a:")) emoji = emoji.split("a:")[1]
+                                emoji = emoji.split(":")[2];
+
+                                const theEmoji = await app.client.emojis.cache.find(e => e.id === emoji) || false;
+
+                                if (!theEmoji) {
+                                    m.react(app.config.system.emotes.error).catch(err => {});
+                                    app.functions.msgHandler(m, { content: "Cannot use that custom emoji. Must be emoji from server I'm in!\n(You can also use built-in Discord emojis)" }, 0, true, (async errMsg => { setTimeout(() => { errMsg.delete() }, 10000) }));
+                                    return;
+                                };
+                                emoji = { name: theEmoji["name"], id: theEmoji["id"] };
+                            } else
+                                emoji = { name: emoji, id: 0 };
                             reactions.push({
                                 emoji: emoji,
                                 roleID: roleID,
                                 roleMsg: roleMsg
                             });
+
+                            if (exMsg) {
+                                var embs = exMsg.embeds;
+                                embs[0].description += ((reactions.length < 1) ? "\n" : "") + "\n" + ((app.functions.getEmoji(app, emoji["id"], true) || emoji["name"]) + " " + roleMsg);
+                                exMsg.edit({ embeds: embs }).catch(err => {});
+                            };
 
                             m.react(app.config.system.emotes.success).catch(err => {});
                         };
