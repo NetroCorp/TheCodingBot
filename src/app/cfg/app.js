@@ -36,6 +36,16 @@ const app = {
         }
     },
 
+    types: {
+        channels: {
+            GUILD_TEXT: "Text Channel",
+            GUILD_VOICE: "Voice Channel",
+            GUILD_CATEGORY: "Category",
+            GUILD_NEWS: "News Channel",
+            GUILD_STAGE_VOICE: "Stage Channel"
+        }
+    },
+
     functions: {
         sleep: function(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
@@ -212,16 +222,18 @@ const app = {
                     title: `${app.config.system.emotes.error} **Missing Permissions**`,
                     color: app.config.system.embedColors.red,
                     description: `You're lacking ${lackedPerms} to ${cantdo}.\nSorry about that...`,
-                    footer: { text: app.config.system.footerText }
                 }]
             }, edit, true);
         },
         msgHandler: async function(message, options, action = 0, doReply = false, callback = null) { // action: 0 = Send, 1 = Edit
-            if (options["author"] != null) {
-                var author = options["author"];
-                if (author.id)
-                    options.embeds[0]["author"] = { name: `Hello, ${author.tag}!`, icon_url: author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) };
-                delete options["author"];
+            if (options.embeds) {
+                if (options["author"] != null) {
+                    var author = options["author"];
+                    if (author.id)
+                        options.embeds[0]["author"] = { name: `Hello, ${author.tag}!`, icon_url: author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) };
+                    delete options["author"];
+                };
+                if (!options.embeds[0]["footer"]) options.embeds[0]["footer"] = { text: app.config.system.footerText }; // Install branding.exe
             };
 
             if (action == 0) {
@@ -239,8 +251,7 @@ const app = {
                 app.functions.msgHandler(msg, {
                     embeds: [{
                         color: app.config.system.embedColors.red,
-                        description: "Failed to remove all reactions! Will attempt to remove my reactions only...",
-                        footer: { text: app.config.system.footerText }
+                        description: "Failed to remove all reactions! Will attempt to remove my reactions only..."
                     }]
                 }, 0, true, (async m => {
                     var myID = app.client.user.id;
@@ -253,7 +264,6 @@ const app = {
                             embeds: [{
                                 color: app.config.system.embedColors.red,
                                 description: "Failed to remove my reactions! well, that's an F.",
-                                footer: { text: app.config.system.footerText }
                             }]
                         }, 1, true);
                         app.logger.error("DISCORD", "Could not remove my reactions due to " + err);
@@ -274,12 +284,12 @@ const app = {
                         description: `Command \`${((command.name) ? command.name : command)}\` was not found!`,
                         fields: [
                             { name: "Lost?", value: `You should check out the \`${userSettings.get("prefix")}help\`` }
-                        ],
-                        footer: { text: app.config.system.footerText }
+                        ]
                     }]
                 }
             else {
                 var msg = ((err.message && err.message != "") ? "js\n" + err.message : (err && err != "") ? err : "Unknown Error.");
+
                 data = {
                     embeds: [{
                         title: embedTitle,
@@ -288,16 +298,14 @@ const app = {
                         fields: [
                             { name: "Error Details", value: "```" + msg + "```" }
 
-                        ],
-                        footer: { text: app.config.system.footerText }
+                        ]
                     }]
                 };
                 if (type == "error" && err.stack) {
                     var stack = err.stack,
-                        maxLength = 2000,
+                        maxLength = 1020,
                         msg = "(continued)";
-                    if (stack.length > maxLength) stack = stack.match(new RegExp('.{1,' + (maxLength - msg.length) + '}', 'g'))[0] + msg;
-                    data.embeds[0].fields.push({ name: "Stacktrace", value: "```js\n" + err.stack + "```" });
+                    //                     data.embeds[0].fields.push({ name: "Stacktrace", value: "```js\n" + err.stack + "```" });
                     userSettings.update({ executedCommands: (userSettings.get('errorCommands') + 1) }, { where: { userID: message.author.id } });
                 };
             };

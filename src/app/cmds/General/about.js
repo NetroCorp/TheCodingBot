@@ -34,8 +34,7 @@ module.exports = {
                     { name: "System Platform", value: `${process.platform}`, inline: true },
                     { name: ((process.platform == "linux") ? "Kernel Version" : "System Version"), value: os.version(), inline: true }
                     // I'd like to have this show the current CPU usage, I'm open to ideas on how to get it to work. - IDeletedSystem64
-                ],
-                footer: { text: app.config.system.footerText }
+                ]
             }]
         });
     }

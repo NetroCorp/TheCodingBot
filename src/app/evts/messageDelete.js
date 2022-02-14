@@ -1,5 +1,5 @@
 module.exports = async(app, message) => {
-    if (message.partial) await message.fetch().catch(() => { app.logger.warn("DISCORD", `[MESSAGE] Message with ID ${message.id} was not in cache when deleted. Cannot get details.`); return; });
+    if (message.partial) await message.fetch(true, true).catch(() => { app.logger.warn("DISCORD", `[MESSAGE] Message with ID ${message.id} was not in cache when deleted. Cannot get details.`); return; });
 
     if (message.guild == null) // Stop if we not in a guild.
         return;
@@ -9,9 +9,9 @@ module.exports = async(app, message) => {
     var serverSettings = await app.DBs.serverSettings.findOne({ where: { serverID: message.guild.id } });
     if (!serverSettings) return;
 
-    var channelID = serverSettings.get("loggingMessageChannel");
-    var channel = app.client.channels.cache.get(channelID);
-    if (!channel) return; // Something's wrong here?
+    var logChannelID = serverSettings.get("loggingMessageChannel");
+    var logChannel = app.client.channels.cache.get(logChannelID);
+    if (!logChannel) return; // Something's wrong here?
 
     var msgAttachments;
     if (message.attachments.size > 0) {
@@ -22,7 +22,7 @@ module.exports = async(app, message) => {
         };
     };
 
-    var embs = [{
+    var embs = {
         color: app.config.system.embedColors.orange,
         description: `Message ID: ${message.id} | [Message link](https://discord.com/channels/${message.guild.id}/${message.channel.id}/${message.id})`,
         fields: [
@@ -30,13 +30,27 @@ module.exports = async(app, message) => {
             { name: "Deleted In", value: `${message.channel.name} (${message.channel.id}) | <#${message.channel.id}>` }
         ],
         footer: { text: app.config.system.footerText }
-    }];
+    };
 
-    if (message.author) embs[0]["author"] = { name: `Message by ${message.author.tag} (${ message.author.id}) deleted.`, icon_url: message.author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) };
-
+    if (message.author) embs["author"] = { name: `Message by ${message.author.tag} (${ message.author.id}) deleted.`, icon_url: message.author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) };
+    const fetchedLogs = await message.guild.fetchAuditLogs({
+        limit: 6,
+        type: "MESSAGE_DELETE",
+    }).catch(err => {});
+    if (fetchedLogs) {
+        const deleteLog = fetchedLogs.entries.find(entry => // To avoid false positives, we sort by message author, message channel, and a timeframe of when the message was deleted.
+            (message.author) ? entry.target.id === message.author.id : true &&
+            entry.extra.channel.id === message.channel.id &&
+            Date.now() - entry.createdTimestamp < 10000
+        );
+        if (deleteLog) { // If none, we may be missing permissions to fetch audit log.
+            const { executor } = deleteLog;
+            embs.fields.push({ name: "Deleted by", value: (executor) ? `${executor.tag} (${executor.id})` : "Unknown" });
+        };
+    };
 
     if (message.attachments.size > 0) {
-        embs[0].fields.push({
+        embs.fields.push({
             name: "Attachments",
             value:
                 ((msgAttachments.succeed.length > 0) ? `${msgAttachments.succeed.join("\n")}` : "") +
@@ -44,7 +58,7 @@ module.exports = async(app, message) => {
         });
     };
 
-    channel.send({
-        embeds: embs
+    logChannel.send({
+        embeds: [embs]
     }).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Message deleted but an error occurred when trying to send log! Error: ${err.message}`) });
 }

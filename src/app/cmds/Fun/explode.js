@@ -37,8 +37,7 @@ module.exports = {
                     { name: "BOOM!", value: `${target} has been kaboom'd!` },
                     { name: "But, uh...", value: "That explosion made a huge mess..." }
                 ],
-                image: { url: img },
-                footer: app.config.system.footerText
+                image: { url: img }
             }]
         });
 

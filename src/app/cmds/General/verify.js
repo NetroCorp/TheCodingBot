@@ -16,8 +16,7 @@ module.exports = {
                 embeds: [{
                     title: `${app.config.system.emotes.wait} Preparing`,
                     color: app.config.system.embedColors.blue,
-                    description: "Hello! We're loading the verification set up. Please wait.",
-                    footer: { text: app.config.system.footerText }
+                    description: "Hello! We're loading the verification set up. Please wait."
                 }],
                 author: message.author
             }, 0, true, (async msg => {
@@ -32,8 +31,7 @@ module.exports = {
                         embeds: [{
                             title: `${app.config.system.emotes.error} Missing Parameters`,
                             color: app.config.system.embedColors.red,
-                            description: "You're missing `channel:#channelORID` and/or `role:<@&role>ORID`.\n" + ((parameters.length > 0) ? "Got parameters: `" + parameters.join("`, `") + "`" : "Got no parameters!"),
-                            footer: { text: app.config.system.footerText }
+                            description: "You're missing `channel:#channelORID` and/or `role:<@&role>ORID`.\n" + ((parameters.length > 0) ? "Got parameters: `" + parameters.join("`, `") + "`" : "Got no parameters!")
                         }],
                         author: message.author
                     }, 1, true);
@@ -55,8 +53,7 @@ module.exports = {
                             embeds: [{
                                 title: `${app.config.system.emotes.wait} Configuring Verification...`,
                                 color: app.config.system.embedColors.blue,
-                                description: `Setting up verification with the following information:\n - **Role to give**: ${role.name}\n - **Channel to verify in**: #${channel.name} (<#${channel.id}>)`,
-                                footer: { text: app.config.system.footerText }
+                                description: `Setting up verification with the following information:\n - **Role to give**: ${role.name}\n - **Channel to verify in**: #${channel.name} (<#${channel.id}>)`
                             }],
                             author: message.author
                         }, 1, true);
@@ -67,8 +64,7 @@ module.exports = {
                                 embeds: [{
                                     title: `${app.config.system.emotes.success} Configured Verification!`,
                                     color: app.config.system.embedColors.lime,
-                                    description: `Great news! Verification is now setup!\nNow, go tell them newcomers to verify in ${channel.name} (<#${channel.id}>)!`,
-                                    footer: { text: app.config.system.footerText }
+                                    description: `Great news! Verification is now setup!\nNow, go tell them newcomers to verify in ${channel.name} (<#${channel.id}>)!`
                                 }],
                                 author: message.author
                             }, 1, true);
@@ -86,8 +82,7 @@ module.exports = {
                                     description: `Whoopsie! That ${type} does not exist!`,
                                     fields: [
                                         { name: "Here's what to do", value: " -> Please ensure you typed the name correctly and that it does exist.\n -> Please also verify that I have permissions to check its existence.\n -> Please try your request again" }
-                                    ],
-                                    footer: { text: app.config.system.footerText }
+                                    ]
                                 }],
                                 author: message.author
                             }, 1, true);
@@ -99,8 +94,7 @@ module.exports = {
                                     description: `Here's what just happened: The channel specified cannot be used for verification.`,
                                     fields: [
                                         { name: "Here's what to do", value: " -> Please ensure that the channel you provided is a text channel - not a stage or voice channel.\n -> Please try your request again" }
-                                    ],
-                                    footer: { text: app.config.system.footerText }
+                                    ]
                                 }],
                                 author: message.author
                             }, 1, true);
@@ -112,8 +106,7 @@ module.exports = {
                                     description: `Here's what just happened: ${Ex.message}`,
                                     fields: [
                                         { name: "Here's what to do", value: " -> Please try your request again" }
-                                    ],
-                                    footer: { text: app.config.system.footerText }
+                                    ]
                                 }],
                                 author: message.author
                             }, 1, true);
@@ -130,8 +123,7 @@ module.exports = {
                 embeds: [{
                     title: `${app.config.system.emotes.wait} Preparing to verify you...`,
                     color: app.config.system.embedColors.blue,
-                    description: "Looking for you (in the database)...",
-                    footer: { text: app.config.system.footerText }
+                    description: "Looking for you (in the database)..."
                 }],
                 author: message.author
             }, 0, false, (async msg => {
@@ -150,12 +142,11 @@ module.exports = {
                             author: { name: `Eep! Sorry about that, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
                             title: `${app.config.system.emotes.warning} Verification failed!`,
                             color: app.config.system.embedColors.orange,
-                            description: `Here's what just happened: ${messages[Ex.message] ? messages[Ex.message][0] : messages[Ex.message]["DEFAULT"][0]}.`,
+                            description: `Here's what just happened: ${messages[Ex.message] ? messages[Ex.message][0] : messages["DEFAULT"][0]}.`,
                             fields: [{
                                 name: "Here's what to do",
-                                value: messages[Ex.message] ? messages[Ex.message][1] : messages[Ex.message]["DEFAULT"][1]
-                            }],
-                            footer: { text: app.config.system.footerText }
+                                value: messages[Ex.message] ? messages[Ex.message][1] : messages["DEFAULT"][1]
+                            }]
                         }],
                         components: []
                     }, 1, false, (async msgC => { setTimeout(function() { msgC.delete().catch(err => {}); }, 10000); })).catch(err => {});
@@ -186,8 +177,7 @@ module.exports = {
                             fields: [
                                 { name: `Welcome to ${message.guild.name}!`, value: "Ah, a newcomer! How fun!\nPlease ensure to read the server rules." },
                                 { name: "Okay, enough talk.", value: `Your code is: \`${codeGen}\`.\nYour next message should be the code.` },
-                            ],
-                            footer: { text: app.config.system.footerText }
+                            ]
                         }],
                         author: message.author
                     }, 1, false, (async msg => {
@@ -228,8 +218,7 @@ module.exports = {
                                         author: { name: `Whoop whoop, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
                                         title: `${app.config.system.emotes.success} Verified!`,
                                         color: app.config.system.embedColors.lime,
-                                        description: `Here's what just happened: You successfully verified!\nHave fun and enjoy your stay!`,
-                                        footer: { text: app.config.system.footerText }
+                                        description: `Here's what just happened: You successfully verified!\nHave fun and enjoy your stay!`
                                     }],
                                     components: []
                                 }, 1, false, (async msgC => { setTimeout(function() { msgC.delete().catch(err => {}); }, 10000); })).catch(err => {});

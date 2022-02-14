@@ -32,8 +32,7 @@ module.exports = {
                 app.functions.msgHandler(message, {
                     embeds: [{
                         color: app.config.system.embedColors.aqua,
-                        fields: result,
-                        footer: { text: app.config.system.footerText }
+                        fields: result
                     }]
                 }, 0, true);
             };
@@ -43,8 +42,7 @@ module.exports = {
                     color: app.config.system.embedColors.red,
                     fields: [
                         { name: "Execution Failure!", value: "```js\n" + err.message + "```" }
-                    ],
-                    footer: { text: app.config.system.footerText + " | There was an error." }
+                    ]
                 }]
             }, 0, true);
             app.logger.warn("SYS", `[EVAL] ${err.message}\n${err.stack}`);

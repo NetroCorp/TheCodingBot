@@ -71,8 +71,7 @@ module.exports = async(app, message) => {
                     embeds: [{
                         title: `${app.config.system.emotes.error} **End-User Agreement**`,
                         color: app.config.system.embedColors.red,
-                        description: "Operation timed out.",
-                        footer: { text: app.config.system.footerText }
+                        description: "Operation timed out."
                     }],
                     components: []
                 }, 1, true);
@@ -87,8 +86,7 @@ module.exports = async(app, message) => {
             title: `${app.config.system.emotes.question} **End-User Agreement Agreement**`,
             color: app.config.system.embedColors.purple,
             description: "Before continuing, you must agree to the bot's End-User Agreement.",
-            fields: fields,
-            footer: { text: app.config.system.footerText }
+            fields: fields
         }],
         components: [row]
     }, 0, true, (async msg => {

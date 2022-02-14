@@ -132,6 +132,11 @@ class BootLoader {
                                 type: Sequelize.BOOLEAN,
                                 defaultValue: 0,
                                 allowNull: false
+                            },
+                            AFKSettings: {
+                                type: Sequelize.STRING,
+                                defaultValue: null,
+                                allowNull: true
                             }
                         }),
                         serverSettings: app.db.define('serverSettings', {
@@ -156,6 +161,11 @@ class BootLoader {
                                 allowNull: true
                             },
                             verification: { // Tells the verification system where to accept verification and what role to give
+                                type: Sequelize.STRING,
+                                defaultValue: null,
+                                allowNull: true
+                            },
+                            reactionRoles: { // Reaction Roles :D
                                 type: Sequelize.STRING,
                                 defaultValue: null,
                                 allowNull: true
@@ -266,7 +276,7 @@ class BootLoader {
                 var endTime = new Date();
                 var elapsedMS = (endTime - startTime) / 1000;
                 if (err === false) {
-                    if (!hideLoadingText) app.logger.success("SYS", `Loaded & enabled ${varSimpleName}${((varType == "dependency") ? ((app.modules[varSimpleName].version) ? " v" + app.modules[varSimpleName].version : "") : "")} in ${elapsedMS}ms.`);
+                    if (!hideLoadingText) app.logger.success("SYS", `Loaded & enabled ${varSimpleName} in ${elapsedMS}ms.`);
                     results["success"].push(varSimpleName);
                 } else {
                     results["fail"].push(varSimpleName);

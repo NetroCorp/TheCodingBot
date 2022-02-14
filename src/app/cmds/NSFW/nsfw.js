@@ -15,8 +15,7 @@ module.exports = {
                 embeds: [{
                     title: `${app.config.system.emotes.information} BONK!`,
                     color: app.config.system.embedColors.blue,
-                    image: { url: "attachment://bonk.gif" },
-                    footer: { text: app.config.system.footerText }
+                    image: { url: "attachment://bonk.gif" }
                 }]
             }, 0, true);
         } else {
@@ -24,8 +23,7 @@ module.exports = {
                 embeds: [{
                     title: `${app.config.system.emotes.error} NSFW`,
                     color: app.config.system.embedColors.red,
-                    description: "We're sorry, but NSFW is still being worked on.\n***TIP:** Try running outside a NSFW channel.*",
-                    footer: { text: app.config.system.footerText }
+                    description: "We're sorry, but NSFW is still being worked on.\n***TIP:** Try running outside a NSFW channel.*"
                 }]
             }, 0, true);
         };

@@ -1,6 +1,6 @@
 module.exports = async(app, omessage, nmessage) => {
-    if (omessage.partial) await omessage.fetch();
-    if (nmessage.partial) await nmessage.fetch();
+    if (omessage.partial) await omessage.fetch(true).catch(err => {});
+    if (nmessage.partial) await nmessage.fetch(true).catch(err => {});
 
     if (omessage.content == nmessage.content) return;
 
@@ -8,15 +8,17 @@ module.exports = async(app, omessage, nmessage) => {
         return;
     else if (omessage.guild != null && omessage.author) // Or stop if we are in a guild and the author exists.
         if (omessage.author.bot) return; // - and stop if we getting data from a bot.
+        else {}
+    else return;
 
     var serverSettings = await app.DBs.serverSettings.findOne({ where: { serverID: omessage.guild.id } });
     if (!serverSettings) return;
 
-    var channelID = serverSettings.get("loggingMessageChannel");
-    var channel = app.client.channels.cache.get(channelID);
-    if (!channel) return; // Something's wrong here?
+    var logChannelID = serverSettings.get("loggingGuildChannel");
+    var logChannel = app.client.channels.cache.get(logChannelID);
+    if (!logChannel) return; // Something's wrong here?
 
-    channel.send({
+    logChannel.send({
         embeds: [{
             author: { name: `Message by ${omessage.author.tag} (${ omessage.author.id}) edited.`, icon_url: omessage.author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) },
             color: app.config.system.embedColors.yellow,

@@ -9,9 +9,9 @@ module.exports = async(app, messages) => {
     var serverSettings = await app.DBs.serverSettings.findOne({ where: { serverID: messages.first().guild.id } });
     if (!serverSettings) return;
 
-    var channelID = serverSettings.get("loggingMessageChannel");
-    var channel = app.client.channels.cache.get(channelID);
-    if (!channel) return; // Something's wrong here?
+    var logChannelID = serverSettings.get("loggingMessageChannel");
+    var logChannel = app.client.channels.cache.get(logChannelID);
+    if (!logChannel) return; // Something's wrong here?
 
     var data = new Map();
 
@@ -67,12 +67,12 @@ module.exports = async(app, messages) => {
         await fs.appendFile(fileToExportTo, `// Message Bulk Delete Log\n// Time deleted: ${app.functions.convertTimestamp(new Date().getTime(), true, true)}\n\n${((msgData) ? ((msgData.length > 0) ? msgData.join("\n") : "No messages fetched. Bummer.") : "Something went wrong?")}`, 'utf8', (err) => { if (err) { console.error(err); } });
         await app.functions.sleep(1000);
 
-        channel.send(options);
-        channel.send({ files: [fileToExportTo] }).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Message in bulk deleted but an error occurred when trying to send log! Error: ${err.message}`) });
+        logChannel.send(options);
+        logChannel.send({ files: [fileToExportTo] }).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Message in bulk deleted but an error occurred when trying to send log! Error: ${err.message}`) });
     } catch (Ex) {
         console.log(Ex);
         options["embeds"][0]["fields"].unshift({ name: "Contents (First-Last)", value: ((msgData) ? ((msgData.length > 0) ? msgData.join("\n") : "No messages fetched. Bummer.") : "Something went wrong?") });
-        channel.send(options).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Messages in bulk deleted but an error occurred when trying to send log! Error: ${err.message}`) });
+        logChannel.send(options).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Messages in bulk deleted but an error occurred when trying to send log! Error: ${err.message}`) });
     };
 
 

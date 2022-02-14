@@ -32,8 +32,7 @@ module.exports = {
                     title: `${app.config.system.emotes.information} ${app.name} Help`,
                     color: app.config.system.embedColors.blue,
                     description: ((temp) ? "The command or category '" + temp + "' is invalid." : `Yeaaah we got it! (Help! Help!)`),
-                    fields: fields,
-                    footer: { text: app.config.system.footerText }
+                    fields: fields
                 }]
             }, 0, true);
         };
@@ -56,8 +55,7 @@ module.exports = {
                     title: `${app.config.system.emotes.information} ${app.name} Help`,
                     color: app.config.system.embedColors.pink,
                     description: `Showing commands for the '${categoryName}' category.`,
-                    fields: fields,
-                    footer: { text: app.config.system.footerText }
+                    fields: fields
                 }]
             }, 0, true);
         };
@@ -82,8 +80,7 @@ module.exports = {
                     title: `${app.config.system.emotes.information} Help for ${commandName}`,
                     color: app.config.system.embedColors.lime,
                     description: command.description,
-                    fields: fields,
-                    footer: { text: app.config.system.footerText }
+                    fields: fields
                 }]
             }, 0, true);
 

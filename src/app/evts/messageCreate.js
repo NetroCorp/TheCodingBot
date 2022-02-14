@@ -19,6 +19,28 @@ module.exports = async(app, message) => {
         userSettings = await app.DBs.userSettings.findOne({ where: { userID: message.author.id } });
     };
 
+
+    if (userSettings.get("AFKSettings")) {
+        var AFKSettings = JSON.parse(userSettings.get("AFKSettings")) || null;
+        if (AFKSettings != null) {
+            try {
+                app.functions.msgHandler(message, {
+                    embeds: [{
+                        title: `${app.config.system.emotes.success} Welcome back!`,
+                        color: app.config.system.embedColors.lime,
+                        description: `You were AFK for **${app.functions.TStoHR(new Date().getTime() - AFKSettings["timestamp"])}**.${(AFKSettings["mentions"] > 0) ? "\nYou were mentioned **" + AFKSettings["mentions"] + "** times!" : ""}`
+                    }]
+                }, 0, true, (async msg => {
+                    var rowsUpdated = await app.DBs.userSettings.update({ AFKSettings: null }, { where: { userID: message.author.id } });
+                    if (rowsUpdated < 1)
+                        return app.functions.msgHandler(message, { content: `Something went wrong while updating your database entry!` }, 0, true);
+                    userSettings = await app.DBs.userSettings.findOne({ where: { userID: message.author.id } });
+                    setTimeout(function() { msg.delete(); }, 6000);
+                }));
+            } catch (Ex) {};
+        };
+    };
+
     var prefix = userSettings.get("prefix");
     if (!prefix) {
         prefix = app.config.system.defaultPrefix;
@@ -32,7 +54,27 @@ module.exports = async(app, message) => {
     if (!message.content.startsWith(prefix)) { // If the user did not include prefix
         if (message.mentions.has(app.client.user.id) && !message.mentions.everyone && !message.reference) // ...and did not reply to & actually pinged the bot.
             return app.functions.msgHandler(message, { content: `n-nya! My prefix is \`${prefix}\`` }, 0, true);
-        else return;
+        else if (!message.mentions.has(app.client.user.id) && !message.mentions.everyone) {
+            var AFKpeeps = [];
+            var usersSettings = await app.DBs.userSettings.findAll({ where: {}, raw: true }); // WARNING: Do not expose this variable.
+            for (user in usersSettings) {
+                user = usersSettings[user];
+                if (user["AFKSettings"] != null) {
+                    var AFKSettings = JSON.parse(user["AFKSettings"]);
+                    if (message.mentions.has(user["userID"])) {
+                        AFKSettings["mentions"]++;
+                        AFKpeeps.push(`${app.client.users.cache.get(user["userID"]).tag} has been AFK since ${app.functions.TStoHR(new Date().getTime() - AFKSettings["timestamp"])} ago${((AFKSettings["reason"]) != "." ? ": " + AFKSettings["reason"]: "")}`);
+                        try { await app.DBs.userSettings.update({ AFKSettings: JSON.stringify(AFKSettings, null, "\t") }, { where: { userID: user["userID"] } }); } catch (Ex) {};
+                    };
+                };
+            };
+
+            if (AFKpeeps.length > 0)
+                app.functions.msgHandler(message, {
+                    content: `${AFKpeeps.join("\n") || "Something went wrong while fetching AFK data."}`
+                }, 0, true);
+            return;
+        } else return;
     };
 
     const args = message.content.slice(prefix.length).split(/ +/);

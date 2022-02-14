@@ -17,8 +17,7 @@ module.exports = {
         app.functions.msgHandler(message, {
             embeds: [{
                 title: app.config.system.emotes.wait + " **Loading**",
-                color: app.config.system.embedColors.blue,
-                footer: { text: app.config.system.footerText }
+                color: app.config.system.embedColors.blue
             }]
         }, 0, true, (async msg => {
             try {
@@ -26,7 +25,7 @@ module.exports = {
                 app.functions.msgHandler(msg, {
                     embeds: [{
                         author: { name: `Welcome, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) },
-                        title: `${app.config.system.emotes.information}It's all about you!**`,
+                        title: `${app.config.system.emotes.information} It's all about you!`,
                         color: app.config.system.embedColors.lime,
                         fields: [
                             { name: "Your User Information", value: "** **" },
@@ -35,8 +34,7 @@ module.exports = {
                             { name: "Your User Statistics", value: "** **" },
                             { name: "Total Commands Executed", value: userSettings.get("executedCommands").toString() || "0", inline: true },
                             { name: "Total Commands Errored", value: userSettings.get("errorCommands").toString() || "0", inline: true }
-                        ],
-                        footer: { text: app.config.system.footerText }
+                        ]
                     }],
                     components: [new MessageActionRow()
                         .addComponents(
@@ -61,10 +59,9 @@ module.exports = {
                 app.functions.msgHandler(msg, {
                     embeds: [{
                         author: { name: `Something happened, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
-                        title: `${app.config.system.emotes.information} It's all about you!**`,
+                        title: `${app.config.system.emotes.information} It's all about you!`,
                         color: app.config.system.embedColors.red,
-                        description: `Sadly, we ran into an error while handling your profile. Here's what we know: ${Ex.message}`,
-                        footer: { text: app.config.system.footerText }
+                        description: `Sadly, we ran into an error while handling your profile. Here's what we know: ${Ex.message}`
                     }]
                 })
             }
@@ -77,10 +74,9 @@ module.exports = {
             await i.update({
                 embeds: [{
                     author: { name: `Eep! Sorry about that, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
-                    title: `${app.config.system.emotes.warning} User Settings - ${title}**`,
+                    title: `${app.config.system.emotes.warning} User Settings - ${title}`,
                     color: app.config.system.embedColors.orange,
                     description: "Could not save your acknowledgement. Please try again.",
-                    footer: { text: app.config.system.footerText }
                 }],
                 components: []
             }).catch(err => {});
@@ -97,10 +93,9 @@ module.exports = {
                     await app.functions.msgHandler(msg, {
                         embeds: [{
                             author: { name: `Change change change, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
-                            title: `${app.config.system.emotes.question} User Settings - Change Settings**`,
+                            title: `${app.config.system.emotes.question} User Settings - Change Settings`,
                             color: app.config.system.embedColors.purple,
-                            description: "Alright - from the dropdown - what do you wish to change?",
-                            footer: { text: app.config.system.footerText }
+                            description: "Alright - from the dropdown - what do you wish to change?"
                         }],
                         components: [new MessageActionRow()
                             .addComponents(
@@ -130,10 +125,9 @@ module.exports = {
                         await i.update({
                             embeds: [{
                                 author: { name: `At your request, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
-                                title: `${app.config.system.emotes.success} User Settings - ${type}**`,
+                                title: `${app.config.system.emotes.success} User Settings - ${type}`,
                                 color: app.config.system.embedColors.lime,
                                 description: `Here's what just happened: You successfully ${((i.customId === "optout") ? "dis" : "en")}abled analytics.`,
-                                footer: { text: app.config.system.footerText }
                             }],
                             components: []
                         });
@@ -148,10 +142,9 @@ module.exports = {
                             embeds: [{
                                 author: { name: `We're sad to see you go, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
 
-                                title: `${app.config.system.emotes.success} User Settings - Delete Account**`,
+                                title: `${app.config.system.emotes.success} User Settings - Delete Account`,
                                 color: app.config.system.embedColors.lime,
                                 description: "Here's what just happened: You successfully deleted your account.",
-                                footer: { text: app.config.system.footerText }
                             }],
                             components: []
                         });
@@ -186,10 +179,9 @@ module.exports = {
                             await app.functions.msgHandler(msg, {
                                 embeds: [{
                                     author: { name: `Change change change, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
-                                    title: `${app.config.system.emotes.question} User Settings - Change Language**`,
+                                    title: `${app.config.system.emotes.question} User Settings - Change Language`,
                                     color: app.config.system.embedColors.purple,
-                                    description: "Neat, choose from the dropdown your new language!",
-                                    footer: { text: app.config.system.footerText }
+                                    description: "Neat, choose from the dropdown your new language!"
                                 }],
                                 components: [new MessageActionRow()
                                     .addComponents(
@@ -211,10 +203,9 @@ module.exports = {
                             await app.functions.msgHandler(msg, {
                                 embeds: [{
                                     author: { name: `Change change change, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
-                                    title: `${app.config.system.emotes.question} User Settings - Change Prefix**`,
+                                    title: `${app.config.system.emotes.question} User Settings - Change Prefix`,
                                     color: app.config.system.embedColors.purple,
-                                    description: "Great! What should that new prefix be?\n*NOTE: If you enter a space, it will only take the first part before the space). Example: `a prefix` -> `a`*",
-                                    footer: { text: app.config.system.footerText }
+                                    description: "Great! What should that new prefix be?\n*NOTE: If you enter a space, it will only take the first part before the space). Example: `a prefix` -> `a`*"
                                 }],
                                 components: []
                             }, 1, true, (async menumsg => {
@@ -253,10 +244,9 @@ module.exports = {
                                     embeds: [{
                                         author: { name: `Whoop whoop, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
 
-                                        title: `${app.config.system.emotes.success} User Settings - Change Language**`,
+                                        title: `${app.config.system.emotes.success} User Settings - Change Language`,
                                         color: app.config.system.embedColors.lime,
-                                        description: `Here's what just happened: You successfully changed your language to \`${newLang}\`.`,
-                                        footer: { text: app.config.system.footerText }
+                                        description: `Here's what just happened: You successfully changed your language to \`${newLang}\`.`
                                     }],
                                     components: []
                                 });
@@ -293,10 +283,9 @@ module.exports = {
                             embeds: [{
                                 author: { name: `Whoop whoop, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
 
-                                title: `${app.config.system.emotes.success} User Settings - Change Prefix**`,
+                                title: `${app.config.system.emotes.success} User Settings - Change Prefix`,
                                 color: app.config.system.embedColors.lime,
-                                description: `Here's what just happened: You successfully changed your prefix to \`${newPrefix}\`.`,
-                                footer: { text: app.config.system.footerText }
+                                description: `Here's what just happened: You successfully changed your prefix to \`${newPrefix}\`.`
                             }],
                             components: []
                         }, 1, true);
