@@ -94,73 +94,109 @@ class BootLoader {
                         storage: './app/cfg/app.sqlite',
                     });
 
-                    // app.client.invites = app.db.define('invite', {
-                    //     discordUser: Sequelize.STRING,
-                    //     inviter: Sequelize.STRING,
-                    //     invites: Sequelize.NUMBER,
-                    //     guildID: Sequelize.STRING
-                    // });
-                    // app.client.invites.sync();
-
-                    app.DBs.userSettings = app.db.define('userSettings', {
-                        userID: {
-                            type: Sequelize.STRING,
-                            unique: true,
-                            primaryKey: true
-                        },
-                        prefix: {
-                            type: Sequelize.STRING,
-                            defaultValue: "t/",
-                            allowNull: false
-                        },
-                        language: {
-                            type: Sequelize.STRING,
-                            defaultValue: "English",
-                            allowNull: false
-                        },
-                        acceptedEULA: Sequelize.BOOLEAN,
-                        executedCommands: {
-                            type: Sequelize.NUMBER,
-                            defaultValue: 0,
-                            allowNull: false
-                        },
-                        errorCommands: {
-                            type: Sequelize.NUMBER,
-                            defaultValue: 0,
-                            allowNull: false
-                        },
-                        optedOut: {
-                            type: Sequelize.BOOLEAN,
-                            defaultValue: 0,
-                            allowNull: false
-                        }
-                    });
-                    app.DBs.userSettings.sync();
-
-                    app.DBs.serverSettings = app.db.define('serverSettings', {
-                        serverID: { // The executing channel
-                            type: Sequelize.STRING,
-                            unique: true,
-                            primaryKey: true
-                        }, // Message Update/Deletes
-                        loggingMessageChannel: {
-                            type: Sequelize.STRING,
-                            defaultValue: null,
-                            allowNull: true
-                        }, // Member Joins/Updates/Leaves
-                        loggingMemberChannel: {
-                            type: Sequelize.STRING,
-                            defaultValue: null,
-                            allowNull: true
-                        }, // Role Adds/Updates/Deletes, Emoji Adds/Updates/Deletes, Channel Adds/Updates/Deletes
-                        loggingGuildChannel: {
-                            type: Sequelize.STRING,
-                            defaultValue: null,
-                            allowNull: true
-                        }
-                    });
-                    app.DBs.serverSettings.sync();
-
+                    app.DBs = {
+                        // invites: app.db.define('invites', {
+                        //     discordUser: Sequelize.STRING,
+                        //     inviter: Sequelize.STRING,
+                        //     invites: Sequelize.NUMBER,
+                        //     guildID: Sequelize.STRING
+                        // }),
+                        userSettings: app.db.define('userSettings', {
+                            userID: { // The executing user
+                                type: Sequelize.STRING,
+                                unique: true,
+                                primaryKey: true
+                            },
+                            prefix: { // The user's desired command prefix
+                                type: Sequelize.STRING,
+                                defaultValue: "t/",
+                                allowNull: false
+                            },
+                            language: { // The user's desired languager
+                                type: Sequelize.STRING,
+                                defaultValue: "English",
+                                allowNull: false
+                            },
+                            acceptedEULA: Sequelize.BOOLEAN, // DID THE USER ACCEPT THE EOA?!
+                            executedCommands: { // The user's count of executed commands (will be -1 if optedOut)
+                                type: Sequelize.NUMBER,
+                                defaultValue: 0,
+                                allowNull: false
+                            },
+                            errorCommands: { // The user's count of errored commands (will be -1 if optedOut)
+                                type: Sequelize.NUMBER,
+                                defaultValue: 0,
+                                allowNull: false
+                            },
+                            optedOut: { // Did the user opt-out of analytics?
+                                type: Sequelize.BOOLEAN,
+                                defaultValue: 0,
+                                allowNull: false
+                            },
+                            AFKSettings: {
+                                type: Sequelize.STRING,
+                                defaultValue: null,
+                                allowNull: true
+                            }
+                        }),
+                        serverSettings: app.db.define('serverSettings', {
+                            serverID: { // The executing server
+                                type: Sequelize.STRING,
+                                unique: true,
+                                primaryKey: true
+                            },
+                            loggingMessageChannel: { // Message Update/Deletes
+                                type: Sequelize.STRING,
+                                defaultValue: null,
+                                allowNull: true
+                            },
+                            loggingMemberChannel: { // Member Joins/Updates/Leaves
+                                type: Sequelize.STRING,
+                                defaultValue: null,
+                                allowNull: true
+                            },
+                            loggingGuildChannel: { // Role Adds/Updates/Deletes, Emoji Adds/Updates/Deletes, Channel Adds/Updates/Deletes
+                                type: Sequelize.STRING,
+                                defaultValue: null,
+                                allowNull: true
+                            },
+                            verification: { // Tells the verification system where to accept verification and what role to give
+                                type: Sequelize.STRING,
+                                defaultValue: null,
+                                allowNull: true
+                            },
+                            reactionRoles: { // Reaction Roles :D
+                                type: Sequelize.STRING,
+                                defaultValue: null,
+                                allowNull: true
+                            }
+                        }),
+                        verification: app.db.define('verification', {
+                            serverID: { // The executing server
+                                type: Sequelize.STRING,
+                                primaryKey: true
+                            },
+                            userID: { // The executing user
+                                type: Sequelize.STRING,
+                                defaultValue: null,
+                                allowNull: true
+                            },
+                            messageID: { // Allows us to edit the same message (if in a server)
+                                type: Sequelize.STRING,
+                                defaultValue: null,
+                                allowNull: true
+                            },
+                            userCode: { // The code generated
+                                type: Sequelize.STRING,
+                                unique: true,
+                                allowNull: false
+                            },
+                        })
+                    };
+                    Object.keys(app.DBs).forEach(db => {
+                        app.logger.debug("DB", "Syncing database table: " + db);
+                        app.DBs[db].sync();
+                    }); // Sync go brrr (Make sure the tables and stuff are created)
                 } catch (error) {
                     err = error;
                 } finally {
@@ -240,7 +276,7 @@ class BootLoader {
                 var endTime = new Date();
                 var elapsedMS = (endTime - startTime) / 1000;
                 if (err === false) {
-                    if (!hideLoadingText) app.logger.success("SYS", `Loaded & enabled ${varSimpleName}${((varType == "dependency") ? ((app.modules[varSimpleName].version) ? " v" + app.modules[varSimpleName].version : "") : "")} in ${elapsedMS}ms.`);
+                    if (!hideLoadingText) app.logger.success("SYS", `Loaded & enabled ${varSimpleName} in ${elapsedMS}ms.`);
                     results["success"].push(varSimpleName);
                 } else {
                     results["fail"].push(varSimpleName);

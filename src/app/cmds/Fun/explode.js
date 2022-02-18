@@ -1,6 +1,6 @@
 module.exports = {
-    name: "cuddle",
-    description: "Get close and show even more wholesomeness!",
+    name: "explode",
+    description: "MAKE THAT THING GO KABOOM!",
     guildOnly: false,
     authorizedGuilds: [],
     hidden: false,
@@ -11,11 +11,11 @@ module.exports = {
     execute: async(app, message, args) => {
         var target = message.mentions.users.first() || args[0],
             sender = message.author;
-        if (!target) return app.functions.msgHandler(message, { content: "You need to tag someone to cuddle!" }, 0, true);
-        else if (target == sender) return app.functions.msgHandler(message, { content: "There there, here's a personal cuddle. :)" }, 0, true);
+        if (!target) return app.functions.msgHandler(message, { content: "You need to add something to explode!!" }, 0, true);
+        else if (target == sender) return app.functions.msgHandler(message, { content: "Why would you want to send a bomb to yourself???" }, 0, true);
 
         var img = "error";
-        const res = await app.modules["node-fetch"](app.config.system.imgAPI + "cuddle");
+        const res = await app.modules["node-fetch"](app.config.system.imgAPI + "explosion");
 
         if (res.status != 200) {
             // In the future, we'll use a "fallback" instance
@@ -31,8 +31,12 @@ module.exports = {
         };
         return app.functions.msgHandler(message, {
             embeds: [{
-                color: app.config.system.embedColors.lime,
-                description: `**${sender}** cuddles **${target}**!`,
+                author: { name: `Bomb sent by ${sender.tag}`, icon_url: sender.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) },
+                color: app.config.system.embedColors.blue,
+                fields: [
+                    { name: "BOOM!", value: `${target} has been kaboom'd!` },
+                    { name: "But, uh...", value: "That explosion made a huge mess..." }
+                ],
                 image: { url: img }
             }]
         });
