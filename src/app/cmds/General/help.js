@@ -32,8 +32,7 @@ module.exports = {
                     title: `${app.config.system.emotes.information} ${app.name} Help`,
                     color: app.config.system.embedColors.blue,
                     description: ((temp) ? "The command or category '" + temp + "' is invalid." : `Yeaaah we got it! (Help! Help!)`),
-                    fields: fields,
-                    footer: { text: app.config.system.footerText }
+                    fields: fields
                 }]
             }, 0, true);
         };
@@ -47,7 +46,7 @@ module.exports = {
                 if (category == categoryName && app.functions.hasPermissions(message, cmd) && !cmd.hidden)
                     commands.push("`" + cmd.name + "`");
             });
-            if (commands.length < 1) { return app.functions.missingPerms("view help on " + categoryName, command); };
+            if (commands.length < 1) { return app.functions.missingPerms(message, 0, "view help on " + categoryName, command); };
 
             fields.push({ name: categoryName, value: commands.join(", ") });
 
@@ -56,8 +55,7 @@ module.exports = {
                     title: `${app.config.system.emotes.information} ${app.name} Help`,
                     color: app.config.system.embedColors.pink,
                     description: `Showing commands for the '${categoryName}' category.`,
-                    fields: fields,
-                    footer: { text: app.config.system.footerText }
+                    fields: fields
                 }]
             }, 0, true);
         };
@@ -65,7 +63,7 @@ module.exports = {
         function commandHelp(commandName) {
             var command = app.commands.get(commandName) || app.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
-            if (!app.functions.hasPermissions(message, command)) { return app.functions.missingPerms("view help on " + commandName, command); };
+            if (!app.functions.hasPermissions(message, command)) { return app.functions.missingPerms(message, 0, "view help on " + commandName, command); };
             var fields = [
                 { name: "Category", value: command.category || "Uncategorized", inline: true },
                 { name: "Server Only?", value: (command.guildOnly ? "Yes" : "No"), inline: true },
@@ -82,8 +80,7 @@ module.exports = {
                     title: `${app.config.system.emotes.information} Help for ${commandName}`,
                     color: app.config.system.embedColors.lime,
                     description: command.description,
-                    fields: fields,
-                    footer: { text: app.config.system.footerText }
+                    fields: fields
                 }]
             }, 0, true);
 

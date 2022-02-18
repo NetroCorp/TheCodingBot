@@ -33,8 +33,7 @@ module.exports = {
             embeds: [{
                 color: app.config.system.embedColors.red,
                 description: `**${sender}** kisses **${target}**!`,
-                image: { url: img },
-                footer: app.config.system.footerText
+                image: { url: img }
             }]
         });
 

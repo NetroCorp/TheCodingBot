@@ -30,8 +30,7 @@ module.exports = {
                     color: app.config.system.embedColors.yellow,
                     fields: [
                         { name: `Are you sure you wish for me to ${type}?`, value: `To confirm, use the buttons.${((type == "Restart") ? "\n*This will not reload the main bot file.*" : "")}` }
-                    ],
-                    footer: { text: app.config.system.footerText }
+                    ]
                 }],
                 components: [row]
             }, 0, true, (msg => {
@@ -46,8 +45,7 @@ module.exports = {
                             embeds: [{
                                 title: `${app.config.system.emotes.wait} **${actionDoing}**`,
                                 color: app.config.system.embedColors.blue,
-                                description: `I'm ${((type == "Shutdown") ? "shutting down and will be gone in a moment." : "restarting! Be back soon!")}`,
-                                footer: { text: app.config.system.footerText }
+                                description: `I'm ${((type == "Shutdown") ? "shutting down and will be gone in a moment." : "restarting! Be back soon!")}`
                             }],
                             components: []
                         }, 1, true, (async() => {
@@ -66,8 +64,7 @@ module.exports = {
                             embeds: [{
                                 title: `${app.config.system.emotes.error} **${type}**`,
                                 color: app.config.system.embedColors.red,
-                                description: "Operation cancelled.",
-                                footer: { text: app.config.system.footerText }
+                                description: "Operation cancelled."
                             }],
                             components: []
                         });
@@ -82,8 +79,7 @@ module.exports = {
                             embeds: [{
                                 title: `${app.config.system.emotes.error} **${type}**`,
                                 color: app.config.system.embedColors.red,
-                                description: "Operation timed out.",
-                                footer: { text: app.config.system.footerText }
+                                description: "Operation timed out."
                             }],
                             components: []
                         }, 1, true);

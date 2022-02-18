@@ -18,8 +18,7 @@ module.exports = {
                     fields: [
                         { name: "API", value: app.client.ws.ping + "ms", inline: true },
                         { name: "Messages", value: ((msg.createdTimestamp - message.createdTimestamp) + "ms"), inline: true }
-                    ],
-                    footer: { text: app.config.system.footerText }
+                    ]
                 }]
             }, 1, true)
         }));

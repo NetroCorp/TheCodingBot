@@ -1,6 +1,6 @@
 module.exports = {
-    name: "cuddle",
-    description: "Get close and show even more wholesomeness!",
+    name: "pat",
+    description: "There, there! Wholesome pats for everyone!",
     guildOnly: false,
     authorizedGuilds: [],
     hidden: false,
@@ -11,11 +11,11 @@ module.exports = {
     execute: async(app, message, args) => {
         var target = message.mentions.users.first() || args[0],
             sender = message.author;
-        if (!target) return app.functions.msgHandler(message, { content: "You need to tag someone to cuddle!" }, 0, true);
-        else if (target == sender) return app.functions.msgHandler(message, { content: "There there, here's a personal cuddle. :)" }, 0, true);
+        if (!target) return app.functions.msgHandler(message, { content: "You need to tag someone to pat!" }, 0, true);
+        else if (target == sender) return app.functions.msgHandler(message, { content: "There there, here's a personal pat. :)" }, 0, true);
 
         var img = "error";
-        const res = await app.modules["node-fetch"](app.config.system.imgAPI + "cuddle");
+        const res = await app.modules["node-fetch"](app.config.system.imgAPI + "pat");
 
         if (res.status != 200) {
             // In the future, we'll use a "fallback" instance
@@ -31,8 +31,8 @@ module.exports = {
         };
         return app.functions.msgHandler(message, {
             embeds: [{
-                color: app.config.system.embedColors.lime,
-                description: `**${sender}** cuddles **${target}**!`,
+                color: app.config.system.embedColors.purple,
+                description: `**${sender}** pats **${target}**!`,
                 image: { url: img }
             }]
         });

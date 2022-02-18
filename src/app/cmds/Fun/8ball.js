@@ -15,8 +15,7 @@ module.exports = {
             embeds: [{
                 title: `${app.config.system.emotes.error} Error`,
                 color: app.config.system.embedColors.red,
-                description: "You need to ask a question!",
-                footer: { text: app.config.system.footerText + " | An error occurred." }
+                description: "You need to ask a question!"
             }]
         }, 0, true);
 
@@ -44,8 +43,7 @@ module.exports = {
                 fields: [
                     { name: "Question", value: question },
                     { name: "Answer", value: responsePick }
-                ],
-                footer: { text: app.config.system.footerText }
+                ]
             }]
         }, 0, true);
     }

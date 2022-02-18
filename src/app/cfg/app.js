@@ -36,6 +36,16 @@ const app = {
         }
     },
 
+    types: {
+        channels: {
+            GUILD_TEXT: "Text Channel",
+            GUILD_VOICE: "Voice Channel",
+            GUILD_CATEGORY: "Category",
+            GUILD_NEWS: "News Channel",
+            GUILD_STAGE_VOICE: "Stage Channel"
+        }
+    },
+
     functions: {
         sleep: function(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
@@ -123,6 +133,24 @@ const app = {
                 app.logger.warn("DB", `Server data for ${id} removed from database!`);
 
                 return serverSetting;
+            },
+
+            createVerification: async function(serverID, userID, messageID, codeGenerated) {
+                const verificationSetting = await app.DBs.verification.create({
+                    serverID: serverID,
+                    userID: userID,
+                    messageID: messageID,
+                    userCode: codeGenerated
+                });
+                app.logger.success("DB", `Verification started for ${userID} in ${serverID} with code ${codeGenerated}!`);
+
+                return verificationSetting;
+            },
+            deleteVerification: async function(serverID, userID) {
+                const verificationSetting = await app.DBs.verification.destroy({ where: { userID: userID, serverID: serverID } });
+                app.logger.warn("DB", `Verification data for ${userID} in ${serverID} removed from database!`);
+
+                return verificationSetting;
             }
         },
         downloadAttachments: async function(message, attachments) {
@@ -172,7 +200,7 @@ const app = {
                 command.permissions != "BOT_OWNER" && message.member.permissions.has(command.permissions))
         },
 
-        missingPerms: function(message, cantdo, command) {
+        missingPerms: function(message, edit, cantdo, command) { // 0 = Send, 1 = Edit
             var lackedPerms = [];
             if (command) {
                 for (var i = 0; i < command.permissions.length; i++) {
@@ -194,16 +222,27 @@ const app = {
                     title: `${app.config.system.emotes.error} **Missing Permissions**`,
                     color: app.config.system.embedColors.red,
                     description: `You're lacking ${lackedPerms} to ${cantdo}.\nSorry about that...`,
-                    footer: { text: app.config.system.footerText }
                 }]
-            }, 0, true);
+            }, edit, true);
         },
         msgHandler: async function(message, options, action = 0, doReply = false, callback = null) { // action: 0 = Send, 1 = Edit
+            if (options.embeds) {
+                if (options["author"] != null) {
+                    var author = options["author"];
+                    if (author.id)
+                        options.embeds[0]["author"] = { name: `Hello, ${author.tag}!`, icon_url: author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) };
+                    delete options["author"];
+                };
+                if (!options.embeds[0]["footer"]) options.embeds[0]["footer"] = { text: app.config.system.footerText }; // Install branding.exe
+            };
+
             if (action == 0) {
                 if (doReply) options["reply"] = { messageReference: message.id };
                 message.channel.send(options).then(msg => { if (callback != null) callback(msg); });
-            } else if (action == 1)
-                message.edit(options).then(msg => { if (callback != null) callback(msg); });
+            } else if (action == 1) {
+                if (message.edit) message.edit(options).then(msg => { if (callback != null) callback(msg); });
+                else if (message.update) message.update(options).then(msg => { if (callback != null) callback(msg); });
+            };
         },
 
         RemoveReactions: function(app, msg) {
@@ -212,8 +251,7 @@ const app = {
                 app.functions.msgHandler(msg, {
                     embeds: [{
                         color: app.config.system.embedColors.red,
-                        description: "Failed to remove all reactions! Will attempt to remove my reactions only...",
-                        footer: { text: app.config.system.footerText }
+                        description: "Failed to remove all reactions! Will attempt to remove my reactions only..."
                     }]
                 }, 0, true, (async m => {
                     var myID = app.client.user.id;
@@ -226,7 +264,6 @@ const app = {
                             embeds: [{
                                 color: app.config.system.embedColors.red,
                                 description: "Failed to remove my reactions! well, that's an F.",
-                                footer: { text: app.config.system.footerText }
                             }]
                         }, 1, true);
                         app.logger.error("DISCORD", "Could not remove my reactions due to " + err);
@@ -247,12 +284,12 @@ const app = {
                         description: `Command \`${((command.name) ? command.name : command)}\` was not found!`,
                         fields: [
                             { name: "Lost?", value: `You should check out the \`${userSettings.get("prefix")}help\`` }
-                        ],
-                        footer: { text: app.config.system.footerText }
+                        ]
                     }]
                 }
             else {
                 var msg = ((err.message && err.message != "") ? "js\n" + err.message : (err && err != "") ? err : "Unknown Error.");
+
                 data = {
                     embeds: [{
                         title: embedTitle,
@@ -261,16 +298,14 @@ const app = {
                         fields: [
                             { name: "Error Details", value: "```" + msg + "```" }
 
-                        ],
-                        footer: { text: app.config.system.footerText }
+                        ]
                     }]
                 };
                 if (type == "error" && err.stack) {
                     var stack = err.stack,
-                        maxLength = 2000,
+                        maxLength = 1020,
                         msg = "(continued)";
-                    if (stack.length > maxLength) stack = stack.match(new RegExp('.{1,' + (maxLength - msg.length) + '}', 'g'))[0] + msg;
-                    data.embeds[0].fields.push({ name: "Stacktrace", value: "```js\n" + err.stack + "```" });
+                    //                     data.embeds[0].fields.push({ name: "Stacktrace", value: "```js\n" + err.stack + "```" });
                     userSettings.update({ executedCommands: (userSettings.get('errorCommands') + 1) }, { where: { userID: message.author.id } });
                 };
             };
@@ -280,6 +315,25 @@ const app = {
             return;
         },
 
+        generateRandomCode: function(length, random = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") { // random could be set to "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"@#$%^&()-=+[{]}"
+            var code = "";
+            for (var i = 0; i < length; i++) { code += random.charAt(Math.floor(Math.random() * random.length)); };
+            return code;
+        },
+        getEmoji: function(app, emojiID, full = false) {
+            var emoji = app.client.emojis.cache.find(e => e.id === emojiID) || null;
+
+            var theEmoji = emoji;
+            if (emoji && full) {
+                theEmoji = "<";
+                if (emoji.animated)
+                    emoji += ":a";
+                theEmoji += ":" + emoji["name"] + ":" + emoji["id"] + ">";
+            };
+            return theEmoji || null;
+        },
+        getID: function(string) { return string.replace(/[<#@&!>]/g, ''); },
+        doesArrayStartsWith: function(string, array) { return array.findIndex((item) => { return item.startsWith(string); }, string) != -1; },
 
         clearCache: function(module) {
             if (module == null)
@@ -323,6 +377,16 @@ const app = {
                 if (arr[i] === value) arr.splice(i, 1);
                 else ++i;
             return arr;
+        },
+        getParameters: function(array, chars) {
+            if (typeof array != "object" || !array.length) return "gimme a array, not whatever that was!";
+            else if (typeof chars != "string" || !chars) return "What am I supposed to split?? Gimme a string!";
+            var parameters = [];
+            for (var i = 0; i < array.length; i++) {
+                var parameter = array[i].split(chars)[1];
+                if (parameter) parameters.push(parameter);
+            };
+            return parameters;
         },
         RPSSystem: function(app, action) {
             if (app.client == undefined) { return "RPS failed to attach to client! Create Discord Client first." } else if (app.config == undefined) { return "RPS failed to attach to client: Missing config data."; };
@@ -422,9 +486,9 @@ const app = {
         { name: "node-fetch", required: true },
         { name: "discord.js", required: true },
         { name: "sequelize", required: true },
-        { name: "os", required: true},
-        { name: "node-os-utils", required: true},
-        { name: "canvas", required: false }
+        { name: "http", required: false },
+        { name: "canvas", required: false },
+        { name: "os", required: true }
     ]
 }
 
