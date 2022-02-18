@@ -3,6 +3,7 @@
 	6/24/2021
 
 	Now open-source!
+
 	Can you believe it took Matt 4 years (as of 2022)
 	to open-source his bot projects?
 	Yeah, I know crazy. wait.. why am I talking third-person again?
@@ -17,8 +18,9 @@ async function bot(debug, lastMessageID = null) {
 
 
     // ========== PRE-BOOT
+    var startTime = new Date().getTime();
     if (debug) console.log("- PRE-BOOT");
-    if (debug) console.log(` -- App is starting as of ${new Date().toString()} -- `);
+    if (debug) console.log(` -- App is starting as of ${new Date(startTime).toString()} -- `);
 
     // Change directory
     try {
@@ -39,12 +41,14 @@ async function bot(debug, lastMessageID = null) {
     logger = new Log();
     logger.info("SYS", `Logging is now enabled!`);
 
+    await logger.warnAboutDebug(debug); // warn about debugging (if it applies)
 
     if (debug) console.log("-> Init: App");
     const app = require("./app/cfg/app.js");
     app.debugMode = debug;
     app.logger = logger;
     app.bootloader = bootloader;
+    app.startTime = startTime;
     app.botStart = (lastMessage) => bot(debug, lastMessage);
     if (lastMessageID != null) app.lastMessageID = lastMessageID;
     logger.info("SYS", `App core successfully loaded!`);
@@ -80,12 +84,13 @@ async function bot(debug, lastMessageID = null) {
                         log('X', 'SYS', err);
                     };
 
-                    var events = Object.keys(app.client._events)
-                    if (events)
+                    if (app.client._events) {
+                        var events = Object.keys(app.client._events)
                         for (var i = 0; i < events.length; i++) {
                             log("i", "SYS", "Unloading event " + events[i]);
                             await app.client.removeListener(events[i], () => {});
                         };
+                    };
 
                     app.client = null;
                 };
@@ -132,7 +137,8 @@ async function bot(debug, lastMessageID = null) {
         }, 500);
 
 
-    }
+    };
+
     process.exitHandler = (options, exitCode) => exitHandler(options, exitCode);
 
     // Kinda dumb how I had to shove it into the bot function but it's whatever.
