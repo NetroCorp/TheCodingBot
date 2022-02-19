@@ -89,8 +89,7 @@ module.exports = async(app, message) => {
     var command = app.commands.get(commandName) || app.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
     if (!command) return app.functions.ErrorHandler(app, userSettings, message, commandName, new Error("Command not found."), "warning");
 
-    if (!args ||
-        args && args.slice(0))
+    if (!args)
         app.logger.info("DISCORD", `[MESSAGE] ${message.author.id} running ${commandName}`);
     else
         app.logger.info("DISCORD", `[MESSAGE] ${message.author.id} running ${commandName} with args: ${args.join(" ")}`);

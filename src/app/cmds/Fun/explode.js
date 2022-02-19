@@ -9,7 +9,7 @@ module.exports = {
     aliases: [],
     syntax: [],
     execute: async(app, message, args) => {
-        var target = message.mentions.users.first() || args.slice(0).join(" "),
+        var target = message.mentions.users.first() || args[0],
             sender = message.author;
         if (!target) return app.functions.msgHandler(message, { content: "You need to add something to explode!!" }, 0, true);
         else if (target == sender) return app.functions.msgHandler(message, { content: "Why would you want to send a bomb to yourself???" }, 0, true);

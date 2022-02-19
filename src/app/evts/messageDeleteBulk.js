@@ -53,7 +53,8 @@ module.exports = async(app, messages) => {
             description: `[Start Message link](https://discord.com/channels/${messages.first().guild.id}/${messages.first().channel.id}/${messages.first().id}) | [End Message link](https://discord.com/channels/${messages.last().guild.id}/${messages.last().channel.id}/${messages.last().id})`,
             fields: [
                 { name: "Deleted In", value: `${messages.first().channel.name} (${messages.first().channel.id}) | <#${messages.first().channel.id}>` }
-            ]
+            ],
+            footer: { text: app.config.system.footerText }
         }]
     };
 
@@ -66,13 +67,12 @@ module.exports = async(app, messages) => {
         await fs.appendFile(fileToExportTo, `// Message Bulk Delete Log\n// Time deleted: ${app.functions.convertTimestamp(new Date().getTime(), true, true)}\n\n${((msgData) ? ((msgData.length > 0) ? msgData.join("\n") : "No messages fetched. Bummer.") : "Something went wrong?")}`, 'utf8', (err) => { if (err) { console.error(err); } });
         await app.functions.sleep(1000);
 
-        await app.functions.msgHandler(logChannel, options);
-        await app.functions.msgHandler(logChannel, { files: [fileToExportTo] });
+        logChannel.send(options);
+        logChannel.send({ files: [fileToExportTo] }).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Message in bulk deleted but an error occurred when trying to send log! Error: ${err.message}`) });
     } catch (Ex) {
-        app.logger.error("DISCORD", "[MESSAGE] Delete Bulk errored! " + Ex.stack);
+        console.log(Ex);
         options["embeds"][0]["fields"].unshift({ name: "Contents (First-Last)", value: ((msgData) ? ((msgData.length > 0) ? msgData.join("\n") : "No messages fetched. Bummer.") : "Something went wrong?") });
-
-        await app.functions.msgHandler(logChannel, options);
+        logChannel.send(options).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Messages in bulk deleted but an error occurred when trying to send log! Error: ${err.message}`) });
     };
 
 
