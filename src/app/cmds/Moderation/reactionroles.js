@@ -62,9 +62,19 @@ module.exports = {
                     const filter = i => { return ["select"].includes(i.customId) && i.user.id === message.author.id };
                     const collector = message.channel.createMessageComponentCollector({ filter, time: 30000, errors: ["time"] });
 
+                    const cancelFilter = m => { if (m.user) return m.user.id === message.author.id };
+                    const cancelCollector = message.channel.createMessageCollector({ filter: cancelFilter, time: 30000, errors: ["time"] });
+                    cancelCollector.on("collect", async m => {
+                        if (!m.content == "cancel") return;
+                        collector.stop("cancelled by user");
+                        cancelCollector.stop("cancelled by user");
+                        m.react(app.config.system.emotes.success).catch(err => {});
+                    });
+
                     collector.on("collect", async i => {
                         if (i.customId === "select" && i.values.length > 0) {
                             for (var v in i.values) {
+                                cancelCollector.stop("done");
                                 collector.stop("done");
                                 var val = i.values[v];
                                 channelID = val;
@@ -207,7 +217,6 @@ module.exports = {
                                 roleMsg = splitMsg[1],
                                 roleID = app.functions.getID(splitMsg[2]) || splitMsg[2];
 
-                            console.log(emoji);
                             if (emoji.startsWith("<:") || emoji.startsWith(":")) {
                                 emoji = app.functions.getID(emoji);
                                 if (emoji.startsWith("a:")) emoji = emoji.split("a:")[1]
@@ -255,7 +264,7 @@ module.exports = {
                         color: app.config.system.embedColors.red,
                         description: `Sadly, we ran into an error while setting up your reaction roles. Here's what we know: ${Ex.message}`
                     }]
-                });;
+                });
             }
         }));
     }

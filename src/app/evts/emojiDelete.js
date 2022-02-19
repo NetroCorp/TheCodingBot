@@ -1,8 +1,8 @@
-module.exports = async(app, oldRole) => {
-    if (oldRole.partial) await oldRole.fetch().catch(err => {});
+module.exports = async(app, oldEmoji) => {
+    if (oldEmoji.partial) await oldEmoji.fetch().catch(err => {});
 
-    if (oldRole.guild == null) return; // Stop if we not in a guild? (Just safety)
-    var guild = oldRole.guild;
+    if (oldEmoji.guild == null) return; // Stop if we not in a guild? (Just safety)
+    var guild = oldEmoji.guild;
 
     var serverSettings = await app.DBs.serverSettings.findOne({ where: { serverID: guild.id } });
     if (!serverSettings) return;
@@ -13,31 +13,31 @@ module.exports = async(app, oldRole) => {
 
     var embed = {
         author: { name: `${guild.name} (${guild.id})`, icon_url: guild.iconURL({ format: 'png', dynamic: true, size: 1024 }) },
-        title: "Role deleted!",
+        title: `${(oldEmoji.animated) ? "Animated" : "Standard"} Emoji deleted!`,
         color: app.config.system.embedColors.dark_blue,
-        description: `There are now ${guild.roles.cache.size} roles.`,
+        description: `There are now ${guild.emojis.cache.size} emojis.`,
         fields: [
-            { name: "Name", value: oldRole.name, inline: true },
-            { name: "ID", value: oldRole.id, inline: true },
-            { name: "Deleted At", value: new Date().toString() }
+            { name: "Name", value: oldEmoji.name, inline: true },
+            { name: "ID", value: oldEmoji.id, inline: true },
+            { name: "Deleted At", value: new Date().toString() },
         ]
     };
 
     const fetchedLogs = await guild.fetchAuditLogs({
         limit: 6,
-        type: "ROLE_DELETE",
+        type: "EMOJI_DELETE",
     }).catch(err => {});
     if (fetchedLogs) {
 
-        //define roleLog
-        const roleLog = fetchedLogs.entries.find(entry => // To avoid false positives, we look for a timeframe of when the role was deleted.
+        //define emojiLog
+        const emojiLog = fetchedLogs.entries.find(entry => // To avoid false positives, we look for a timeframe of when the emoji was created.
             Date.now() - entry.createdTimestamp < 20000
         );
-        if (roleLog) {
-            const { executor } = roleLog;
+        if (emojiLog) {
+            const { executor } = emojiLog;
 
             embed.fields.push({ name: "Deleted by", value: `${executor.tag} (${executor.id})` })
-            embed["thumbnail"] = executor;
+            embed["thumbnail"] = { url: `https://cdn.discordapp.com/emojis/${oldEmoji.id}.${(oldEmoji.animated) ? "gif" : "png"}` };
         };
     }; // May be missing permissions to fetch audit log.
 
