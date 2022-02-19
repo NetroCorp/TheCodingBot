@@ -19,8 +19,9 @@ module.exports = async(app, oldRole) => {
         fields: [
             { name: "Name", value: oldRole.name, inline: true },
             { name: "ID", value: oldRole.id, inline: true },
-            { name: "Deleted At", value: new Date().toString() }
-        ]
+            { name: "Created At", value: new Date(oldRole.createdTimestamp).toString() }
+        ],
+        footer: { text: app.config.system.footerText }
     };
 
     const fetchedLogs = await guild.fetchAuditLogs({
@@ -30,16 +31,15 @@ module.exports = async(app, oldRole) => {
     if (fetchedLogs) {
 
         //define roleLog
-        const roleLog = fetchedLogs.entries.find(entry => // To avoid false positives, we look for a timeframe of when the role was deleted.
-            Date.now() - entry.createdTimestamp < 20000
+        const roleLog = fetchedLogs.entries.find(entry => // To avoid false positives, we look for a timeframe of when the role was created.
+            Date.now() - entry.createdTimestamp < 10000
         );
         if (roleLog) {
             const { executor } = roleLog;
 
             embed.fields.push({ name: "Deleted by", value: `${executor.tag} (${executor.id})` })
-            embed["thumbnail"] = executor;
         };
     }; // May be missing permissions to fetch audit log.
 
-    await app.functions.msgHandler(logChannel, { embeds: [embed] });
+    logChannel.send({ embeds: [embed] });
 };

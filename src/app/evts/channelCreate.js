@@ -20,7 +20,8 @@ module.exports = async(app, newChannel) => {
             { name: "Name", value: newChannel.name, inline: true },
             { name: "ID", value: newChannel.id, inline: true },
             { name: "Created At", value: new Date(newChannel.createdTimestamp).toString() }
-        ]
+        ],
+        footer: { text: app.config.system.footerText }
     };
 
     const fetchedLogs = await guild.fetchAuditLogs({
@@ -30,16 +31,15 @@ module.exports = async(app, newChannel) => {
     if (fetchedLogs) {
 
         //define channelLog
-        const channelLog = fetchedLogs.entries.find(entry => // To avoid false positives, we look for a timeframe of when the channel was created.
-            Date.now() - entry.createdTimestamp < 20000
+        const channelLog = fetchedLogs.entries.find(entry => // To avoid false positives, we look for a timeframe of when the role was created.
+            Date.now() - entry.createdTimestamp < 10000
         );
         if (channelLog) {
             const { executor } = channelLog;
 
-            embed.fields.push({ name: "Created by", value: `${executor.tag} (${executor.id})` });
-            embed["thumbnail"] = executor;
+            embed.fields.push({ name: "Created by", value: `${executor.tag} (${executor.id})` })
         };
     }; // May be missing permissions to fetch audit log.
 
-    await app.functions.msgHandler(logChannel, { embeds: [embed] });
+    logChannel.send({ embeds: [embed] });
 };

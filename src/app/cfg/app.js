@@ -46,69 +46,7 @@ const app = {
         }
     },
 
-    defaults: {
-        // -- HEY!!!
-        // -- WARNING :: THIS IS DANGEROUS | ONLY ACCESS DATA FROM MESSAGE. DO NOT ACCESS DATA FROM OTHER VARIABLES.
-        // -- It poses a major security risk and TMC Software is not responsible for that.
-
-        join: {
-            msg: "Hello and welcome %user% to the %server%!",
-            types: [
-                // SERVER INFO
-                { "%server%": { "desc": "Server Name (Cool Place)", "replaceWith": "guild|name" } },
-                { "%serverID%": { "desc": "Server ID (99999999999999999)", "replaceWith": "guild|id" } },
-
-                // USER INFO
-                { "%username%": { "desc": "Username (John Doe)", "replaceWith": "user|username" } },
-                { "%userID%": { "desc": "User ID (99999999999999999)", "replaceWith": "user|id" } },
-                { "%userdisc%": { "desc": "User Discriminator (#0001)", "replaceWith": "user|discriminator" } },
-                { "%usertag%": { "desc": "User Tag (John Doe#0001)", "replaceWith": "user|tag" } },
-                { "%user%": { "desc": "User Mention (@John Doe#0001)", "replaceWith": "user|toString()" } },
-
-                // INVITE INFO
-                { "%invitecode%": { "desc": "Invite Code (HdKeWtV)", "replaceWith": "Unknown" } },
-                { "%inviteuses%": { "desc": "Invite Uses (34)", "replaceWith": "" } },
-                { "%invitername%": { "desc": "Inviter Username (Jane Doe)", "replaceWith": "" } },
-                { "%inviterID%": { "desc": "Inviter ID (11111111111111111)", "replaceWith": "" } },
-                { "%inviterdisc%": { "desc": "Inviter Discriminator (#0002)", "replaceWith": "" } },
-                { "%invitertag%": { "desc": "Inviter Tag (Jane Doe#0001)", "replaceWith": "" } },
-                { "%inviter%": { "desc": "Inviter Mention (@Jane Doe#0002)", "replaceWith": "" } }
-            ]
-        },
-        leave: {
-            msg: "Aw... %user% just left the server...",
-            types: [
-                // SERVER INFO
-                { "%server%": { "desc": "Server Name (Cool Place)", "replaceWith": "guild|name" } },
-                { "%serverID%": { "desc": "Server ID (99999999999999999)", "replaceWith": "guild|id" } },
-
-                // USER INFO
-                { "%username%": { "desc": "Username (John Doe)", "replaceWith": "user|username" } },
-                { "%userID%": { "desc": "User ID (99999999999999999)", "replaceWith": "user|id" } },
-                { "%userdisc%": { "desc": "User Discriminator (#0001)", "replaceWith": "user|discriminator" } },
-                { "%usertag%": { "desc": "User Tag (John Doe#0001)", "replaceWith": "user|tag" } },
-                { "%user%": { "desc": "User Mention (@John Doe#0001)", "replaceWith": "user|toString()" } }
-            ]
-        }
-    },
-
     functions: {
-        getTypes: { // these functions were retardly dumb and overly complicated for no reason.
-            desc: (val) => {
-                var temp = [],
-                    defaults = app.defaults;
-                for (var i = 0; i < Object.keys(defaults[val]["types"]).length; i++) temp.push(Object.keys(defaults[val]["types"][i]) + " = " + defaults[val]["types"][i][Object.keys(defaults[val]["types"][i])]["desc"]);
-                return temp;
-            },
-
-            replaceWith: (val) => {
-                var temp = {},
-                    defaults = app.defaults;
-                for (var i = 0; i < Object.keys(defaults[val]["types"]).length; i++) temp[[Object.keys(defaults[val]["types"][i])[0]]] = defaults[val]["types"][i][Object.keys(defaults[val]["types"][i])[0]]["replaceWith"];
-                return temp;
-            }
-        },
-
         sleep: function(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         },
@@ -296,37 +234,14 @@ const app = {
                     delete options["author"];
                 };
                 if (!options.embeds[0]["footer"]) options.embeds[0]["footer"] = { text: app.config.system.footerText }; // Install branding.exe
-                if (options.embeds[0]["thumbnail"] != null) {
-                    var user = options.embeds[0]["thumbnail"];
-                    if (user["url"] == null)
-                        options.embeds[0]["thumbnail"] = { url: user.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) };
-
-                }
             };
 
-            var currTime = new Date().getTime();
-
             if (action == 0) {
-                if (doReply && message.channel) options["reply"] = { messageReference: message.id };
-
-                if (message.channel)
-                    message.channel.send(options).then(msg => {
-                        if (message.createdTimestamp)
-                            app.logger.debug("DISCORD", `[MESSAGE] Got message in ${(currTime - message.createdTimestamp) / 1000}ms. | Responded in ${(currTime - msg.createdTimestamp) / 1000}ms.`);
-                        if (callback != null) callback(msg);
-                    }).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Message failed to send! Error: ${err.message}`) });
-                else
-                    message.send(options).then(msg => { if (callback != null) callback(msg); }).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Message failed to send! Error: ${err.message}`) });
+                if (doReply) options["reply"] = { messageReference: message.id };
+                message.channel.send(options).then(msg => { if (callback != null) callback(msg); });
             } else if (action == 1) {
-                if (!message.channel) return; // Hate to break it, but you can't edit a channel as a message. 💀 (imagine that)
-                if (message.edit) message.edit(options).then(msg => {
-                    if (message.editedTimestamp) app.logger.debug("DISCORD", `[MESSAGE] Edited message in ${(currTime - msg.editedTimestamp) / 1000}ms.`);
-                    if (callback != null) callback(msg);
-                }).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Message failed to edit! Error: ${err.message}`) });
-                else if (message.update) message.update(options).then(msg => {
-                    if (message.editedTimestamp) app.logger.debug("DISCORD", `[MESSAGE] Edited message in ${(currTime - msg.editedTimestamp) / 1000}ms.`);
-                    if (callback != null) callback(msg);
-                }).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Message failed to update! Error: ${err.message}`) });
+                if (message.edit) message.edit(options).then(msg => { if (callback != null) callback(msg); });
+                else if (message.update) message.update(options).then(msg => { if (callback != null) callback(msg); });
             };
         },
 
@@ -396,7 +311,7 @@ const app = {
             };
 
             app.functions.msgHandler(message, data, 0, true);
-            app.logger.error("SYS", "[ERRHANDLER] " + (err.stack || err.message || err));
+            console.log(err);
             return;
         },
 
@@ -419,16 +334,6 @@ const app = {
         },
         getID: function(string) { return string.replace(/[<#@&!>]/g, ''); },
         doesArrayStartsWith: function(string, array) { return array.findIndex((item) => { return item.startsWith(string); }, string) != -1; },
-        arrayDifference: function(arr1, arr2) {
-            var a = [],
-                diff = [];
-            for (var i = 0; i < arr1.length; i++) { a[arr1[i]] = true; };
-            for (var i = 0; i < arr2.length; i++) {
-                if (a[arr2[i]]) { delete a[arr2[i]]; } else { a[arr2[i]] = true; };
-            };
-            for (var k in a) { diff.push(k); };
-            return diff;
-        },
 
         clearCache: function(module) {
             if (module == null)
@@ -437,7 +342,7 @@ const app = {
                 delete require.cache[module];
         },
         getFiles: async function(dir, filter = []) {
-            if (filter.length > 2) return "filter too powerfuuuuul [startsWith, endsWith] only please, or no filter.";
+            if (filter.length > 2) return "Fliter too powerfuuuuul [startsWith, endsWith] only please, or no fliter.";
 
             const { resolve } = app.modules["path"];
             const { readdir } = app.modules["fs"].promises;

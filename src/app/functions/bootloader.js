@@ -169,20 +169,6 @@ class BootLoader {
                                 type: Sequelize.STRING,
                                 defaultValue: null,
                                 allowNull: true
-                            },
-                            other: { // Other settings - like join images, leave channel, etc.
-                                type: Sequelize.STRING,
-                                defaultValue: JSON.stringify({
-                                    "join": {
-                                        "channel": null,
-                                        "msg": "test"
-                                    },
-                                    "leave": {
-                                        "channel": null,
-                                        "msg": "test!!"
-                                    }
-                                }, null, "\t"),
-                                allowNull: true
                             }
                         }),
                         verification: app.db.define('verification', {
@@ -206,7 +192,7 @@ class BootLoader {
                                 allowNull: false
                             },
                         })
-                    }; // damn this has gotten longer over the past month...
+                    };
                     Object.keys(app.DBs).forEach(db => {
                         app.logger.debug("DB", "Syncing database table: " + db);
                         app.DBs[db].sync();
