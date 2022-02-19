@@ -28,8 +28,7 @@ module.exports = async(app, message) => {
         fields: [
             { name: ((message.partial) ? "Warning!" : "Content"), value: ((message.partial) ? "***Message was sent before cached. The contents are lost.***" : message.content) || "** **" },
             { name: "Deleted In", value: `${message.channel.name} (${message.channel.id}) | <#${message.channel.id}>` }
-        ],
-        footer: { text: app.config.system.footerText }
+        ]
     };
 
     if (message.author) embs["author"] = { name: `Message by ${message.author.tag} (${ message.author.id}) deleted.`, icon_url: message.author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) };
@@ -41,13 +40,16 @@ module.exports = async(app, message) => {
         const deleteLog = fetchedLogs.entries.find(entry => // To avoid false positives, we sort by message author, message channel, and a timeframe of when the message was deleted.
             (message.author) ? entry.target.id === message.author.id : true &&
             entry.extra.channel.id === message.channel.id &&
-            Date.now() - entry.createdTimestamp < 10000
+            Date.now() - entry.createdTimestamp < 20000
         );
         if (deleteLog) { // If none, we may be missing permissions to fetch audit log.
             const { executor } = deleteLog;
             embs.fields.push({ name: "Deleted by", value: (executor) ? `${executor.tag} (${executor.id})` : "Unknown" });
+            embs["thumbnail"] = executor;
+
         };
-    };
+    }; // May be missing permissions to fetch audit log.
+
 
     if (message.attachments.size > 0) {
         embs.fields.push({
@@ -58,7 +60,7 @@ module.exports = async(app, message) => {
         });
     };
 
-    logChannel.send({
+    await app.functions.msgHandler(logChannel, {
         embeds: [embs]
-    }).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Message deleted but an error occurred when trying to send log! Error: ${err.message}`) });
+    });
 }

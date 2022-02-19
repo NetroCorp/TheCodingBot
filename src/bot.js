@@ -79,19 +79,21 @@ async function bot(debug, lastMessageID = null) {
                 if (app.client !== undefined) { // Close Discord
                     log("i", "SYS", "Logging out...");
                     try {
+
                         await app.client.destroy();
                     } catch (err) {
                         log('X', 'SYS', err);
                     };
 
-                    if (app.client._events) {
-                        var events = Object.keys(app.client._events)
-                        for (var i = 0; i < events.length; i++) {
-                            log("i", "SYS", "Unloading event " + events[i]);
-                            await app.client.removeListener(events[i], () => {});
+                    if (app.client) {
+                        if (app.client._events) {
+                            var events = Object.keys(app.client._events)
+                            for (var i = 0; i < events.length; i++) {
+                                log("i", "SYS", "Unloading event " + events[i]);
+                                await app.client.removeListener(events[i], () => {});
+                            };
                         };
                     };
-
                     app.client = null;
                 };
                 if (app.db !== undefined) { // Close DBs
@@ -199,7 +201,7 @@ async function bot(debug, lastMessageID = null) {
     const { Client, Intents } = app.modules["discord.js"];
     const client = new Client({
         partials: ["MESSAGE", "CHANNEL", "REACTION", "GUILD_MEMBER", "USER"],
-        intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_PRESENCES]
+        intents: 32767
     });
     app.client = client;
     if (debug) console.log(` > New Discord Client created.`);

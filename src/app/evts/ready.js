@@ -14,9 +14,7 @@ module.exports = (app) => {
     app.functions.RPSSystem(app, "init"); // Init RPSUpdater
 
     // Init inviteData
-    const Discord = app.modules["discord.js"];
-    const guildInvites = new Discord.Collection();
-    app.client.guildInvites = guildInvites;
+    app.client.guildInvites = new Map();;
 
     // Broadcast we up
     app.client.uptimeTimestamp = new Date().getTime();
@@ -47,29 +45,32 @@ module.exports = (app) => {
             var serverSettings = await app.DBs.serverSettings.findAll({ where: {}, raw: true }); // WARNING: Do not expose this variable.
             for (server in serverSettings) {
                 server = serverSettings[server];
+                var serverID = server["serverID"];
                 if (server["reactionRoles"] != null) {
                     var reactionRolesSettings = JSON.parse(server["reactionRoles"]);
 
                     for (var channelID in reactionRolesSettings) {
-                        channel = app.client.channels.cache.get(channelID) || client.channels.fetch(channelID, true, true) || null;
-                        if (!channel) {
-                            app.logger.warn("DISCORD", `Channel ${channel} cannot be resolved! Removing from database...`);
+                        var guild = app.client.guilds.cache.get(serverID) || null;
+                        if (!guild || !guild.id) continue;
+
+                        channel = app.client.channels.cache.get(channelID) || null;
+                        if (!channel || !channel.id) {
+                            app.logger.warn("DISCORD", `Channel ${channelID} cannot be resolved! Removing from database...`);
                             delete reactionRolesSettings[channelID];
-                            try { await app.DBs.serverSettings.update({ reactionRoles: JSON.stringify(reactionRolesSettings, null, "\t") }, { where: { serverID: guild.id } }); } catch (Ex) {};
-                            return;
+                            try { await app.DBs.serverSettings.update({ reactionRoles: JSON.stringify(reactionRolesSettings, null, "\t") }, { where: { serverID: serverID } }); } catch (Ex) {};
+                            continue;
                         };
-                        var messageID = reactionRolesSettings[channel.id]["message"],
-                            reactionRoles = reactionRolesSettings[channel.id]["reactionRoles"];
+                        var messageID = reactionRolesSettings[channelID]["message"],
+                            reactionRoles = reactionRolesSettings[channelID]["reactionRoles"];
 
                         message = channel.messages.cache.get(messageID) || channel.messages.fetch(messageID, true, true) || null;
                         if (!message) {
-                            app.logger.warn("DISCORD", `Message ${message} in ${channel} cannot be resolved! Removing from database...`);
+                            app.logger.warn("DISCORD", `Message ${message} in ${channelID} cannot be resolved! Removing from database...`);
                             delete reactionRolesSettings[channelID][messageID];
-                            try { await app.DBs.serverSettings.update({ reactionRoles: JSON.stringify(reactionRolesSettings, null, "\t") }, { where: { serverID: guild.id } }); } catch (Ex) {};
-                            return;
+                            try { await app.DBs.serverSettings.update({ reactionRoles: JSON.stringify(reactionRolesSettings, null, "\t") }, { where: { serverID: serverID } }); } catch (Ex) {};
+                            continue;
                         };
-
-                        app.logger.debug("DISCORD", `Loaded reaction roles for ${channel.guild.id}/${channelID}-${messageID}!`);
+                        app.logger.debug("DISCORD", `Loaded reaction roles for ${serverID}/${channelID}-${messageID}!`);
                     };
                 };
             };
@@ -80,26 +81,24 @@ module.exports = (app) => {
             var inviteCount = 0;
             await app.client.guilds.cache.forEach(async guild => {
                 if (!guild) return;
-                else if (guild.partial) await guild.fetch();
-                if (guild.vanityURLCode) invites.set(guild.vanityURLCode, await guild.fetchVanityData());
+                else if (guild.partial) await guild.fetch().cactch(err => {});
 
                 await guild.invites.fetch()
                     .then(async invites => {
-                        const codeUses = new Map();
-                        invites.each(inv => codeUses.set(inv.code, inv.uses));
+                        const firstInvites = await guild.invites.fetch();
 
-                        app.client.guildInvites.set(guild.id, invites);
-                        app.logger.debug("DISCORD", `Cached ${invites.size} invites from ${guild.id}.`);
+                        app.client.guildInvites.set(guild.id, new Map(firstInvites.map((invite) => [invite.code, invite.uses])));
+                        app.logger.debug("DISCORD", `Cached ${firstInvites.size} invites from ${guild.id}.`);
                         inviteCount += invites.size;
                     })
                     .catch(err => {
-                        if (err.code !== Discord.Constants.APIErrors.MISSING_PERMISSIONS) {
+                        if (err.code !== app.modules["discord.js"].Constants.APIErrors.MISSING_PERMISSIONS) {
                             app.logger.error("DISCORD", `Failed to cache invites for ${guild.name} (${guild.id}).`);
                         };
                     });
 
             });
-            setTimeout(async function() { app.logger.success("DISCORD", `Cached ${inviteCount} invites from ${app.client.guildInvites.size} servers.`); }, 200 * (app.client.guilds.cache.size / 2));
+            setTimeout(async function() { app.logger.success("DISCORD", `Cached ${inviteCount} invites from ${app.client.guildInvites.size} servers.`); }, (app.client.guilds.cache.size / 2) * 100);
 
         }, 2500); // Wait an addition 2.5 seconds
     }, 2000);
