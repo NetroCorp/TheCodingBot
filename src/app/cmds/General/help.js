@@ -42,7 +42,6 @@ module.exports = {
                 fields = [];
             app.commands.forEach(cmd => {
                 var category = cmd.category || "Uncategorized";
-                console.log(category)
                 if (category == categoryName && app.functions.hasPermissions(message, cmd) && !cmd.hidden)
                     commands.push("`" + cmd.name + "`");
             });

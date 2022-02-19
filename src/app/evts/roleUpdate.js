@@ -1,5 +1,5 @@
 module.exports = async(app, oldRole, newRole) => {
-    if (oldRole.partial) await newRole.fetch().catch(err => {});
+    if (oldRole.partial) await oldRole.fetch().catch(err => {});
     if (newRole.partial) await newRole.fetch().catch(err => {});
 
     if (oldRole == newRole) return; // how does this even work
@@ -18,8 +18,7 @@ module.exports = async(app, oldRole, newRole) => {
         author: { name: `${guild.name} (${guild.id})`, icon_url: guild.iconURL({ format: 'png', dynamic: true, size: 1024 }) },
         title: "Role updated!",
         color: app.config.system.embedColors.yellow,
-        fields: [],
-        footer: { text: app.config.system.footerText }
+        fields: []
     };
 
     if (oldRole.name !== newRole.name) // Check role name
@@ -67,15 +66,16 @@ module.exports = async(app, oldRole, newRole) => {
     if (fetchedLogs) {
 
         //define roleLog
-        const roleLog = fetchedLogs.entries.find(entry => // To avoid false positives, we look for a timeframe of when the role was created.
-            Date.now() - entry.createdTimestamp < 10000
+        const roleLog = fetchedLogs.entries.find(entry => // To avoid false positives, we look for a timeframe of when the role was updated.
+            Date.now() - entry.createdTimestamp < 20000
         );
         if (roleLog) {
             const { executor } = roleLog;
 
             embed.fields.push({ name: "Updated by", value: `${executor.tag} (${executor.id})` })
+            embed["thumbnail"] = executor;
         };
     }; // May be missing permissions to fetch audit log.
 
-    logChannel.send({ embeds: [embed] });
+    await app.functions.msgHandler(logChannel, { embeds: [embed] });
 };
