@@ -28,7 +28,7 @@ module.exports = async(app, message) => {
                         embeds: [{
                             title: `${app.config.system.emotes.success} **End-User Agreement**`,
                             color: app.config.system.embedColors.lime,
-                            description: "You successfully agreed to the EOA! Thank you and have fun!\n(You many need to rerun your command again.)",
+                            description: "You successfully agreed to the EOA! Thank you and have fun!\n(You may need to rerun your command again.)",
                             footer: { text: app.config.system.footerText }
                         }],
                         components: []
