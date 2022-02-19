@@ -1,5 +1,5 @@
 module.exports = async(app, oldChannel, newChannel) => {
-    if (oldChannel.partial) await newChannel.fetch().catch(err => {});
+    if (oldChannel.partial) await oldChannel.fetch().catch(err => {});
     if (newChannel.partial) await newChannel.fetch().catch(err => {});
 
     if (oldChannel == newChannel) return; // how does this even work
@@ -18,8 +18,7 @@ module.exports = async(app, oldChannel, newChannel) => {
         author: { name: `${guild.name} (${guild.id})`, icon_url: guild.iconURL({ format: 'png', dynamic: true, size: 1024 }) },
         title: `${app.types.channels[oldChannel.type] || "Unknown Channel Type"} updated!`,
         color: app.config.system.embedColors.yellow,
-        fields: [],
-        footer: { text: app.config.system.footerText }
+        fields: []
     };
 
     if (oldChannel.name !== newChannel.name) // Check channel name
@@ -49,15 +48,16 @@ module.exports = async(app, oldChannel, newChannel) => {
     if (fetchedLogs) {
 
         //define channelLog
-        const channelLog = fetchedLogs.entries.find(entry => // To avoid false positives, we look for a timeframe of when the channel was created.
-            Date.now() - entry.createdTimestamp < 10000
+        const channelLog = fetchedLogs.entries.find(entry => // To avoid false positives, we look for a timeframe of when the channel was updated.
+            Date.now() - entry.createdTimestamp < 20000
         );
         if (channelLog) {
             const { executor } = channelLog;
 
             embed.fields.push({ name: "Updated by", value: `${executor.tag} (${executor.id})` })
+            embed["thumbnail"] = executor;
         };
     }; // May be missing permissions to fetch audit log.
 
-    logChannel.send({ embeds: [embed] });
+    await app.functions.msgHandler(logChannel, { embeds: [embed] });
 };

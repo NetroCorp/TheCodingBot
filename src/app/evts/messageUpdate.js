@@ -14,11 +14,11 @@ module.exports = async(app, omessage, nmessage) => {
     var serverSettings = await app.DBs.serverSettings.findOne({ where: { serverID: omessage.guild.id } });
     if (!serverSettings) return;
 
-    var logChannelID = serverSettings.get("loggingGuildChannel");
+    var logChannelID = serverSettings.get("loggingMessageChannel");
     var logChannel = app.client.channels.cache.get(logChannelID);
     if (!logChannel) return; // Something's wrong here?
 
-    logChannel.send({
+    await app.functions.msgHandler(logChannel, {
         embeds: [{
             author: { name: `Message by ${omessage.author.tag} (${ omessage.author.id}) edited.`, icon_url: omessage.author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) },
             color: app.config.system.embedColors.yellow,
@@ -28,7 +28,6 @@ module.exports = async(app, omessage, nmessage) => {
                 { name: "After", value: nmessage.content },
                 { name: "Edited In", value: `${omessage.channel.name} (${omessage.channel.id}) | <#${omessage.channel.id}>` }
             ],
-            footer: { text: app.config.system.footerText }
         }]
-    }).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Message edited but an error occurred when trying to send log! Error: ${err.message}`) });
+    });
 }

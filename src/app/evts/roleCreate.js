@@ -20,8 +20,7 @@ module.exports = async(app, newRole) => {
             { name: "Name", value: newRole.name, inline: true },
             { name: "ID", value: newRole.id, inline: true },
             { name: "Created At", value: new Date(newRole.createdTimestamp).toString() }
-        ],
-        footer: { text: app.config.system.footerText }
+        ]
     };
 
     if (newRole.managed)
@@ -35,14 +34,15 @@ module.exports = async(app, newRole) => {
 
         //define roleLog
         const roleLog = fetchedLogs.entries.find(entry => // To avoid false positives, we look for a timeframe of when the role was created.
-            Date.now() - entry.createdTimestamp < 10000
+            Date.now() - entry.createdTimestamp < 20000
         );
         if (roleLog) {
             const { executor } = roleLog;
 
             embed.fields.push({ name: "Created by", value: `${executor.tag} (${executor.id})` })
+            embed["thumbnail"] = executor;
         };
     }; // May be missing permissions to fetch audit log.
 
-    logChannel.send({ embeds: [embed] });
+    await app.functions.msgHandler(logChannel, { embeds: [embed] });
 };
