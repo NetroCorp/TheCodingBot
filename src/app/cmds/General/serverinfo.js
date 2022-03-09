@@ -14,7 +14,6 @@ module.exports = {
                 splashData = null;
 
             guild.acronym = guild.name.match(/\b(\w)/g).join(""); // Cool thing
-            console.log(guild);
 
             var members = {
                 "total": guild.members.cache.size
