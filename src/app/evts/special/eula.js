@@ -26,7 +26,7 @@ module.exports = async(app, message) => {
                 if (affectedRows > 0) {
                     await i.update({
                         embeds: [{
-                            title: `${app.config.system.emotes.success} **End-User Agreement**`,
+                            title: `${app.config.system.emotes.success} **End-User License Agreement**`,
                             color: app.config.system.embedColors.lime,
                             description: "You successfully agreed to the EOA! Thank you and have fun!\n(You may need to rerun your command again.)",
                             footer: { text: app.config.system.footerText }
@@ -39,7 +39,7 @@ module.exports = async(app, message) => {
                 } else {
                     await i.update({
                         embeds: [{
-                            title: `${app.config.system.emotes.warning} **End-User Agreement**`,
+                            title: `${app.config.system.emotes.warning} **End-User License Agreement**`,
                             color: app.config.system.embedColors.orange,
                             description: "Could not save your acknowledgement. Please try again.",
                             footer: { text: app.config.system.footerText }
@@ -53,7 +53,7 @@ module.exports = async(app, message) => {
             } else if (i.customId === 'disagree') {
                 await i.update({
                     embeds: [{
-                        title: `${app.config.system.emotes.error} **End-User Agreement**`,
+                        title: `${app.config.system.emotes.error} **End-User License Agreement**`,
                         color: app.config.system.embedColors.red,
                         description: "You denied the EOA.",
                         footer: { text: app.config.system.footerText }
@@ -69,7 +69,7 @@ module.exports = async(app, message) => {
             if (collected.size < 1) {
                 app.functions.msgHandler(msg, {
                     embeds: [{
-                        title: `${app.config.system.emotes.error} **End-User Agreement**`,
+                        title: `${app.config.system.emotes.error} **End-User License Agreement**`,
                         color: app.config.system.embedColors.red,
                         description: "Operation timed out."
                     }],
@@ -81,11 +81,19 @@ module.exports = async(app, message) => {
     };
 
     var fields = require("./eula-data.json");
+    for (var i = 0; i < fields.length; i++) { // Placeholder moment
+        var text = fields[i]["value"];
+        if (text != null) {
+            text = text.replaceAll("PREFIX", "Pref");
+            fields[i]["value"] = text;
+        };
+    };
+
     await app.functions.msgHandler(message, {
         embeds: [{
-            title: `${app.config.system.emotes.question} **End-User Agreement Agreement**`,
+            title: `${app.config.system.emotes.question} **End-User License Agreement**`,
             color: app.config.system.embedColors.purple,
-            description: "Before continuing, you must agree to the bot's End-User Agreement.",
+            description: "Before continuing, you must agree to the bot's End-User License Agreement.",
             fields: fields
         }],
         components: [row]

@@ -80,27 +80,24 @@ module.exports = (app) => {
             app.logger.info("DISCORD", `Caching all invites of ${app.client.guilds.cache.size} servers...`);
             var inviteCount = 0;
             await app.client.guilds.cache.forEach(async guild => {
-                if (!guild) return;
-                else if (guild.partial) await guild.fetch().cactch(err => {});
+                try {
+                    if (!guild) return;
+                    if (guild.partial) await guild.fetch().catch(err => app.logger.error("DISCORD", "Something went wrong while fetching the guild " + guild.id + " | " + err.message));
 
-                await guild.invites.fetch()
-                    .then(async invites => {
-                        const firstInvites = await guild.invites.fetch();
-
-                        app.client.guildInvites.set(guild.id, new Map(firstInvites.map((invite) => [invite.code, invite.uses])));
-                        app.logger.debug("DISCORD", `Cached ${firstInvites.size} invites from ${guild.id}.`);
-                        inviteCount += invites.size;
-                    })
-                    .catch(err => {
-                        if (err.code !== app.modules["discord.js"].Constants.APIErrors.MISSING_PERMISSIONS) {
-                            app.logger.error("DISCORD", `Failed to cache invites for ${guild.name} (${guild.id}).`);
-                        };
-                    });
-
+                    const firstInvites = await guild.invites.fetch();
+                    app.client.guildInvites.set(guild.id, new Map(firstInvites.map((invite) => [invite.code, invite.uses])));
+                    app.logger.debug("DISCORD", `Cached ${firstInvites.size} invites from ${guild.id}.`);
+                    inviteCount += firstInvites.size;
+                } catch (err) {
+                    if (err.code !== app.modules["discord.js"].Constants.APIErrors.MISSING_PERMISSIONS) {
+                        app.logger.error("DISCORD", `Failed to cache invites for ${guild.name} (${guild.id}) | ${err.message}.`);
+                    };
+                    return;
+                };
             });
             setTimeout(async function() { app.logger.success("DISCORD", `Cached ${inviteCount} invites from ${app.client.guildInvites.size} servers.`); }, (app.client.guilds.cache.size / 2) * 100);
 
-        }, 2500); // Wait an addition 2.5 seconds
+        }, 3500); // Wait an addition 3.5 seconds
     }, 2000);
 
 };

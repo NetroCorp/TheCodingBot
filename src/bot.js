@@ -201,7 +201,7 @@ async function bot(debug, lastMessageID = null) {
     const { Client, Intents } = app.modules["discord.js"];
     const client = new Client({
         partials: ["MESSAGE", "CHANNEL", "REACTION", "GUILD_MEMBER", "USER"],
-        intents: 32767
+        intents: 32767 // btw, this forces discord.js to do ALL intents. not recommended.
     });
     app.client = client;
     if (debug) console.log(` > New Discord Client created.`);
