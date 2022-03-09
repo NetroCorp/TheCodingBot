@@ -5,7 +5,7 @@ module.exports = {
     authorizedGuilds: [],
     hidden: false,
     permissions: ["DEFAULT"],
-    cooldown: 2,
+    cooldown: 5,
     aliases: [],
     syntax: [" <inviteURLorCode>"],
     execute: async(app, message, args) => {
@@ -23,7 +23,6 @@ module.exports = {
                 var invite = await res.json(),
                     embed = {},
                     splashData = null;
-                console.log(invite);
                 if (invite["message"]) embed = {
                     description: `${app.config.system.emotes.error} **${invite["message"]}**`,
                     color: app.config.system.embedColors.red
@@ -48,11 +47,11 @@ module.exports = {
                     };
 
                     if (invite.guild.icon != null)
-                        embed.thumbnail = { url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}.${app.functions.isAnimated(invite.guild.icon) ? "gif ": "png"}?size=1024` };
+                        embed.thumbnail = { url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}.${app.functions.isAnimated(invite.guild.icon) ? "gif": "png"}?size=1024` };
                     if (invite.guild.splash != null)
-                        splashData = `https://cdn.discordapp.com/splashes/${invite.guild.id}/${invite.guild.splash}.${app.functions.isAnimated(invite.guild.splash) ? "gif ": "png"}?size=600`;
+                        splashData = `https://cdn.discordapp.com/splashes/${invite.guild.id}/${invite.guild.splash}.${app.functions.isAnimated(invite.guild.splash) ? "gif": "png"}?size=600`;
                     if (invite.guild.banner != null)
-                        embed["image"] = { url: `https://cdn.discordapp.com/banners/${invite.guild.id}/${invite.guild.banner}.${app.functions.isAnimated(invite.guild.banner) ? "gif ": "png"}?size=600` };
+                        embed["image"] = { url: `https://cdn.discordapp.com/banners/${invite.guild.id}/${invite.guild.banner}.${app.functions.isAnimated(invite.guild.banner) ? "gif": "png"}?size=600` };
                 };
 
                 var options = { embeds: [embed] };
