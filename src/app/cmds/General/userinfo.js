@@ -58,7 +58,7 @@ module.exports = {
                     embed.fields.push({ name: "Join Position", value: (getJoinPosition(userID) + 1).toString(), inline: true }, { name: "Joined", value: (app.functions.TStoHR(new Date().getTime() - new Date(serverUser.joinedTimestamp).getTime()) + " ago"), inline: true })
                 };
 
-                app.functions.msgHandler(message, { embeds: [embed] })
+                app.functions.msgHandler(message, { embeds: [embed] });
             } catch (Ex) {
                 return app.functions.msgHandler(message, {
                     embeds: [{
