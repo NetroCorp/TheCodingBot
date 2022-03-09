@@ -51,7 +51,7 @@ module.exports = {
                     if (invite.guild.splash != null)
                         splashData = `https://cdn.discordapp.com/splashes/${invite.guild.id}/${invite.guild.splash}.${app.functions.isAnimated(invite.guild.splash) ? "gif": "png"}?size=600`;
                     if (invite.guild.banner != null)
-                        embed["image"] = { url: `https://cdn.discordapp.com/banners/${invite.guild.id}/${invite.guild.banner}.${app.functions.isAnimated(invite.guild.banner) ? "gif": "png"}?size=600` };
+                        embed["image"] = { url: `https://cdn.discordapp.com/banners/${invite.guild.id}/${invite.guild.banner}.${app.functions.isAnimated(invite.guild.banner) ? "gif": "png"}?size=512` };
                 };
 
                 var options = { embeds: [embed] };
