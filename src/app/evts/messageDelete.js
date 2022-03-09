@@ -38,7 +38,7 @@ module.exports = async(app, message) => {
     }).catch(err => {});
     if (fetchedLogs) {
         const deleteLog = fetchedLogs.entries.find(entry => // To avoid false positives, we sort by message author, message channel, and a timeframe of when the message was deleted.
-            (message.author) ? entry.target.id === message.author.id : true &&
+            (message.author) ? entry.executor.id !== message.author.id : true &&
             entry.extra.channel.id === message.channel.id &&
             Date.now() - entry.createdTimestamp < 20000
         );

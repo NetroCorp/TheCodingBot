@@ -43,15 +43,23 @@ class BootLoader {
                     extra = app.extras[extra.extraName]; // redefine the extra, since now we actually in its instance now.
 
                     var missingDeps = extra.extraCfg.info.extraDeps.filter(function(x) { return !Object.keys(app.modules).includes(x); });
-                    if (missingDeps.length > 0)
-                        app.logger.error("SYS", `${extra.extraName} cannot be enabled due to missing package(s): ${missingDeps.join(", ")}`);
-                    else {
-                        app.logger.info("SYS", `Enabling Extra: ${extra.extraName}...`);
-                        extra.extraApp = new extra.extraApp;
-                        await extra.extraApp.init(app, extra.extraCfg.settings);
+                    if (missingDeps.length > 0) {
+                        var deps = [],
+                            temp = [];
+                        for (var mD = 0; mD < missingDeps.length; mD++) deps.push(Object.keys(missingDeps[mD]));
 
-                    }
+                        app.logger.warn("SYS", `${extra.extraName} cannot be enabled due to missing package(s): ${deps.join(", ")}; attempting to find and enable...`);
 
+                        for (var mD = 0; mD < missingDeps.length; mD++) {
+                            var name = (Object.keys(missingDeps[mD])[0]);
+                            temp.push({ name: name, required: missingDeps[name] })
+                        };
+                        await app.bootloader.loadHandler(app, "dependency", temp, false, false);
+
+                    };
+                    app.logger.info("SYS", `Enabling Extra: ${extra.extraName}...`);
+                    extra.extraApp = new extra.extraApp;
+                    await extra.extraApp.init(app, extra.extraCfg.settings);
                 };
             } catch (error) {
                 err = error;
@@ -133,7 +141,7 @@ class BootLoader {
                                 defaultValue: 0,
                                 allowNull: false
                             },
-                            AFKSettings: {
+                            AFKSettings: { // We'll be right back.
                                 type: Sequelize.STRING,
                                 defaultValue: null,
                                 allowNull: true
@@ -218,7 +226,11 @@ class BootLoader {
                         app.logger.success("SYS", `Loaded ${varType}.`);
                     } else {
 
-                        app.logger.error("SYS", `Could not load ${varType}.\n Error: ${err}`);
+                        app.logger.error("SYS", `Could not load ${varType}.\n\tError Details:\n\t${err}`);
+                        if (varType == "database") {
+                            if (!hideLoadingText) app.logger.error("SYS", `A required dependency is missing and we are not able to boot.`);
+                            process.exit(1);
+                        };
                     };
                 }
                 return;
@@ -295,7 +307,7 @@ class BootLoader {
                 } else {
                     results["fail"].push(varSimpleName);
 
-                    app.logger.error("SYS", `Could not load ${varType} ${varSimpleName}.\n Error: ${err}`);
+                    app.logger.error("SYS", `Could not load ${varType} ${varSimpleName}.\n\tError Details:\n\t${err}`);
                     console.log(err.stack);
                     if (varType == "dependency") {
                         if (varName["required"]) {
@@ -304,6 +316,9 @@ class BootLoader {
                         } else {
                             if (!hideLoadingText) app.logger.error("SYS", `A dependency is missing but not required; attempting to boot anyways.`);
                         };
+                    } else if (varType == "database") {
+                        if (!hideLoadingText) app.logger.error("SYS", `A required dependency is missing and we are not able to boot.`);
+                        process.exit(1);
                     };
                 };
 
@@ -315,4 +330,7 @@ class BootLoader {
 }
 
 
+module.exports = BootLoader;
+module.exports = BootLoader;
+module.exports = BootLoader;
 module.exports = BootLoader;

@@ -1,6 +1,6 @@
 module.exports = {
     name: "help",
-    description: "Get some nice help. From a command to all comands! Yeaaah we got it! (Help! Help!)",
+    description: "I need somebody (Help!) Not just anybody (Help!) From a command to all commands (Help!)",
     guildOnly: false,
     authorizedGuilds: [],
     hidden: false,

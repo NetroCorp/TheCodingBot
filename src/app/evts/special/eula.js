@@ -28,7 +28,7 @@ module.exports = async(app, message) => {
                         embeds: [{
                             title: `${app.config.system.emotes.success} **End-User Agreement**`,
                             color: app.config.system.embedColors.lime,
-                            description: "You successfully agreed to the EOA! Thank you and have fun!\n(You many need to rerun your command again.)",
+                            description: "You successfully agreed to the EOA! Thank you and have fun!\n(You may need to rerun your command again.)",
                             footer: { text: app.config.system.footerText }
                         }],
                         components: []
@@ -81,6 +81,14 @@ module.exports = async(app, message) => {
     };
 
     var fields = require("./eula-data.json");
+    for (var i = 0; i < fields.length; i++) { // Placeholder moment
+        var text = fields[i]["value"];
+        if (text != null) {
+            text = text.replaceAll("PREFIX", "Pref");
+            fields[i]["value"] = text;
+        };
+    };
+
     await app.functions.msgHandler(message, {
         embeds: [{
             title: `${app.config.system.emotes.question} **End-User Agreement Agreement**`,
