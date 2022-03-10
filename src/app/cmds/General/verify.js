@@ -20,7 +20,7 @@ module.exports = {
                 }],
                 author: message.author
             }, 0, true, (async msg => {
-                if (message.member.permissions.has("MANAGE_SERVER")) {
+                if (message.member.permissions.has("MANAGE_GUILD")) {
                     // Permission checks out, let's-a-go!
 
                     var parameters = await app.functions.getParameters(args.slice(0), "--");
@@ -31,7 +31,7 @@ module.exports = {
                         embeds: [{
                             title: `${app.config.system.emotes.error} Missing Parameters`,
                             color: app.config.system.embedColors.red,
-                            description: "You're missing `channel:#channelORID` and/or `role:<@&role>ORID`.\n" + ((parameters.length > 0) ? "Got parameters: `" + parameters.join("`, `") + "`" : "Got no parameters!")
+                            description: "You're missing `--channel:#channelORID` and/or `--role:<@&role>ORID`.\n" + ((parameters.length > 0) ? "Got parameters: `" + parameters.join("`, `") + "`" : "Got no parameters!")
                         }],
                         author: message.author
                     }, 1, true);

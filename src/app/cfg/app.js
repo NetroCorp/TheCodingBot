@@ -109,6 +109,10 @@ const app = {
             }
         },
 
+        isAnimated: function(str) {
+            return str.substring(0, 2) === 'a_';
+        },
+
         sleep: function(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         },
@@ -312,7 +316,7 @@ const app = {
                 if (message.channel)
                     message.channel.send(options).then(msg => {
                         if (message.createdTimestamp)
-                            app.logger.debug("DISCORD", `[MESSAGE] Got message in ${(currTime - message.createdTimestamp) / 1000}ms. | Responded in ${(currTime - msg.createdTimestamp) / 1000}ms.`);
+                            app.logger.debug("DISCORD", `[MESSAGE] Got message in ${(currTime - message.createdTimestamp)}ms. | Responded in ${(msg.createdTimestamp - currTime)}ms.`);
                         if (callback != null) callback(msg);
                     }).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Message failed to send! Error: ${err.message}`) });
                 else
@@ -320,11 +324,11 @@ const app = {
             } else if (action == 1) {
                 if (!message.channel) return; // Hate to break it, but you can't edit a channel as a message. 💀 (imagine that)
                 if (message.edit) message.edit(options).then(msg => {
-                    if (message.editedTimestamp) app.logger.debug("DISCORD", `[MESSAGE] Edited message in ${(currTime - msg.editedTimestamp) / 1000}ms.`);
+                    if (message.editedTimestamp) app.logger.debug("DISCORD", `[MESSAGE] Edited message in ${(msg.editedTimestamp - currTime)}ms.`);
                     if (callback != null) callback(msg);
                 }).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Message failed to edit! Error: ${err.message}`) });
                 else if (message.update) message.update(options).then(msg => {
-                    if (message.editedTimestamp) app.logger.debug("DISCORD", `[MESSAGE] Edited message in ${(currTime - msg.editedTimestamp) / 1000}ms.`);
+                    if (message.editedTimestamp) app.logger.debug("DISCORD", `[MESSAGE] Edited message in ${(msg.editedTimestamp - currTime)}ms.`);
                     if (callback != null) callback(msg);
                 }).catch(err => { app.logger.warn("DISCORD", `[MESSAGE] Message failed to update! Error: ${err.message}`) });
             };
@@ -581,7 +585,6 @@ const app = {
         { name: "node-fetch", required: true },
         { name: "discord.js", required: true },
         { name: "sequelize", required: true },
-        { name: "http", required: false },
         { name: "canvas", required: false },
         { name: "os", required: true }
     ]

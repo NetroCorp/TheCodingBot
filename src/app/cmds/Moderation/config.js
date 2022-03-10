@@ -4,7 +4,7 @@ module.exports = {
     guildOnly: true,
     authorizedGuilds: [],
     hidden: false,
-    permissions: ["MANAGE_SERVER", "MANAGE_ROLES", "MANAGE_MESSAGES"],
+    permissions: ["MANAGE_GUILD", "MANAGE_ROLES", "MANAGE_MESSAGES"],
     cooldown: 5,
     aliases: ["configuration"],
     syntax: [],
