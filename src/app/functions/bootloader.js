@@ -7,7 +7,6 @@
 	https://themattchannel.com
 */
 
-
 class BootLoader {
 
     printLogo = function() {
@@ -330,7 +329,4 @@ class BootLoader {
 }
 
 
-module.exports = BootLoader;
-module.exports = BootLoader;
-module.exports = BootLoader;
 module.exports = BootLoader;

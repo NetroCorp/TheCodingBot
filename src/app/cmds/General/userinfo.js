@@ -45,16 +45,13 @@ module.exports = {
 
                 if (message.guild) {
                     var serverUser = await message.guild.members.cache.get(userID) || await message.guild.members.fetch(userID, true);
-                    embed.fields.push({ name: '\u200b', value: '\u200b', inline: false });
                     if (serverUser.roles) {
                         var roles = serverUser.roles.cache.map(role => role).filter(role => role.id != message.guild.id).sort((a, b) => a.comparePositionTo(b)).map(role => role);
                         embed.fields.push({ name: `Roles (**${roles.length}**)`, value: roles.length > 0 ? roles.join(" ") : "No roles :(", inline: true })
                     };
                     if (serverUser.presence) embed.description = states[serverUser.presence.status];
-                    if (serverUser.nickname) {
+                    if (serverUser.nickname)
                         embed.fields.push({ name: `Nickname`, value: serverUser.nickname, inline: true });
-                        embed.fields.push({ name: '\u200b', value: '\u200b', inline: true });
-                    };
                     embed.fields.push({ name: "Join Position", value: (getJoinPosition(userID) + 1).toString(), inline: true }, { name: "Joined", value: (app.functions.TStoHR(new Date().getTime() - new Date(serverUser.joinedTimestamp).getTime()) + " ago"), inline: true })
                 };
 

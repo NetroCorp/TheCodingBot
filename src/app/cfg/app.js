@@ -109,6 +109,10 @@ const app = {
             }
         },
 
+        isAnimated: function(str) {
+            return str.substring(0, 2) === 'a_';
+        },
+
         sleep: function(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         },
