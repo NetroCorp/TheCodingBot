@@ -27,9 +27,9 @@ module.exports = {
                     { name: "Bot Memory Usage", value: (Math.round(process.memoryUsage().heapUsed / 1024 / 1024 * 100) / 100) + " MiB", inline: true },
                     { name: "Servers I'm In", value: app.client.guilds.cache.size + " total", inline: true },
                     { name: "Host System Information", value: "** **" },
-                    { name: "Node Version", value: `${process.version}`, inline: true },
-                    { name: "Node Uptime", value: app.functions.TStoHR(process.uptime() * 1000), inline: true },
-                    { name: "Node Execution Path", value: `${process.execPath}`, inline: true },
+                    { name: "NodeJS Version", value: `${process.version}`, inline: true },
+                    { name: "NodeJS Uptime", value: app.functions.TStoHR(process.uptime() * 1000), inline: true },
+                    { name: "NodeJS Execution Path", value: `${process.execPath}`, inline: true },
                     { name: "Process PID", value: `${process.pid}`, inline: true },
                     { name: "System Platform", value: `${process.platform}`, inline: true },
                     { name: ((process.platform == "linux") ? "Kernel Version" : "System Version"), value: os.version(), inline: true }
