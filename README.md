@@ -36,9 +36,7 @@ This guide will assume you've left `app` in `src` (the way it should be).
 
 | Version | Release Date |
 | ------- | ------------ |
-| 5.0.0   | ❓ N/A       |
-*TheCodingBot v5 is expected to release by 02/14/2022. This, however, is subject to change.*
-
+| 5.0.0   | 3/10/2022    |
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
