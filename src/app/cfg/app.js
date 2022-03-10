@@ -165,7 +165,7 @@ const app = {
             createUser: async function(id) {
                 const userSetting = await app.DBs.userSettings.create({
                     userID: id,
-                    prefix: "tB/",
+                    prefix: app.config.system.defaultPrefix,
                     language: "English",
                     acceptedEULA: false,
                     executedCommands: 0,
