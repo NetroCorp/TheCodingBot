@@ -116,7 +116,7 @@ class BootLoader {
                             },
                             prefix: { // The user's desired command prefix
                                 type: Sequelize.STRING,
-                                defaultValue: "t/",
+                                defaultValue: app.config.system.defaultPrefix,
                                 allowNull: false
                             },
                             language: { // The user's desired languager
@@ -182,11 +182,11 @@ class BootLoader {
                                 defaultValue: JSON.stringify({
                                     "join": {
                                         "channel": null,
-                                        "msg": "test"
+                                        "msg": app.defaults.join.msg
                                     },
                                     "leave": {
                                         "channel": null,
-                                        "msg": "test!!"
+                                        "msg": app.defaults.leave.msg
                                     }
                                 }, null, "\t"),
                                 allowNull: true
