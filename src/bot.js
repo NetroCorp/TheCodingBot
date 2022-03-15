@@ -14,44 +14,13 @@
 
 var logger;
 process.waitingForCleanup = false;
-async function bot(debug, lastMessageID = null) {
+async function bot(debug) {
 
 
     // ========== PRE-BOOT
     var startTime = new Date().getTime();
     if (debug) console.log("- PRE-BOOT");
     if (debug) console.log(` -- App is starting as of ${new Date(startTime).toString()} -- `);
-
-    // Change directory
-    try {
-        if (process.cwd().split("\\").slice(-1) != "src") // attempt to change into 'src'
-            process.chdir(process.cwd() + "/src");
-    } catch (Ex) {}; // Assume it's okay to continue.
-
-    // Do our require
-    if (debug) console.log("-> Init: Bootloader");
-    const BootLoader = require("./app/functions/bootloader.js");
-    const bootloader = new BootLoader();
-    await bootloader.printLogo(); // Print that healthy logo. Logo got back
-
-
-    if (debug) console.log("-> Init: Logger");
-    const Log = require("./app/functions/logger.js");
-    if (debug) console.log("-> Start: Logging");
-    logger = new Log();
-    logger.info("SYS", `Logging is now enabled!`);
-
-    await logger.warnAboutDebug(debug); // warn about debugging (if it applies)
-
-    if (debug) console.log("-> Init: App");
-    const app = require("./app/cfg/app.js");
-    app.debugMode = debug;
-    app.logger = logger;
-    app.bootloader = bootloader;
-    app.startTime = startTime;
-    app.botStart = (lastMessage) => bot(debug, lastMessage);
-    if (lastMessageID != null) app.lastMessageID = lastMessageID;
-    logger.info("SYS", `App core successfully loaded!`);
 
 
     async function exitHandler(options, exitCode) {
@@ -124,6 +93,18 @@ async function bot(debug, lastMessageID = null) {
             };
 
             process.waitingForCleanup = false;
+
+            if (options.restart) {
+                require("child_process")
+                    .spawn(
+                        process.argv.shift(),
+                        process.argv, {
+                            cwd: process.cwd(),
+                            detached: true,
+                            stdio: "inherit"
+                        }
+                    );
+            };
         };
 
         process.waitingForCleanupTM = setInterval(function() {
@@ -146,12 +127,6 @@ async function bot(debug, lastMessageID = null) {
     // Kinda dumb how I had to shove it into the bot function but it's whatever.
     process.stdin.resume(); // Let's not close immediately, thanks.
 
-    process.once('exit', exitHandler.bind(null, { cleanup: true, exit: true })); // Let's catch the app before it exits.
-    process.once('SIGINT', exitHandler.bind(null, { app: app, exit: true, cleanup: true })); // Let's catch CTRL+C.
-    // catches "kill pid" (for example: nodemon restart)
-    process.once('SIGUSR1', exitHandler.bind(null, { exit: true }));
-    process.once('SIGUSR2', exitHandler.bind(null, { exit: true }));
-
     process.on('uncaughtException', error => {
         const errreason = new Error(error.message);
         const errstack = ` Caused By:\n  ${error.stack}`;
@@ -171,6 +146,45 @@ async function bot(debug, lastMessageID = null) {
         if (logger) logger.info("SYS", msg);
         else console.log(`[i] [SYS] ${msg}`);
     }); // Catch all them nasty unhandledRejection errors :/
+
+
+
+    // Change directory
+    try {
+        if (process.cwd().split("\\").slice(-1) != "src") // attempt to change into 'src'
+            process.chdir(process.cwd() + "/src");
+    } catch (Ex) {}; // Assume it's okay to continue.
+
+    // Do our require
+    if (debug) console.log("-> Init: Bootloader");
+    const BootLoader = require("./app/functions/bootloader.js");
+    const bootloader = new BootLoader();
+    await bootloader.printLogo(); // Print that healthy logo. Logo got back
+
+
+    if (debug) console.log("-> Init: Logger");
+    const Log = require("./app/functions/logger.js");
+    if (debug) console.log("-> Start: Logging");
+    logger = new Log();
+    logger.info("SYS", `Logging is now enabled!`);
+
+    await logger.warnAboutDebug(debug); // warn about debugging (if it applies)
+
+    if (debug) console.log("-> Init: App");
+    const app = require("./app/cfg/app.js");
+    app.debugMode = debug;
+    app.logger = logger;
+    app.bootloader = bootloader;
+    app.startTime = startTime;
+    logger.info("SYS", `App core successfully loaded!`);
+
+    process.once('exit', exitHandler.bind(null, { cleanup: true, exit: true })); // Let's catch the app before it exits.
+    process.once('SIGINT', exitHandler.bind(null, { app: app, exit: true, cleanup: true })); // Let's catch CTRL+C.
+    process.once('SIGTERM', exitHandler.bind(null, { app: app, exit: true, cleanup: true }));
+    // catches "kill pid" (for example: nodemon restart)
+    process.once('SIGUSR1', exitHandler.bind(null, { exit: true, cleanup: true }));
+    process.once('SIGUSR2', exitHandler.bind(null, { exit: true, cleanup: true }));
+
 
     if (debug) console.log("-> Init: Dependencies");
     const dependencies = app["dependencies"];
@@ -198,13 +212,22 @@ async function bot(debug, lastMessageID = null) {
 
 
     if (debug) console.log("-> Init: Discord Client...");
-    const { Client, Intents } = app.modules["discord.js"];
+    const { Client } = app.modules["discord.js"];
     const client = new Client({
         partials: ["MESSAGE", "CHANNEL", "REACTION", "GUILD_MEMBER", "USER"],
         intents: 32767 // btw, this forces discord.js to do ALL intents. not recommended.
     });
     app.client = client;
     if (debug) console.log(` > New Discord Client created.`);
+
+
+    if (debug) console.log("-> Check: If Restarted...");
+    lastMessageID = null;
+    try { lastMessageID = await app.modules.fs.readFileSync(process.cwd() + "/cache/restart.tmp", "utf8"); } catch (Ex) {};
+    if (lastMessageID != null) app.lastMessageID = lastMessageID;
+    try { app.modules.fs.unlinkSync(process.cwd() + "/cache/restart.tmp"); } catch (Ex) {};
+
+    if (debug) console.log(` > Cheked If Restart completed.`);
 
 
     if (debug) console.log("-> Init: Extras");

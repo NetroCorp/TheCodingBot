@@ -37,6 +37,7 @@ This guide will assume you've left `app` in `src` (the way it should be).
 | Version | Release Date |
 | ------- | ------------ |
 | 5.0.0   | 3/10/2022    |
+| 5.0.1   | 3/15/2022    |
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
