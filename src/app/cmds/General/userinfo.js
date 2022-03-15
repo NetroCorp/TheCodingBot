@@ -29,7 +29,6 @@ module.exports = {
                 user.tag = `${user.username}#${user.discriminator}`; // Manually add this so it looks cool
 
                 var embed = {
-                    thumbnail: { url: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${app.functions.isAnimated(user.avatar) ? "gif": "png"}?size=1024` },
                     title: `${app.config.system.emotes.information} **${user.tag} ${(user.bot ? "*[BOT]*" : "")}**`,
                     color: (user["accent_color"]) ? user["accent_color"] : app.config.system.embedColors.blue,
                     fields: [
@@ -39,6 +38,12 @@ module.exports = {
                         { name: "User ID", value: user.id, inline: false },
                     ]
                 };
+
+                if (user.avatar != null)
+                    embed["thumbnail"] = { url: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${app.functions.isAnimated(user.avatar) ? "gif": "png"}?size=1024` };
+                else
+                    embed["thumbnail"] = { url: `https://cdn.discordapp.com/embed/avatars/${user.discriminator % 5}.png?size=1024` };
+
 
                 if (user.banner != null)
                     embed["image"] = { url: `https://cdn.discordapp.com/banners/${user.id}/${user.banner}.${app.functions.isAnimated(user.banner) ? "gif": "png"}?size=600` };

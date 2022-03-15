@@ -1,4 +1,6 @@
 module.exports = (app) => {
+    if (!app.client) return app.logger.error("SYS", "CLIENT IS NOT READY YET!!");
+
     app.config["tokendata"] = undefined; // This makes it so no crazy people can find the token (tho, the only way is through eval and uh.. you should keep that to yourself..)
     // app.client.connections.success = true;
     // clearInterval(client.connections.updateTime);
@@ -41,7 +43,7 @@ module.exports = (app) => {
 
         setTimeout(async function() {
             // Reaction Roles
-            app.logger.info("DISCORD", `Initializing Reaction Roles...`);
+            if (app.client.isReady()) app.logger.info("DISCORD", `Initializing Reaction Roles...`);
             var serverSettings = await app.DBs.serverSettings.findAll({ where: {}, raw: true }); // WARNING: Do not expose this variable.
             for (server in serverSettings) {
                 server = serverSettings[server];
@@ -78,25 +80,40 @@ module.exports = (app) => {
 
             // Cache invites
             app.logger.info("DISCORD", `Caching all invites of ${app.client.guilds.cache.size} servers...`);
-            var inviteCount = 0;
-            await app.client.guilds.cache.forEach(async guild => {
-                try {
-                    if (!guild) return;
-                    if (guild.partial) await guild.fetch().catch(err => app.logger.error("DISCORD", "Something went wrong while fetching the guild " + guild.id + " | " + err.message));
 
+            var inviteCount = 0,
+                serverCount = 0,
+                done = false,
+                guilds = Array.from(app.client.guilds.cache.keys());
+
+            for (var i = 0; i < guilds.length; i++) {
+                const guild = app.client.guilds.cache.get(guilds[i]);
+
+                // check guild existence, etc.
+                if (!guild) break;
+                if (guild.partial) await guild.fetch().catch(err => app.logger.error("DISCORD", "Something went wrong while fetching the guild " + guild.id + " | " + err.message));
+
+                if (i != 0 && (i % 15) == 0)
+                    await app.functions.sleep(1500);
+
+                // try to get invites
+                try {
                     const firstInvites = await guild.invites.fetch();
                     app.client.guildInvites.set(guild.id, new Map(firstInvites.map((invite) => [invite.code, invite.uses])));
                     app.logger.debug("DISCORD", `Cached ${firstInvites.size} invites from ${guild.id}.`);
                     inviteCount += firstInvites.size;
+                    serverCount = (serverCount + 1);
                 } catch (err) {
                     if (err.code !== app.modules["discord.js"].Constants.APIErrors.MISSING_PERMISSIONS) {
                         app.logger.error("DISCORD", `Failed to cache invites for ${guild.name} (${guild.id}) | ${err.message}.`);
                     };
-                    return;
+                } finally {
+                    if ((i + 1) === guilds.length)
+                        done = true;
                 };
-            });
-            setTimeout(async function() { app.logger.success("DISCORD", `Cached ${inviteCount} invites from ${app.client.guildInvites.size} servers.`); }, (app.client.guilds.cache.size / 2) * 100);
-
+            };
+            while (!done) await app.functions.sleep(1500);
+            app.logger.success("DISCORD", `Cached ${inviteCount} invites from ${((serverCount == app.client.guilds.cache.size) ? serverCount : serverCount + "/" + app.client.guilds.cache.size)} servers.`);
         }, 3500); // Wait an addition 3.5 seconds
     }, 2000);
 

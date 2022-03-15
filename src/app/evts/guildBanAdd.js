@@ -33,7 +33,7 @@ module.exports = async(app, ban) => {
 
         //define banLog
         const banLog = fetchedLogs.entries.find(entry => { // To avoid false positives, we look for a timeframe of when the ban was created, and if the user banned is the correct entry.
-            Date.now() - entry.createdTimestamp < 20000
+            Date.now() - entry.createdTimestamp < 5000
         });
         if (banLog) {
             const { executor } = banLog;

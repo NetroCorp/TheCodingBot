@@ -30,7 +30,7 @@ module.exports = async(app, oldChannel) => {
     if (fetchedLogs) {
         //define channelLog
         const channelLog = fetchedLogs.entries.find(entry => // To avoid false positives, we look for a timeframe of when the channel was deleted.
-            Date.now() - entry.createdTimestamp < 20000
+            Date.now() - entry.createdTimestamp < 5000
         );
         if (channelLog) {
             const { executor } = channelLog;

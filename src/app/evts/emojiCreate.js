@@ -31,7 +31,7 @@ module.exports = async(app, newEmoji) => {
 
         //define emojiLog
         const emojiLog = fetchedLogs.entries.find(entry => // To avoid false positives, we look for a timeframe of when the emoji was created.
-            Date.now() - entry.createdTimestamp < 20000
+            Date.now() - entry.createdTimestamp < 5000
         );
         if (emojiLog) {
             const { executor } = emojiLog;

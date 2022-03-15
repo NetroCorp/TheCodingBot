@@ -42,7 +42,7 @@ module.exports = async(app, oldMember, newMember) => {
         else if (oldMember.roles.cache.size < newMember.roles.cache.size) embed.fields.push({ name: "Roles Added", value: roleUpdated.join(", ") || "Failed to get roles added" }); // ooo features
     };
 
-    if (!embed.fields.length > 3) return; // Since we aren't subscribing to all updates, stop here if it was something else non-related to what we have.
+    if (embed.fields.length < 3) return; // Since we aren't subscribing to all updates, stop here if it was something else non-related to what we have.
 
     embed.fields.push({ name: "Updated At", value: new Date().toString() })
 
@@ -53,7 +53,7 @@ module.exports = async(app, oldMember, newMember) => {
 
         //define memberLog
         const memberLog = fetchedLogs.entries.filter(e => e.action === "MEMBER_UPDATE" || e.action === "MEMBER_ROLE_UPDATE").find(entry => // To avoid false positives, we look for a timeframe of when the member was updated.
-            Date.now() - entry.createdTimestamp < 20000
+            Date.now() - entry.createdTimestamp < 5000
         );
         if (memberLog) {
             const { executor } = memberLog;

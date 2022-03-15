@@ -325,15 +325,15 @@ module.exports = {
                                             msgCollector.stop("cancelled by user");
                                             m.react(app.config.system.emotes.success).catch(err => {});
                                         } else if (m.content == "next") {
-                                            var tmpContent = JSON.parse(serverSettings.get("other")[val]) || { msg: defaults[val][msg], channel: null };
+                                            var tmpContent = (serverSettings.get("other")[val]) ? JSON.parse(serverSettings.get("other")[val]) || { msg: defaults[val]["msg"], channel: null } : { msg: defaults[val]["msg"], channel: null };
                                             if (tmpContent["msg"]) {
                                                 msgCollector.stop("done");
-                                                await collectJoinLeaveChannel(val, null);
+                                                await collectJoinLeaveChannel(val, tmpContent);
                                                 m.react(app.config.system.emotes.success).catch(err => {});
                                             } else m.react(app.config.system.emotes.error).catch(err => {});
                                         } else {
                                             msgCollector.stop("done");
-                                            var tmpContent = { msg: m.content || defaults[val][msg], channel: null };
+                                            var tmpContent = { msg: m.content || defaults[val]["msg"], channel: null };
                                             await collectJoinLeaveChannel(val, tmpContent);
                                             m.react(app.config.system.emotes.success).catch(err => {});
                                         }
@@ -432,7 +432,7 @@ module.exports = {
                                                 embeds: [{
                                                     title: `${app.config.system.emotes.success} Configure ${app.name}`,
                                                     color: app.config.system.embedColors.lime,
-                                                    description: `Woohoo! We're done here!\nYour ${evtType} message & channel are both ready to go!`
+                                                    description: `Woohoo! We're done here!\nYour ${evtType} message & channel are both ready to go!\n\n\`${evtData["msg"]}\``
                                                 }],
                                                 components: [],
                                                 author: message.author
