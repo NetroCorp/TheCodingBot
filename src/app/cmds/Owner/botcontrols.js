@@ -29,7 +29,7 @@ module.exports = {
                     title: `${app.config.system.emotes.warning} **${type}**`,
                     color: app.config.system.embedColors.yellow,
                     fields: [
-                        { name: `Are you sure you wish for me to ${type}?`, value: `To confirm, use the buttons.${((type == "Restart") ? "\n*This will not reload the main bot file.*" : "")}` }
+                        { name: `Are you sure you wish for me to ${type}?`, value: `To confirm, use the buttons.` }
                     ]
                 }],
                 components: [row]
@@ -51,10 +51,9 @@ module.exports = {
                         }, 1, true, (async() => {
                             app.logger.debug("SYS", `${app.name} ${actionDoing.toLowerCase()} as of ${new Date()}.`);
                             if (type == "Restart") {
-                                await process.exitHandler({ app: app, cleanup: true, exit: false }, 0);
+                                try { app.modules.fs.writeFileSync(process.cwd() + "/cache/restart.tmp", msg.channel.id + "-" + msg.id); } catch (Ex) {};
+                                await process.exitHandler({ app: app, cleanup: true, exit: false, restart: true }, 0);
 
-                                await app.functions.clearCache();
-                                await app.botStart(msg.channel.id + "-" + msg.id);
                             } else { process.exitHandler({ app: app, cleanup: true, exit: true }, 0); };
                         }));
                         denied = false, buttonStuffWaiting = false;

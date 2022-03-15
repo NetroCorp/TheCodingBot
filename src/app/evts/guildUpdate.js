@@ -87,7 +87,7 @@ module.exports = async(app, oldGuild, newGuild) => {
 
         //define guildLog
         const guildLog = fetchedLogs.entries.find(entry => // To avoid false positives, we look for a timeframe of when the guild was updated.
-            Date.now() - entry.createdTimestamp < 20000
+            Date.now() - entry.createdTimestamp < 5000
         );
         if (guildLog) {
             const { executor } = guildLog;

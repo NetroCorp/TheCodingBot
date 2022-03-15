@@ -31,7 +31,7 @@ module.exports = async(app, oldRole) => {
 
         //define roleLog
         const roleLog = fetchedLogs.entries.find(entry => // To avoid false positives, we look for a timeframe of when the role was deleted.
-            Date.now() - entry.createdTimestamp < 20000
+            Date.now() - entry.createdTimestamp < 5000
         );
         if (roleLog) {
             const { executor } = roleLog;

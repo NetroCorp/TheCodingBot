@@ -195,16 +195,21 @@ class BootLoader {
                         verification: app.db.define('verification', {
                             serverID: { // The executing server
                                 type: Sequelize.STRING,
-                                primaryKey: true
+                                defaultValue: null,
+                                unique: false
                             },
                             userID: { // The executing user
                                 type: Sequelize.STRING,
                                 defaultValue: null,
-                                allowNull: true
+                                allowNull: true,
+                                unique: true,
+                                primaryKey: true
+
                             },
                             messageID: { // Allows us to edit the same message (if in a server)
                                 type: Sequelize.STRING,
                                 defaultValue: null,
+                                unique: true,
                                 allowNull: true
                             },
                             userCode: { // The code generated

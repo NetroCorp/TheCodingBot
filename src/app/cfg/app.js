@@ -15,8 +15,8 @@ const app = {
     version: {
         major: 5,
         minor: 0,
-        revision: 0,
-        buildType: "A",
+        revision: 1,
+        buildType: "R",
         toString: function() {
             var major = app.version.major,
                 minor = app.version.minor,
