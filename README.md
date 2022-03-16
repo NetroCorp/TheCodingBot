@@ -2,7 +2,7 @@
 Welcome to TheCodingBot. The hobby Discord bot created by TheCodingGuy#6697.
 
 ## Version 4
-Version 4. The current version of the bot.
+Version 4. The previous version of the bot.
 
 ## Get this version goin'!
 Eh... you can run this. Run `start.sh` or `start.bat` from `src` folder. It is not optimized to run like v5 does.
