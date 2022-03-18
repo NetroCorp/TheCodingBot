@@ -14,7 +14,7 @@ module.exports = {
             title: app.config.system.emotes.information + " Source",
             color: app.config.system.embedColors.green,
             fields: [
-                { name: "OwO? Source Code?!?", value: `The source code for TheCodingBot can be found [here](https://tcb.nekos.tech/)!` }
+                { name: "OwO? Source Code?!?", value: `The source code for TheCodingBot can be found [here](https://tcb.nekos.tech/source)!` }
         ]}]
     })
 }}
