@@ -138,7 +138,7 @@
     },
 
     "logURL": "https://tcb.nekos.tech/bot/",
-    "imgAPI": "https://api.themattchannel.com/imgs/",
+    "imgAPI": "https://api.themattchannel.com/v1/imgs/",
 
 
     "owners": [

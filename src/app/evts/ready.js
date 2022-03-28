@@ -8,8 +8,6 @@ module.exports = (app) => {
     app.config.system.footerText = app.config.system.footerText.replace("APPNAME", app.name).replace("currYear", new Date().getFullYear()); // Update year
 
     app.logger.success("DISCORD", `Logged in as ${app.client.user.tag} | ${app.client.user.id}.`);
-    // app.logger.success("DISCORD", `It took ${app.client.connections.startupTime}ms (${(app.client.connections.startupTime / 1000)} seconds)!`);
-
 
     // Finish up anything else
     app.bypassEnabled = false; // Disable bypass
