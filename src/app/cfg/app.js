@@ -11,7 +11,7 @@ module.exports = {
         major: 6,
         minor: 0,
         revision: 0,
-        buildType: "B",
+        buildType: "A",
         toString: function() {
             var major = app.version.major,
                 minor = app.version.minor,

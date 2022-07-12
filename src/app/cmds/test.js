@@ -7,8 +7,13 @@ module.exports = {
     name: "test",
     description: "Test command.",
     author: ["Aisuruneko"],
-
+	aliases: [],
+	syntax: [],
+	permissions: 0,
+	cooldown: 2,
+	guildOnly: false,
+	hidden: false,
     execute: async(app, interaction) => {
-        interaction.followUp({ content: "Hello world!" });
+        interaction.followUp({ content: app.lang.get(interaction.userInfo.preferredLanguage, "commands.test.test") });
     }
 }

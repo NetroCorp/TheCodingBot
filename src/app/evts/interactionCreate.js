@@ -5,7 +5,7 @@
 
 module.exports = {
     name: "interactionCreate",
-    description: "Fired when a new interaction (slash command usually) is sent.",
+    description: "Fired when a new interaction (slash command usually) is received.",
     author: ["Aisuruneko"],
 
     execute: async(app, interaction) => {
@@ -13,9 +13,13 @@ module.exports = {
         if (interaction.isChatInputCommand()) {
             await interaction.deferReply({ ephemeral: false }).catch(() => {});
 
+			interaction.userInfo = {
+				preferredLanguage: Object.keys(app.config.langs)[Math.floor(Math.random() * Object.keys(app.config.langs).length)]
+			}
+
             const cmd = app.client.slashCommands.get(interaction.commandName);
             if (!cmd)
-                return interaction.followUp({ content: "An error has occurred " });
+                return interaction.followUp({ content: app.lang.get(interaction.userInfo.preferredLanguage, "errors.commands.genric") });
 
             const args = [];
 

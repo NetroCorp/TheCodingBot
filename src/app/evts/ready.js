@@ -8,28 +8,32 @@ module.exports = {
     description: "Runs when the Gateway does something.",
     author: ["Aisuruneko"],
 
-    execute: async(app, data) => {
+    execute: async(app) => {
 		app.logger.info("SYS", `[${app.client.user.tag}] Connected to Discord!`);
-
+		app.config.system.footerText = app.config.system.footerText.replace("APPNAME", app.name);
+		
 		// Fetch all members for initially available guilds
 		try {
-			app.logger.info("SYS", `Found ${app.client.guilds.cache.size} servers to cache.`);
+			app.logger.info("SYS", `Found ${app.client.guilds.cache.size} servers to cache. [It may be spammy!!]`);
+
 			const promises = app.client.guilds.cache.map(guild => {
-				app.logger.info("SYS", `[${guild.id}] --> Cache members...`);
+				app.logger.debug("SYS", `[${guild.id}] --> Cache members...`);
 				if (guild.available) guild.members.fetch(true)
 				else Promise.resolve();
 				app.logger.debug("SYS", `[${guild.id}] --> Members cached: ${guild.members.cache.size}`);
-				app.logger.info("SYS", `[${guild.id}] --> Cached members.`);
+				app.logger.debug("SYS", `[${guild.id}] --> Cached members.`);
 
-				app.logger.info("SYS", `[${guild.id}] --> Cache roles...`);
+				app.logger.debug("SYS", `[${guild.id}] --> Cache roles...`);
 				if (guild.available) guild.roles.fetch(true)
 				else Promise.resolve();
 				app.logger.debug("SYS", `[${guild.id}] --> Roles cached: ${guild.roles.cache.size}`);
-				app.logger.info("SYS", `[${guild.id}] --> Cached roles.`);
+				app.logger.debug("SYS", `[${guild.id}] --> Cached roles.`);
+
+				app.logger.info("SYS", `Cache complete from ${guild.id}!`);
 			});
 			await Promise.all(promises);
 		} catch (err) {
-			app.logger.error("SYS", `Failed to fetch all members! ${err}\n${err.stack}`);
+			app.logger.error("SYS", `Failed to cache from all servers! ${err}\n${err.stack}`);
 		} finally {
 			const registeringToAll = app.config.commands.registerToAllServers;
 			try {

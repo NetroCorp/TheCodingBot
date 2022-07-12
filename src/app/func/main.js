@@ -100,6 +100,19 @@ class main {
             };
         };
     };
+
+	exitHandler = (options, exitCode) => {
+		if (options.cleanup) {
+			if (this.app.client != null)
+				if (this.app.client.user != null) {
+					this.app.logger.info("DISCORD", "Logging out...");
+					this.app.client.destroy();
+				};
+		};
+		if (exitCode || exitCode === 0) {}
+		if (options.exit) process.exit();
+	}
+
 }
 
 // module.exports = main;
