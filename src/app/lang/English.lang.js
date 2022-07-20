@@ -16,7 +16,8 @@ module.exports = {
 
 
 		// Errors
-		"errors.commands.genric": "That command does not exist or is no longer available.",
+		"errors.generic": "An error occurred!",
+		"errors.commands.generic": "That command does not exist or is no longer available.",
 
 
 		// Commands
@@ -37,6 +38,26 @@ module.exports = {
 		],
 		"commands.ping.ping": "Ping",
 		"commands.ping.servers": "Servers",
-		"commands.ping.latency": "Latency"
+		"commands.ping.latency": "Latency",
+
+		"commands.hug.title": "Hug",
+		"commands.hug.hugs": "hugs",
+		"commands.hug.personal": "Here's a hug to you,",
+
+		"commands.pat.title": "Pat",
+		"commands.pat.pats": "pats",
+		"commands.pat.personal": "Here's a pat to you,",
+
+		"commands.kiss.title": "Kiss",
+		"commands.kiss.kisses": "kisses",
+		"commands.kiss.personal": "Here's a kiss to you,",
+
+		"commands.nom.title": "Nom",
+		"commands.nom.noms": "noms",
+		"commands.nom.personal": "Nomming you,",
+
+		"commands.cuddle.title": "Cuddle",
+		"commands.cuddle.cuddles": "cuddles",
+		"commands.cuddle.personal": "I will cuddle you,"
 	}
 }

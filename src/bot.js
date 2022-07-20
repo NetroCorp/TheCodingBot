@@ -46,7 +46,6 @@ async function bot(debug) {
         app.logger.setContext(app);
         app.logger.info("SYS", `Hello world of ${app.name}! Logger configured!`);
 
-
         // Load dependencies
         app.logger.info("SYS", `Loading ${app.dependencies.length} dependencies...`);
         app.modules = {};
@@ -93,9 +92,15 @@ async function bot(debug) {
 
         // Load commands
 		app.client.slashCommands = new app.modules["discord.js"].Collection();
-        const commands = await app.modules.fs.readdirSync(`${process.cwd()}/app/cmds`).filter(file => file.endsWith('.js'));
+        // const commands = await app.modules.fs.readdirSync(`${process.cwd()}/app/cmds`).filter(file => file.endsWith('.js'));
+		const commands = await app.functions.getFiles(`${process.cwd()}/app/cmds`, ["", ".js"]);
         app.logger.info("SYS", `Loading ${commands.length} commands...`);
         await app.functions.loadCommands(commands);
+
+        // Import custom interaction functions (i.e. for hug commands, etc.)
+        app.functions.interactions = require(`${process.cwd()}/app/func/interactions.js`)();
+        app.functions.interactions.setContext(app);
+        app.logger.info("SYS", `Custom interaction functions imported.`);
 
 		// Here we gooooooooo!
         app.client

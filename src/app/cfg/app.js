@@ -13,13 +13,13 @@ module.exports = {
         revision: 0,
         buildType: "A",
         toString: function() {
-            var major = app.version.major,
+            const major = app.version.major,
                 minor = app.version.minor,
                 revision = app.version.revision;
             return major + "." + minor + "." + revision;
         },
         toBuildString: function() {
-            var buildType = app.version.buildType;
+            let buildType = app.version.buildType;
             if (buildType == "A") buildType = "ALPHA";
             else if (buildType == "B") buildType = "BETA";
             else if (buildType == "R") buildType = "RELEASE";

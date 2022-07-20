@@ -44,6 +44,36 @@ class main {
     sleep = (ms) => { return new Promise(resolve => setTimeout(resolve, ms)); };
     getTicks = () => { return ((new Date().getTime() * 10000) + 621355968000000000); };
     getID = (string) => { return string.replace(/[<#@&!>]/g, ''); };
+	splitMulti = (str, tokens) => {
+        const tempChar = tokens[0];
+        for (let i = 1; i < tokens.length; i++) {
+        	str = str.split(tokens[i]).join(tempChar);
+        }
+        str = str.split(tempChar);
+        return str;
+    };
+	getFiles = async(dir, filter = []) => {
+        if (filter.length > 2) return "filter too powerfuuuuul [startsWith, endsWith] only please, or no filter.";
+
+        const { resolve } = this.app.modules["path"];
+        const { readdir } = this.app.modules["fs"].promises;
+
+        const dirents = await readdir(dir, { withFileTypes: true });
+        const files = await Promise.all(dirents.map((dirent) => {
+            let res = resolve(dir, dirent.name);
+        	if (dirent.isDirectory()) return this.app.functions.getFiles(res, filter);
+            else {
+
+            	if (filter[0] != null || filter[0] != undefined || filter[0] != "")
+                	if (!res.startsWith(filter[0])) return "";
+                if (filter[1] != null || filter[1] != undefined || filter[0] != "")
+                	if (!res.endsWith(filter[1])) return "";
+    			res = this.app.functions.splitMulti(res, ['\\', '\\\\', '/', '//'])
+                return res.slice((res.length - 2), res.length).join("/");
+            };
+        }));
+        return files.flat().filter(Boolean);
+    };
 
     loadDependencies = (dependencies) => {
 		const startTime = new Date().getTime();
@@ -91,6 +121,9 @@ class main {
                 this.app.logger.debug("SYS", `Loading command: ${commandName}...`);
 				this.app.functions.clearCache(commandLocation);
                 const rqCommand = require(commandLocation);
+
+				rqCommand.file = commandLocation;
+				rqCommand.category = ((commandName.split("/")[0] == "cmds") ? "" : commandName.split("/")[0]) || "Uncategorized";
 
                 this.app.client.slashCommands.set(rqCommand.name, rqCommand);
 				this.app.client.arrayOfSlashCommands.push(rqCommand);

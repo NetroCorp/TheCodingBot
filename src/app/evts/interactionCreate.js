@@ -19,7 +19,7 @@ module.exports = {
 
             const cmd = app.client.slashCommands.get(interaction.commandName);
             if (!cmd)
-                return interaction.followUp({ content: app.lang.get(interaction.userInfo.preferredLanguage, "errors.commands.genric") });
+                return interaction.followUp({ content: app.lang.get(interaction.userInfo.preferredLanguage, "errors.commands.generic") });
 
             const args = [];
 

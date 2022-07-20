@@ -15,9 +15,9 @@ module.exports = {
 			results.map((data) => {
 				eFields.push(
 					{ name: `Shard ${data[0]}/${app.client.shard.count}`, value:
-						`📶 **${app.lang.get(interaction.userInfo.preferredLanguage, "commands.ping.status")}**: ${app.lang.get(interaction.userInfo.preferredLanguage, "commands.ping.statusTypes")[data[1]]}\n` + 
-						`🏓 **${app.lang.get(interaction.userInfo.preferredLanguage, "commands.ping.ping")}**: ${data[2]}ms\n` +
-						`🖥️ **${app.lang.get(interaction.userInfo.preferredLanguage, "commands.ping.servers")}**: ${data[3]}\n`, inline: true }
+						`📶 **${app.lang.get(interaction.userInfo.preferredLanguage, "commands.ping.status")}**: ${app.lang.get(interaction.userInfo.preferredLanguage, "commands.ping.statusTypes")[data[1]]}\n` +
+						`🖥️ **${app.lang.get(interaction.userInfo.preferredLanguage, "commands.ping.servers")}**: ${data[3]}\n` +
+						`🏓 **${app.lang.get(interaction.userInfo.preferredLanguage, "commands.ping.ping")}**: ${data[2]}ms\n`, inline: true }
 				);
 			});
 

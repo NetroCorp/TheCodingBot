@@ -41,8 +41,8 @@ class Logger {
     getTimestamp = () => { return `${loggingcolors.Reset}[${loggingcolors.FgCyan}${this.app.functions.convertTimestamp(new Date().getTime(), true, true)}${loggingcolors.Reset}] `; };
 
     log = function(type, location, message, useTimeStamp, logToFile) { // no need to = true or = false, we should have the passed already.
-        var typecolor = knownTypes[type] || loggingcolors.FgWhite;
-        var locationcolor = knownLocations[location] || loggingcolors.FgWhite;
+        const typecolor = knownTypes[type] || loggingcolors.FgWhite;
+        const locationcolor = knownLocations[location] || loggingcolors.FgWhite;
         console.log(`${((useTimeStamp) ? this.getTimestamp() : "")}${loggingcolors.Reset}[${typecolor}${type}${loggingcolors.Reset}] [${locationcolor}${location}${loggingcolors.Reset}] ${message}`);
     }
 
