@@ -4,7 +4,7 @@
 */
 
 module.exports = {
-    name: "ready",
+    name: "debug",
     description: "Runs when the Gateway does something.",
     author: ["Aisuruneko"],
 

@@ -21,18 +21,15 @@ async function bot(debug) {
         const app = require(`${process.cwd()}/app/cfg/app.js`);
         app.debugMode = debug;
         app.config = require(`${process.cwd()}/app/cfg/config.js`);
+		app.config.dbs = require(`${process.cwd()}/app/cfg/database.js`);
         app.functions = require(`${process.cwd()}/app/func/main.js`)();
         app.functions.setContext(app);
 
 		process.stdin.resume();
-
 		process.on('exit', app.functions.exitHandler.bind(null,{cleanup:true}));
-
 		process.on('SIGINT', app.functions.exitHandler.bind(null, {exit:true}));
-
 		process.on('SIGUSR1', app.functions.exitHandler.bind(null, {exit:true}));
 		process.on('SIGUSR2', app.functions.exitHandler.bind(null, {exit:true}));
-
 		process.on('uncaughtException', (error) => {
 			if (app.logger)
                 app.logger.error("SYS", `An uncaught exception just occurred! ${error}\n${error.stack}!`);
@@ -85,14 +82,15 @@ async function bot(debug) {
 
 
         // Load events
-        const events = await app.modules.fs.readdirSync(`${process.cwd()}/app/evts`).filter(file => file.endsWith('.js'));
+        // const events = await app.modules.fs.readdirSync(`${process.cwd()}/app/evts`).filter(file => file.endsWith('.js'));
+		const events = await app.functions.getFiles(`${process.cwd()}/app/evts`, ["", ".js"]);
         app.logger.info("SYS", `Loading ${events.length} events...`);
         await app.functions.loadEvents(events);
 
 
+
         // Load commands
 		app.client.slashCommands = new app.modules["discord.js"].Collection();
-        // const commands = await app.modules.fs.readdirSync(`${process.cwd()}/app/cmds`).filter(file => file.endsWith('.js'));
 		const commands = await app.functions.getFiles(`${process.cwd()}/app/cmds`, ["", ".js"]);
         app.logger.info("SYS", `Loading ${commands.length} commands...`);
         await app.functions.loadCommands(commands);
@@ -102,6 +100,14 @@ async function bot(debug) {
         app.functions.interactions.setContext(app);
         app.logger.info("SYS", `Custom interaction functions imported.`);
 
+		// Get our database online pl0x
+		app.db = null, app.DBs = {};
+		app.databases = require(`${process.cwd()}/app/func/database.js`)();
+        app.logger.info("SYS", `Loading database...`);
+        app.databases.setContext(app);
+        await app.databases.init(app.config.dbs);
+        app.logger.info("SYS", `Loaded database.`);
+
 		// Here we gooooooooo!
         app.client
             .login(process.env.DISCORD_BOT_TOKEN)
@@ -109,7 +115,7 @@ async function bot(debug) {
             .catch((err) => app.logger.error("DISCORD", err));
 
     } catch (Ex) {
-        console.log("Something terribly went wrong and now I must exit. Until next time. :(");
+        console.log("[] Something terribly went wrong and now I must exit. Until next time. :(");
         console.log(Ex);
     };
 }; // hello

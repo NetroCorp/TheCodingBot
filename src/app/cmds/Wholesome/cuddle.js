@@ -26,7 +26,7 @@ module.exports = {
 						color: app.config.system.embedColors.lime,
 						image: { url: response.data.url },
 						footer: { text: app.config.system.footerText }
-					}],
+					}]
 				});
 			})
 			.catch((response) => {
@@ -38,7 +38,7 @@ module.exports = {
 							{ name: app.lang.get(interaction.userInfo.preferredLanguage, "errors.generic"), value: response.error }
 						],
 						footer: { text: app.config.system.footerText }
-					}],
+					}]
 				});
 			})
 	}

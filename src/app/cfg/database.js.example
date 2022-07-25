@@ -1,0 +1,43 @@
+/*
+	TheCodingBot v6
+	https://tcb.nekos.tech
+*/
+
+module.exports = [{
+    database: "TheCodingBot",
+    username: "username",
+    password: "password",
+    cfg: {
+        dialect: "sqlite", // sqlite will use 'storage' (local) option; mysql will use the database, username, password, and host options to connect to a MySQL database.
+        host: "0.0.0.0", // MySQL only
+        storage: './app/cfg/app.sqlite', // SQLite only
+    },
+
+    tables: {
+		userSettings: { // Data of the executor
+        	userID: { // Their ID
+            	type: "INTEGER",
+                unique: true,
+                primaryKey: true,
+                autoIncrement: true
+            },
+			language: { // Their preferred language
+				type: "STRING",
+				defaultValue: "DEFAULT", // Putting DEFAULT here will default to the proper language when the bot loads the Database.
+			},
+			acceptedEULA: { // Their accepectance to the EULA
+				type: "BOOLEAN",
+				defaultValue: false
+			},
+			optedOut: { // Their status of optting out of analytics
+				type: "BOOLEAN",
+				defaultValue: false
+			},
+			AFKSettings: { // We'll be right back.
+				type: "STRING",
+				defaultValue: null,
+                allowNull: true
+            }
+		}
+    }
+}]

@@ -14,6 +14,7 @@ README.md.dev
 src/app/cache/*
 src/app/cfg/config.js
 src/app/cfg/app.sqlite
+*.ignore
 
 ## -- OTHER --
 #my/life

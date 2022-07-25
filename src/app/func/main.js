@@ -98,7 +98,7 @@ class main {
 		const startTime = new Date().getTime();
         for (let i = 0; i < events.length; i++) {
             const eventName = events[i].split(".")[0];
-			const eventLocation = process.cwd() + "/app/evts/" + eventName;
+			const eventLocation = process.cwd() + "/app/" + ((eventName.split("/")[0] != "evts") ? "evts/" : "") + eventName;
             try {
                 this.app.logger.debug("SYS", `Loading event: ${eventName}...`);
 				this.app.functions.clearCache(eventLocation);
@@ -116,7 +116,7 @@ class main {
 		this.app.client.arrayOfSlashCommands = [];
         for (let i = 0; i < commands.length; i++) {
             const commandName = commands[i].split(".")[0];
-			const commandLocation = process.cwd() + "/app/cmds/" + commandName;
+			const commandLocation = process.cwd() + "/app/" + ((commandName.split("/")[0] != "cmds") ? "cmds/" : "") + commandName;
             try {
                 this.app.logger.debug("SYS", `Loading command: ${commandName}...`);
 				this.app.functions.clearCache(commandLocation);
