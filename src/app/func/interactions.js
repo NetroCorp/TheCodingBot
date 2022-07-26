@@ -43,6 +43,16 @@ class interactions {
 			};
 		});
 	}
+
+	hasPermissions(interaction, command) {
+		return (
+			command.permissions == "DEFAULT" ||
+			interaction.channel.guild != null && command.guildOnly ||
+			command.permissions == "BOT_OWNER" && this.app.config.system.owners.includes(interaction.user.id) ||
+            this.app.config.system.owners.includes(interaction.user.id) && app.client.bypassEnabled ||
+            command.permissions != "BOT_OWNER" && interaction.member.permissions.has(command.permissions)
+		);
+	}
 }
 
 // module.exports = interactions;

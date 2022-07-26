@@ -15,6 +15,10 @@ module.exports = {
 	translations: {
 
 
+		// Success
+		"success.generic": "成功！",
+
+
 		// Errors
 		"errors.generic": "エラーが発生しました！",
 		"errors.commands.generic": "そのコマンドは存在しないか、使用できなくなりました。",
@@ -58,6 +62,13 @@ module.exports = {
 
 		"commands.cuddle.title": "寄り添う",
 		"commands.cuddle.cuddles": "はと寄り添います",
-		"commands.cuddle.personal": "私は意思あなたを寄り添います、"
+		"commands.cuddle.personal": "私は意思あなたを寄り添います、",
+
+		"commands.eval.title": "評価",
+		"commands.eval.result": "評価結果",
+
+		"commands.source.title": "源",
+		"commands.source.description": "あなたはソースコードを見つけることができます[ここ](LINKHERE)"
+
 	}
 }

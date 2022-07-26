@@ -7,6 +7,12 @@ module.exports = {
     name: "ping",
     description: "Status for TheCodingBot.",
     author: ["Aisuruneko"],
+	aliases: [],
+	syntax: [],
+	permissions: [ "DEFAULT" ],
+	cooldown: 2,
+	guildOnly: false,
+	hidden: false,
 
     execute: async(app, interaction) => {
 		let eFields = [];
@@ -15,15 +21,15 @@ module.exports = {
 			results.map((data) => {
 				eFields.push(
 					{ name: `Shard ${data[0]}/${app.client.shard.count}`, value:
-						`📶 **${app.lang.get(interaction.userInfo.preferredLanguage, "commands.ping.status")}**: ${app.lang.get(interaction.userInfo.preferredLanguage, "commands.ping.statusTypes")[data[1]]}\n` +
-						`🖥️ **${app.lang.get(interaction.userInfo.preferredLanguage, "commands.ping.servers")}**: ${data[3]}\n` +
-						`🏓 **${app.lang.get(interaction.userInfo.preferredLanguage, "commands.ping.ping")}**: ${data[2]}ms\n`, inline: true }
+						`📶 **${app.lang.get(interaction.userInfo.get("language"), "commands.ping.status")}**: ${app.lang.get(interaction.userInfo.get("language"), "commands.ping.statusTypes")[data[1]]}\n` +
+						`🖥️ **${app.lang.get(interaction.userInfo.get("language"), "commands.ping.servers")}**: ${data[3]}\n` +
+						`🏓 **${app.lang.get(interaction.userInfo.get("language"), "commands.ping.ping")}**: ${data[2]}ms\n`, inline: true }
 				);
 			});
 
 			interaction.followUp({
 				embeds: [{
-					title: app.lang.get(interaction.userInfo.preferredLanguage, "commands.ping.title"),
+					title: app.lang.get(interaction.userInfo.get("language"), "commands.ping.title"),
 					description: `Shards: ${app.client.shard.count}\n`,
 					color: app.config.system.embedColors.blue,
 					fields: eFields,
@@ -31,7 +37,7 @@ module.exports = {
 				}]
 			}).then(message => {
 				let newEmbeds = message.embeds;
-				newEmbeds[0].fields[0].value += `\n📝 **${app.lang.get(interaction.userInfo.preferredLanguage, "commands.ping.latency")}**: ${(message.createdTimestamp - interaction.createdTimestamp)}ms\n`;
+				newEmbeds[0].fields[0].value += `\n📝 **${app.lang.get(interaction.userInfo.get("language"), "commands.ping.latency")}**: ${(message.createdTimestamp - interaction.createdTimestamp)}ms\n`;
 				interaction.editReply({ embeds: newEmbeds });
 			});
 		}).catch((error) => {

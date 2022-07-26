@@ -38,6 +38,25 @@ module.exports = [{
 				defaultValue: null,
                 allowNull: true
             }
+		},
+
+		analytics: { // Analytical Data of the executor
+        	userID: { // Their ID
+            	type: "STRING",
+                unique: true,
+                primaryKey: true,
+                autoIncrement: false
+            },
+			commandsExecuted: { // Commands they executed
+				type: "INTEGER",
+				defaultValue: 0,
+				allowNull: false
+			},
+			commandsErrored: { // Commands they executed that errored
+				type: "INTEGER",
+				defaultValue: 0,
+				allowNull: false
+			}
 		}
     }
 }]

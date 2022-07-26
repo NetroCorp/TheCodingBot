@@ -2,6 +2,12 @@ module.exports = {
     name: "kiss",
     description: "Kiss someone 😳!",
     author: ["Aisuruneko"],
+	aliases: [],
+	syntax: [],
+	permissions: [ "DEFAULT" ],
+	cooldown: 2,
+	guildOnly: false,
+	hidden: false,
 	options: [
         {
             name: 'user',
@@ -15,13 +21,13 @@ module.exports = {
 		app.functions.interactions.getImg("kiss")
 			.then((response) => {
 				const kissgedUser = interaction.guild.members.cache.get(interaction.options.get('user').value);
-				let msg = `${interaction.user.username} **${app.lang.get(interaction.userInfo.preferredLanguage, "commands.kiss.kisses")}** ${kissgedUser.user.username}`;
+				let msg = `${interaction.user.username} **${app.lang.get(interaction.userInfo.get("language"), "commands.kiss.kisses")}** ${kissgedUser.user.username}`;
 				
-				if (interaction.user.id === kissgedUser.user.id) msg = `**${app.lang.get(interaction.userInfo.preferredLanguage, "commands.kiss.personal")}** ${interaction.user.username}`;
+				if (interaction.user.id === kissgedUser.user.id) msg = `**${app.lang.get(interaction.userInfo.get("language"), "commands.kiss.personal")}** ${interaction.user.username}`;
 				
 				interaction.followUp({
 					embeds: [{
-						title: app.lang.get(interaction.userInfo.preferredLanguage, "commands.kiss.title"),
+						title: app.lang.get(interaction.userInfo.get("language"), "commands.kiss.title"),
 						description: `${msg}`,
 						color: app.config.system.embedColors.lime,
 						image: { url: response.data.url },
@@ -32,10 +38,10 @@ module.exports = {
 			.catch((response) => {
 				interaction.followUp({
 					embeds: [{
-						title: app.lang.get(interaction.userInfo.preferredLanguage, "commands.kiss.title"),
+						title: app.lang.get(interaction.userInfo.get("language"), "commands.kiss.title"),
 						color: app.config.system.embedColors.red,
 						fields: [
-							{ name: app.lang.get(interaction.userInfo.preferredLanguage, "errors.generic"), value: response.error }
+							{ name: app.lang.get(interaction.userInfo.get("language"), "errors.generic"), value: response.error }
 						],
 						footer: { text: app.config.system.footerText }
 					}]

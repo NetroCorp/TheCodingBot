@@ -141,6 +141,11 @@ class main {
 					this.app.logger.info("DISCORD", "Logging out...");
 					this.app.client.destroy();
 				};
+
+			if (this.app.db != null) {
+					this.app.logger.info("DISCORD", "Closing Database...");
+					this.app.databases.unload();
+			};
 		};
 		if (exitCode || exitCode === 0) {}
 		if (options.exit) process.exit();

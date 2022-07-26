@@ -9,11 +9,12 @@ module.exports = {
     author: ["Aisuruneko"],
 	aliases: [],
 	syntax: [],
-	permissions: 0,
+	permissions: [ "DEFAULT" ],
 	cooldown: 2,
 	guildOnly: false,
 	hidden: false,
+
     execute: async(app, interaction) => {
-        interaction.followUp({ content: app.lang.get(interaction.userInfo.preferredLanguage, "commands.test.test") });
+        interaction.followUp({ content: app.lang.get(interaction.userInfo.get("language"), "commands.test.test") });
     }
 }

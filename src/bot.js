@@ -103,10 +103,10 @@ async function bot(debug) {
 		// Get our database online pl0x
 		app.db = null, app.DBs = {};
 		app.databases = require(`${process.cwd()}/app/func/database.js`)();
-        app.logger.info("SYS", `Loading database...`);
+        app.logger.info("SYS", `Loading databases...`);
         app.databases.setContext(app);
         await app.databases.init(app.config.dbs);
-        app.logger.info("SYS", `Loaded database.`);
+        app.logger.info("SYS", `Loaded databases.`);
 
 		// Here we gooooooooo!
         app.client

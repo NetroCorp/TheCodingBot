@@ -50,6 +50,14 @@ class database {
             };
 		});
 	}
+
+	unload() {
+		const Sequelize = this.app.modules["sequelize"];
+
+		if (!this.app.db) return "NO_DB";
+
+		this.app.db.close();
+	}
 }
 
 // module.exports = database;

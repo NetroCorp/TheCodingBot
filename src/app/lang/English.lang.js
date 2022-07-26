@@ -15,6 +15,10 @@ module.exports = {
 	translations: {
 
 
+		// Success
+		"success.generic": "Success!",
+
+
 		// Errors
 		"errors.generic": "An error occurred!",
 		"errors.commands.generic": "That command does not exist or is no longer available.",
@@ -58,6 +62,13 @@ module.exports = {
 
 		"commands.cuddle.title": "Cuddle",
 		"commands.cuddle.cuddles": "cuddles",
-		"commands.cuddle.personal": "I will cuddle you,"
+		"commands.cuddle.personal": "I will cuddle you,",
+
+		"commands.eval.title": "Eval",
+		"commands.eval.result": "Evaluation Result",
+
+		"commands.source.title": "Source",
+		"commands.source.description": "You can find the Source Code [here](LINKHERE)"
+
 	}
 }
