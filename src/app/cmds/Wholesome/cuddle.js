@@ -1,7 +1,7 @@
 module.exports = {
-    name: "cuddle",
-    description: "Get close and show even more wholesomeness!",
-    author: ["Aisuruneko"],
+	name: "cuddle",
+	description: "Get close and show even more wholesomeness!",
+	author: ["Aisuruneko"],
 	aliases: [],
 	syntax: [],
 	permissions: [ "DEFAULT" ],
@@ -9,12 +9,12 @@ module.exports = {
 	guildOnly: false,
 	hidden: false,
 	options: [
-        {
-            name: 'user',
-            description: 'The user you want to cuddle.',
-            type: 6,
+		{
+			name: 'user',
+			description: 'The user you want to cuddle.',
+			type: 6,
 			required: true
-        }
+		}
 	],
 
 	execute: (app, interaction, args) => {

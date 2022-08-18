@@ -1,7 +1,7 @@
 module.exports = {
-    name: "hug",
-    description: "Hug someone and show wholesomeness!",
-    author: ["Aisuruneko"],
+	name: "hug",
+	description: "Hug someone and show wholesomeness!",
+	author: ["Aisuruneko"],
 	aliases: [],
 	syntax: [],
 	permissions: [ "DEFAULT" ],
@@ -9,12 +9,12 @@ module.exports = {
 	guildOnly: false,
 	hidden: false,
 	options: [
-        {
-            name: 'user',
-            description: 'The user you want to hug.',
-            type: 6,
+		{
+			name: 'user',
+			description: 'The user you want to hug.',
+			type: 6,
 			required: true
-        }
+		}
 	],
 
 	execute: (app, interaction, args) => {

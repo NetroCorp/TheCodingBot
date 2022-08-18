@@ -4,12 +4,12 @@
 */
 
 module.exports = {
-	name: "channelDelete",
-	description: "Emits when a channel is deleted.",
+	name: "roleCreate",
+	description: "Emits when a role is created.",
 	author: ["Aisuruneko"],
 
-	execute: async(app, oChannel) => {
-		const guild = oChannel.guild;
+	execute: async(app, nRole) => {
+		const guild = nRole.guild;
 		const serverInfo = await app.DBs.TheCodingBot.serverSettings.findOne({ where: { serverID: guild.id } });
 		const logging = await app.DBs.TheCodingBot.logging.findOne({ where: { serverID: guild.id } });
 		if (!serverInfo || !logging) return;
@@ -19,13 +19,13 @@ module.exports = {
 
 		var embed = {
 			author: { name: `${guild.name} (${guild.id})`, iconURL: guild.iconURL({ format: "png", size: 1024 }) },
-			title: "Channel Deleted",
-			color: app.config.system.embedColors.red,
-			description: `There are now ${guild.channels.cache.size} channels.`,
+			title: "Role Created",
+			color: app.config.system.embedColors.lime,
+			description: `There are now ${guild.roles.cache.size} roles.`,
 			fields: [
-				{ name: "Name", value: oChannel.name, inline: true },
-				{ name: "ID", value: oChannel.id, inline: true },
-				{ name: "Deleted At", value: new Date(oChannel.createdTimestamp).toString() }
+				{ name: "Name", value: nRole.name, inline: true },
+				{ name: "ID", value: nRole.id, inline: true },
+				{ name: "Created At", value: new Date(nRole.createdTimestamp).toString() }
 			],
 			footer: { text: app.config.system.footerText }
 		};
@@ -33,13 +33,13 @@ module.exports = {
 		const { AuditLogEvent } = app.modules["discord.js"];
 		const fetchedLogs = await guild.fetchAuditLogs({
 			limit: 1,
-			type: AuditLogEvent.ChannelDelete,
+			type: AuditLogEvent.RoleCreate,
 		});
 		const auditLog = fetchedLogs.entries.first();
 		if (!auditLog) return logChannel.send({ embeds: [ embed ] });
 		const { executor, target } = auditLog;
 
-		embed.fields.push({ name: "Deleted by", value: `${executor.tag} (${executor.id})` });
+		embed.fields.push({ name: "Created by", value: `${executor.tag} (${executor.id})` });
 		embed.thumbnail = { url: executor.displayAvatarURL({ format: "png", size: 1024 }) };
 		logChannel.send({ embeds: [ embed ] });
 	}

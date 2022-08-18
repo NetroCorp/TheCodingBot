@@ -4,10 +4,10 @@
 */
 
 module.exports = {
-    name: "channelUpdate",
-    description: "Emits when a channel is updated.",
-    author: ["Aisuruneko"],
+	name: "channelUpdate",
+	description: "Emits when a channel is updated.",
+	author: ["Aisuruneko"],
 
-    execute: async(app, channel, nChannel) => {
-    }
+	execute: async(app, oChannel, nChannel) => {
+	}
 }

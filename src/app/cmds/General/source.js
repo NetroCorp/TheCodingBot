@@ -4,9 +4,9 @@
 */
 
 module.exports = {
-    name: "source",
-    description: "Source Code?? Where??",
-    author: ["Aisuruneko"],
+	name: "source",
+	description: "Source Code?? Where??",
+	author: ["Aisuruneko"],
 	aliases: [],
 	syntax: [],
 	permissions: [ "DEFAULT" ],
@@ -14,14 +14,14 @@ module.exports = {
 	guildOnly: false,
 	hidden: false,
 
-    execute: async(app, interaction) => {
+	execute: async(app, interaction) => {
 		interaction.followUp({
 			embeds: [{
 				title: app.lang.get(interaction.userInfo.get("language"), "commands.source.title"),
-				description: app.lang.get(interaction.userInfo.get("language"), "commands.source.description").replace("LINK", "https://tcb.nekos.tech/source"),
+				description: app.lang.get(interaction.userInfo.get("language"), "commands.source.description").replace("%SOURCELINK%", "https://tcb.nekos.tech/source"),
 				color: app.config.system.embedColors.blue,
 				footer: { text: app.config.system.footerText }
 			}]
 		});
-    }
+	}
 }

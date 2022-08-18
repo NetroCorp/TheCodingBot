@@ -68,7 +68,12 @@ module.exports = {
 		"commands.eval.result": "Evaluation Result",
 
 		"commands.source.title": "Source",
-		"commands.source.description": "You can find the Source Code [here](LINKHERE)"
+		"commands.source.description": "You can find the Source Code [here](%SOURCELINK%)",
+
+		"commands.kick.title": "Kick",
+		"errors.commands.kick.invalid_target": "The user does not exist in the server.",
+		"errors.commands.kick.user_is_target": "Why do you want to kick yourself?",
+		"commands.kick.complete": "%USERTAG%",
 
 	}
 }

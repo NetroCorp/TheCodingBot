@@ -68,7 +68,12 @@ module.exports = {
 		"commands.eval.result": "評価結果",
 
 		"commands.source.title": "源",
-		"commands.source.description": "あなたはソースコードを見つけることができます[ここ](LINKHERE)"
+		"commands.source.description": "あなたはソースコードを見つけることができます[ここ](%SOURCELINK%)",
+
+		"commands.kick.title": "Kick",
+		"errors.commands.kick.invalid_target": "ユーザーがサーバーに存在しません。",
+		"errors.commands.kick.user_is_target": "なぜ自分を蹴りたいのですか？",
+		"commands.kick.complete": "%USERTAG%",
 
 	}
 }

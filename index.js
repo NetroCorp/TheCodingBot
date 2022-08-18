@@ -69,10 +69,10 @@ async function bot(debug) {
 // of asking "GOOD LORD, WHAT IS HAPPENING IN THERE?"
 const cmdArgs = process.argv.slice(2); // Get args
 switch (cmdArgs[0]) {
-    case "true":
-        bot(true);
-        break;
-    default:
-        bot();
-        break;
+	case "true":
+		bot(true);
+		break;
+	default:
+		bot();
+		break;
 }; // Just tell the bot to either start with debug or nah :D

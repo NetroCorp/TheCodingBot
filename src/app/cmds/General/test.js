@@ -4,9 +4,9 @@
 */
 
 module.exports = {
-    name: "test",
-    description: "Test command.",
-    author: ["Aisuruneko"],
+	name: "test",
+	description: "Test command.",
+	author: ["Aisuruneko"],
 	aliases: [],
 	syntax: [],
 	permissions: [ "DEFAULT" ],
@@ -14,7 +14,7 @@ module.exports = {
 	guildOnly: false,
 	hidden: false,
 
-    execute: async(app, interaction) => {
-        interaction.followUp({ content: app.lang.get(interaction.userInfo.get("language"), "commands.test.test") });
-    }
+	execute: async(app, interaction) => {
+		interaction.followUp({ content: app.lang.get(interaction.userInfo.get("language"), "commands.test.test") });
+	}
 }

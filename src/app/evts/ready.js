@@ -4,11 +4,11 @@
 */
 
 module.exports = {
-    name: "ready",
-    description: "Runs when the Gateway does something.",
-    author: ["Aisuruneko"],
+	name: "ready",
+	description: "Runs when the Gateway does something.",
+	author: ["Aisuruneko"],
 
-    execute: async(app) => {
+	execute: async(app) => {
 		app.logger.info("SYS", `[${app.client.user.tag}] Connected to Discord!`);
 		app.config.system.footerText = app.config.system.footerText.replace("APPNAME", app.name);
 		
@@ -47,5 +47,5 @@ module.exports = {
 			} finally {
 			};
 		};
-    }
+	}
 }

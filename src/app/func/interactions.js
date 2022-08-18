@@ -4,15 +4,15 @@
 */
 
 class interactions {
-    constructor() {
-        this.app = null;
+	constructor() {
+		this.app = null;
 		this.fetch = null;
-    }
+	}
 
-    setContext(app) {
-        this.app = app;
+	setContext(app) {
+		this.app = app;
 		this.fetch = app.modules["node-fetch"];
-    }
+	}
 
 	getAPI() {
 		if (this.app.config == undefined || this.app.config == null) return "NO_CONFIG";
@@ -49,8 +49,8 @@ class interactions {
 			command.permissions == "DEFAULT" ||
 			interaction.channel.guild != null && command.guildOnly ||
 			command.permissions == "BOT_OWNER" && this.app.config.system.owners.includes(interaction.user.id) ||
-            this.app.config.system.owners.includes(interaction.user.id) && app.client.bypassEnabled ||
-            command.permissions != "BOT_OWNER" && interaction.member.permissions.has(command.permissions)
+			this.app.config.system.owners.includes(interaction.user.id) && this.app.client.bypassEnabled ||
+			command.permissions != "BOT_OWNER" && interaction.member.permissions.has(command.permissions)
 		);
 	}
 }

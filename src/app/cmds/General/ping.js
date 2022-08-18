@@ -4,9 +4,9 @@
 */
 
 module.exports = {
-    name: "ping",
-    description: "Status for TheCodingBot.",
-    author: ["Aisuruneko"],
+	name: "ping",
+	description: "Status for TheCodingBot.",
+	author: ["Aisuruneko"],
 	aliases: [],
 	syntax: [],
 	permissions: [ "DEFAULT" ],
@@ -14,7 +14,7 @@ module.exports = {
 	guildOnly: false,
 	hidden: false,
 
-    execute: async(app, interaction) => {
+	execute: async(app, interaction) => {
 		let eFields = [];
 
 		await app.client.shard.broadcastEval(client => [client.shard.ids, client.ws.status, client.ws.ping, client.guilds.cache.size]).then((results) => {
@@ -41,7 +41,7 @@ module.exports = {
 				interaction.editReply({ embeds: newEmbeds });
 			});
 		}).catch((error) => {
-    		console.error(error);
+			console.error(error);
 		});
-    }
+	}
 }

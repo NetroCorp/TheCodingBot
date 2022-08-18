@@ -4,23 +4,23 @@
 */
 
 module.exports = [{
-    database: "TheCodingBot",
-    username: "username",
-    password: "password",
-    cfg: {
-        dialect: "sqlite", // sqlite will use 'storage' (local) option; mysql will use the database, username, password, and host options to connect to a MySQL database.
-        host: "0.0.0.0", // MySQL only
-        storage: './app/cfg/app.sqlite', // SQLite only
-    },
+	database: "TheCodingBot",
+	username: "username",
+	password: "password",
+	cfg: {
+		dialect: "sqlite", // sqlite will use 'storage' (local) option; mysql will use the database, username, password, and host options to connect to a MySQL database.
+		host: "0.0.0.0", // MySQL only
+		storage: './app/cfg/app.sqlite', // SQLite only
+	},
 
-    tables: {
+	tables: {
 		userSettings: { // Data of the executor
-        	userID: { // Their ID
-            	type: "INTEGER",
-                unique: true,
-                primaryKey: true,
-                autoIncrement: true
-            },
+			userID: { // Their ID
+				type: "INTEGER",
+				unique: true,
+				primaryKey: true,
+				autoIncrement: true
+			},
 			language: { // Their preferred language
 				type: "STRING",
 				defaultValue: "DEFAULT", // Putting DEFAULT here will default to the proper language when the bot loads the Database.
@@ -36,17 +36,17 @@ module.exports = [{
 			AFKSettings: { // We'll be right back.
 				type: "STRING",
 				defaultValue: null,
-                allowNull: true
-            }
+				allowNull: true
+			}
 		},
 
 		analytics: { // Analytical Data of the executor
-        	userID: { // Their ID
-            	type: "STRING",
-                unique: true,
-                primaryKey: true,
-                autoIncrement: false
-            },
+			userID: { // Their ID
+				type: "STRING",
+				unique: true,
+				primaryKey: true,
+				autoIncrement: false
+			},
 			commandsExecuted: { // Commands they executed
 				type: "INTEGER",
 				defaultValue: 0,
@@ -58,5 +58,65 @@ module.exports = [{
 				allowNull: false
 			}
 		}
-    }
+
+		serverSettings: { // Data of the server
+			serverID: { // The server's ID
+				type: "STRING",
+				unique: true,
+				primaryKey: true,
+				autoIncrement: false
+			},
+
+			antiNuke: { // Did they enable antiNuke?
+				type: "BOOLEAN",
+				defaultValue: false
+			},
+
+			antiRaid: { // Did they enable antiRaid?
+				type: "BOOLEAN",
+				defaultValue: false
+			},
+
+			modLog: { // Did they enable modlog?
+				type: "BOOLEAN",
+				defaultValue: false
+			},
+
+			guildLog: { // Did they enable guildLog?
+				type: "BOOLEAN",
+				defaultValue: false
+			},
+
+			memberLog: { // Did they enable guildLog?
+				type: "BOOLEAN",
+				defaultValue: false
+			}
+		},
+
+		logging: { // Logging data of the server
+			serverID: { // The server's ID
+				type: "STRING",
+				unique: true,
+				primaryKey: true,
+				autoIncrement: false
+			},
+
+			modLog: { // Moderation logging for server.
+				type: "STRING",
+				defaultValue: null,
+				allowNull: true
+			},
+			guildLog: { // Server logging for server.
+				type: "STRING",
+				defaultValue: null,
+				allowNull: true
+			},
+
+			memberLog: { // Member logging for server.
+				type: "STRING",
+				defaultValue: null,
+				allowNull: true
+			}
+		}
+	}
 }]

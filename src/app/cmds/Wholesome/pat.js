@@ -1,7 +1,7 @@
 module.exports = {
-    name: "pat",
-    description: "Pat someone 😌",
-    author: ["Aisuruneko"],
+	name: "pat",
+	description: "Pat someone 😌",
+	author: ["Aisuruneko"],
 	aliases: [],
 	syntax: [],
 	permissions: [ "DEFAULT" ],
@@ -9,12 +9,12 @@ module.exports = {
 	guildOnly: false,
 	hidden: false,
 	options: [
-        {
-            name: 'user',
-            description: 'The user you want to pat.',
-            type: 6,
+		{
+			name: 'user',
+			description: 'The user you want to pat.',
+			type: 6,
 			required: true
-        }
+		}
 	],
 
 	execute: (app, interaction, args) => {

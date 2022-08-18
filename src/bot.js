@@ -8,22 +8,22 @@
 
 async function bot(debug) {
 	const startTime = new Date().getTime();
-    try {
-        console.log(` -- Starting as of ${new Date(startTime).toString()} -- `);
+	try {
+		console.log(` -- Starting as of ${new Date(startTime).toString()} -- `);
 
-        // Change directory
-        try {
-            if (process.cwd().split("\\").slice(-1) != "src") // attempt to change into 'src'
-                process.chdir(process.cwd() + "/src");
-        } catch (Ex) {}; // Assume it's okay to continue.
+		// Change directory
+		try {
+			if (process.cwd().split("\\").slice(-1) != "src") // attempt to change into 'src'
+				process.chdir(process.cwd() + "/src");
+		} catch (Ex) {}; // Assume it's okay to continue.
 
-        // Import ourselves and other functions
-        const app = require(`${process.cwd()}/app/cfg/app.js`);
-        app.debugMode = debug;
-        app.config = require(`${process.cwd()}/app/cfg/config.js`);
+		// Import ourselves and other functions
+		const app = require(`${process.cwd()}/app/cfg/app.js`);
+		app.debugMode = debug;
+		app.config = require(`${process.cwd()}/app/cfg/config.js`);
 		app.config.dbs = require(`${process.cwd()}/app/cfg/database.js`);
-        app.functions = require(`${process.cwd()}/app/func/main.js`)();
-        app.functions.setContext(app);
+		app.functions = require(`${process.cwd()}/app/func/main.js`)();
+		app.functions.setContext(app);
 
 		process.stdin.resume();
 		process.on('exit', app.functions.exitHandler.bind(null,{cleanup:true}));
@@ -32,101 +32,101 @@ async function bot(debug) {
 		process.on('SIGUSR2', app.functions.exitHandler.bind(null, {exit:true}));
 		process.on('uncaughtException', (error) => {
 			if (app.logger)
-                app.logger.error("SYS", `An uncaught exception just occurred! ${error}\n${error.stack}!`);
-            else
-                console.error(`An uncaught exception just occurred! ${error}\n${error.stack}!`);
+				app.logger.error("SYS", `An uncaught exception just occurred! ${error}\n${error.stack}!`);
+			else
+				console.error(`An uncaught exception just occurred! ${error}\n${error.stack}!`);
 		});
 
 
-        // Import logger (so we look pretty :)
-        app.logger = require(`${process.cwd()}/app/func/logger.js`)();
-        app.logger.setContext(app);
-        app.logger.info("SYS", `Hello world of ${app.name}! Logger configured!`);
+		// Import logger (so we look pretty :)
+		app.logger = require(`${process.cwd()}/app/func/logger.js`)();
+		app.logger.setContext(app);
+		app.logger.info("SYS", `Hello world of ${app.name}! Logger configured!`);
 
-        // Load dependencies
-        app.logger.info("SYS", `Loading ${app.dependencies.length} dependencies...`);
-        app.modules = {};
-        app.functions.loadDependencies(app.dependencies);
+		// Load dependencies
+		app.logger.info("SYS", `Loading ${app.dependencies.length} dependencies...`);
+		app.modules = {};
+		app.functions.loadDependencies(app.dependencies);
 
 
 		// Import language handler & load languages
 		app.lang = require(`${process.cwd()}/app/lang/main.js`)();
 		app.lang.setContext(app);
-        const languages = await app.modules.fs.readdirSync(`${process.cwd()}/app/lang`).filter(file => file.endsWith('.lang.js'));
-        app.logger.info("SYS", `Loading ${languages.length} languages...`);
-        await app.lang.load(languages);
+		const languages = await app.modules.fs.readdirSync(`${process.cwd()}/app/lang`).filter(file => file.endsWith('.lang.js'));
+		app.logger.info("SYS", `Loading ${languages.length} languages...`);
+		await app.lang.load(languages);
 
 
-        // Define our Client lol
-        app.logger.info("SYS", "Loading client...");
-        const { Client, GatewayIntentBits } = app.modules["discord.js"];
-        app.client = new Client({
-            intents: [
-                GatewayIntentBits.Guilds,
-                GatewayIntentBits.GuildMembers,
-                GatewayIntentBits.GuildBans,
-                GatewayIntentBits.GuildEmojisAndStickers,
-                GatewayIntentBits.GuildIntegrations,
-                GatewayIntentBits.GuildWebhooks,
-                GatewayIntentBits.GuildInvites,
-                GatewayIntentBits.GuildVoiceStates,
-                GatewayIntentBits.GuildPresences,
-                GatewayIntentBits.GuildMessages,
-                GatewayIntentBits.GuildMessageReactions,
-                GatewayIntentBits.GuildMessageTyping,
-                GatewayIntentBits.DirectMessages,
-                GatewayIntentBits.DirectMessageReactions,
-                GatewayIntentBits.DirectMessageTyping
-            ]
-        });
+		// Define our Client lol
+		app.logger.info("SYS", "Loading client...");
+		const { Client, GatewayIntentBits } = app.modules["discord.js"];
+		app.client = new Client({
+			intents: [
+				GatewayIntentBits.Guilds,
+				GatewayIntentBits.GuildMembers,
+				GatewayIntentBits.GuildBans,
+				GatewayIntentBits.GuildEmojisAndStickers,
+				GatewayIntentBits.GuildIntegrations,
+				GatewayIntentBits.GuildWebhooks,
+				GatewayIntentBits.GuildInvites,
+				GatewayIntentBits.GuildVoiceStates,
+				GatewayIntentBits.GuildPresences,
+				GatewayIntentBits.GuildMessages,
+				GatewayIntentBits.GuildMessageReactions,
+				GatewayIntentBits.GuildMessageTyping,
+				GatewayIntentBits.DirectMessages,
+				GatewayIntentBits.DirectMessageReactions,
+				GatewayIntentBits.DirectMessageTyping
+			]
+		});
 
 
-        // Load events
-        // const events = await app.modules.fs.readdirSync(`${process.cwd()}/app/evts`).filter(file => file.endsWith('.js'));
+		// Load events
+		// const events = await app.modules.fs.readdirSync(`${process.cwd()}/app/evts`).filter(file => file.endsWith('.js'));
 		const events = await app.functions.getFiles(`${process.cwd()}/app/evts`, ["", ".js"]);
-        app.logger.info("SYS", `Loading ${events.length} events...`);
-        await app.functions.loadEvents(events);
+		app.logger.info("SYS", `Loading ${events.length} events...`);
+		await app.functions.loadEvents(events);
 
 
 
-        // Load commands
+		// Load commands
 		app.client.slashCommands = new app.modules["discord.js"].Collection();
 		const commands = await app.functions.getFiles(`${process.cwd()}/app/cmds`, ["", ".js"]);
-        app.logger.info("SYS", `Loading ${commands.length} commands...`);
-        await app.functions.loadCommands(commands);
+		app.logger.info("SYS", `Loading ${commands.length} commands...`);
+		await app.functions.loadCommands(commands);
 
-        // Import custom interaction functions (i.e. for hug commands, etc.)
-        app.functions.interactions = require(`${process.cwd()}/app/func/interactions.js`)();
-        app.functions.interactions.setContext(app);
-        app.logger.info("SYS", `Custom interaction functions imported.`);
+		// Import custom interaction functions (i.e. for hug commands, etc.)
+		app.functions.interactions = require(`${process.cwd()}/app/func/interactions.js`)();
+		app.functions.interactions.setContext(app);
+		app.logger.info("SYS", `Custom interaction functions imported.`);
 
 		// Get our database online pl0x
 		app.db = null, app.DBs = {};
 		app.databases = require(`${process.cwd()}/app/func/database.js`)();
-        app.logger.info("SYS", `Loading databases...`);
-        app.databases.setContext(app);
-        await app.databases.init(app.config.dbs);
-        app.logger.info("SYS", `Loaded databases.`);
+		app.logger.info("SYS", `Loading databases...`);
+		app.databases.setContext(app);
+		await app.databases.init(app.config.dbs);
+		app.logger.info("SYS", `Loaded databases.`);
 
 		// Here we gooooooooo!
-        app.client
-            .login(process.env.DISCORD_BOT_TOKEN)
-            .then(() => app.logger.info("DISCORD", "Logged in!"))
-            .catch((err) => app.logger.error("DISCORD", err));
+		app.client
+			.login(process.env.DISCORD_BOT_TOKEN)
+			.then(() => app.logger.info("DISCORD", "Logged in!"))
+			.catch((err) => app.logger.error("DISCORD", err));
 
-    } catch (Ex) {
-        console.log("[] Something terribly went wrong and now I must exit. Until next time. :(");
-        console.log(Ex);
-    };
+	} catch (Ex) {
+		console.log("[] Something terribly went wrong and now I must exit. Until next time. :(");
+		console.log(Ex);
+	};
 }; // hello
 
 // Details on how this works is located in ../index.js.
 const cmdArgs = process.argv.slice(2);
 switch (cmdArgs[0]) {
-    case "true":
-        bot(true);
-        break;
-    default:
-        bot();
-        break;
+	case "true":
+		bot(true);
+		break;
+	default:
+		bot();
+		break;
 };

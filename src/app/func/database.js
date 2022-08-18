@@ -4,13 +4,13 @@
 */
 
 class database {
-    constructor() {
-        this.app = null;
-    }
+	constructor() {
+		this.app = null;
+	}
 
-    setContext(app) {
-        this.app = app;
-    }
+	setContext(app) {
+		this.app = app;
+	}
 
 	init(databases) {
 		const startTime = new Date().getTime();
@@ -38,16 +38,16 @@ class database {
 					this.app.DBs[dbName][table] = await this.app.db.define(table, db.tables[table]);
 
 
-                    if (this.app.DBs[dbName][table]) {
-                        this.app.logger.debug("DB", `Syncing database ${dbName} table: ${table}...`);
-                        await this.app.DBs[dbName][table].sync();
-                    }; // Sync go brrr (Make sure the tables and stuff are created)
-                });
+					if (this.app.DBs[dbName][table]) {
+						this.app.logger.debug("DB", `Syncing database ${dbName} table: ${table}...`);
+						await this.app.DBs[dbName][table].sync();
+					}; // Sync go brrr (Make sure the tables and stuff are created)
+				});
 
 				this.app.logger.info("SYS", `Loaded database: ${dbName} in ${new Date().getTime() - startTime}ms.`);
 			} catch (Ex) {
 				this.app.logger.error("SYS", `Failed to database: ${dbName}. ${Ex.message}\n${Ex.stack}`);
-            };
+			};
 		});
 	}
 

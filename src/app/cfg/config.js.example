@@ -4,10 +4,10 @@
 */
 
 module.exports = {
-    commands: {
-        registerToAllServers: false, // TRUE will register to ALL, FALSE will register to Server ID below.
-        registerToServer: "", // Set this to the Server ID you want. (See above for details)
-    },
+	commands: {
+		registerToAllServers: false, // TRUE will register to ALL, FALSE will register to Server ID below.
+		registerToServer: "", // Set this to the Server ID you want. (See above for details)
+	},
 	system: {
 		owners: [
 			"YOUR USERID HERE"

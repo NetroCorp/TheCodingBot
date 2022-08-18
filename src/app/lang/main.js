@@ -4,47 +4,47 @@
 */
 
 class main {
-    constructor() {
-        this.app = null;
-    }
+	constructor() {
+		this.app = null;
+	}
 
-    setContext(app) {
-        this.app = app;
-    }
+	setContext(app) {
+		this.app = app;
+	}
 
    load = async function(langs, init = true) {
-        if (!this.app) return "NO APP, NO LANG";
-        if (init)
-            this.app.config.langs = {};
+		if (!this.app) return "NO APP, NO LANG";
+		if (init)
+			this.app.config.langs = {};
 		
-        for (let i = 0; i < langs.length; i++) {
-            const lang = langs[i].split(".lang.js")[0],
+		for (let i = 0; i < langs.length; i++) {
+			const lang = langs[i].split(".lang.js")[0],
 				startTime = new Date();
-            let err = false;
-            try {
-                this.app.logger.debug("SYS", `Loading language: ${lang}...`);
+			let err = false;
+			try {
+				this.app.logger.debug("SYS", `Loading language: ${lang}...`);
 
-                const theLanguage = require(process.cwd() + "/app/lang/" + langs[i]);
-                this.app.logger.debug("SYS", `[${theLanguage.metadata.langCode}] ${lang} (${theLanguage.metadata.full_name}) v${theLanguage.metadata.version} by ${theLanguage.metadata.translator} loaded.`);
+				const theLanguage = require(process.cwd() + "/app/lang/" + langs[i]);
+				this.app.logger.debug("SYS", `[${theLanguage.metadata.langCode}] ${lang} (${theLanguage.metadata.full_name}) v${theLanguage.metadata.version} by ${theLanguage.metadata.translator} loaded.`);
 
-                this.app.config.langs[lang] = theLanguage;
-            } catch (error) {
-                err = error;
-            } finally {
-                const endTime = new Date().getTime();
-                if (err === false) {
-                    this.app.logger.success("SYS", `Loaded language: ${lang} in ${(endTime - startTime)}ms.`);
-                } else {
-                    this.app.logger.error("SYS", `Could not load language: ${lang}.\n\tError Details:\n\t${err}`);
-                    console.log(err.stack);
-                };
+				this.app.config.langs[lang] = theLanguage;
+			} catch (error) {
+				err = error;
+			} finally {
+				const endTime = new Date().getTime();
+				if (err === false) {
+					this.app.logger.success("SYS", `Loaded language: ${lang} in ${(endTime - startTime)}ms.`);
+				} else {
+					this.app.logger.error("SYS", `Could not load language: ${lang}.\n\tError Details:\n\t${err}`);
+					console.log(err.stack);
+				};
 
-            };
-        };
-    }
+			};
+		};
+	}
 
-    get = function(lang, line) {
-        if (!this.app) return "NO APP, NO LANG";
+	get = function(lang, line) {
+		if (!this.app) return "NO APP, NO LANG";
 
 		function returnLine(app) {
 			if (!app.config.langs[lang]) {
@@ -73,7 +73,7 @@ class main {
 			return translation.replace("APPNAME", this.app.name).replace("FOOTER", this.app.config.system.footerText);
 		else
 			return translation;
-    }
+	}
 }
 
 // module.exports = main;

@@ -1,7 +1,7 @@
 module.exports = {
-    name: "eval",
-    description: "Run that code!",
-    author: ["Aisuruneko"],
+	name: "eval",
+	description: "Run that code!",
+	author: ["Aisuruneko"],
 	aliases: [],
 	syntax: [],
 	permissions: [ "BOT_OWNER" ],
@@ -9,12 +9,12 @@ module.exports = {
 	guildOnly: false,
 	hidden: false,
 	options: [
-        {
-            name: 'code',
-            description: 'The code you want to execute.',
-            type: 3,
+		{
+			name: 'code',
+			description: 'The code you want to execute.',
+			type: 3,
 			required: true
-        }
+		}
 	],
 
 	execute: (app, interaction, args) => {
