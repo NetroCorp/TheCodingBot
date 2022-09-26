@@ -19,7 +19,9 @@ class database {
 
 		Object.keys(databases).forEach(db => {
 			db = databases[db];
-			const dbName = db.database;
+			let dbName = db.database;
+			if (dbName == "APPNAME") dbName = this.app.name;
+			
 			try {
 				this.app.logger.info("SYS", `Loading database: ${dbName}...`);
 				const dbCfg = db.cfg;
@@ -52,11 +54,36 @@ class database {
 	}
 
 	unload() {
+		if (!this.app.db) return "NO_DB";
+
+		this.app.db.close();
+	}
+
+	async createUser(userID) {
 		const Sequelize = this.app.modules["sequelize"];
 
 		if (!this.app.db) return "NO_DB";
 
-		this.app.db.close();
+		try {
+            const userSetting = await this.app.DBs[this.app.name].userSettings.create({
+                userID: userID,
+				language: this.app.config.system.defaultLanguage || "English (en_US)",
+                acceptedEULA: false,
+				AFKSettings: null,
+                optedOut: false
+            });
+            const analytical = await this.app.DBs[this.app.name].analytics.create({
+                userID: userID,
+				commandsExecuted: 0,
+                commandsError: 0
+            });
+            this.app.logger.success("DB", `User data for ${userID} created in database!`);
+
+            return userSetting;
+		} catch (Ex) {
+			this.app.logger.error("DB", `Failed to create user ${userID}. ${Ex.message}\n${Ex.stack}`);
+			return 1;
+		};
 	}
 }
 

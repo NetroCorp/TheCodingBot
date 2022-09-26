@@ -26,7 +26,7 @@ module.exports = {
 				interaction.followUp({
 					embeds: [{
 						title: app.lang.get(interaction.userInfo.get("language"), "commands.eval.title"),
-						color: app.config.system.embedColors.red,
+						color: app.config.system.embedColors.lime,
 						fields: [
 							{ name: app.lang.get(interaction.userInfo.get("language"), "commands.eval.result"), value: "```js\n" + ((evaluated == "") ? "" : evaluated) + "```" }
 						],

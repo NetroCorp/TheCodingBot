@@ -9,7 +9,8 @@ Version 6 is the next generation of TheCodingBot. Currently written in Discord.J
 And, I have no idea when Version 6 will release as my schedule is as haywire as this code.
  ...well, maybe worse than the code, but- anyways!
 
-## Proper instructions coming soon!
+## Proper instructions
+Coming soon, because we ain't fully stable yet!
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

@@ -10,6 +10,7 @@ module.exports = {
     author: ["Aisuruneko"],
 
     execute: async(app, data) => {
+		console.log(data);
 		const msg = `-- Ratelimit detected! --\n` +
 			`Discord has placed a limit on ${data.path} for ${data.limit} requests.\n` +
 			`This ratelimit is ${(data.global) ? "global" : "non-global"} and will expire in ${data.timeout}ms.\n`;

@@ -4,7 +4,7 @@
 */
 
 module.exports = [{
-	database: "TheCodingBot",
+	database: "APPNAME", // APPNAME will use the app's name from app.js. (RECOMMENDED)
 	username: "username",
 	password: "password",
 	cfg: {

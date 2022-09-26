@@ -10,8 +10,8 @@ module.exports = {
 
 	execute: async(app, nChannel) => {
 		const guild = nChannel.guild;
-		const serverInfo = await app.DBs.TheCodingBot.serverSettings.findOne({ where: { serverID: guild.id } });
-		const logging = await app.DBs.TheCodingBot.logging.findOne({ where: { serverID: guild.id } });
+		const serverInfo = await app.DBs[app.name].serverSettings.findOne({ where: { serverID: guild.id } });
+		const logging = await app.DBs[app.name].logging.findOne({ where: { serverID: guild.id } });
 		if (!serverInfo || !logging) return;
 
 		const logChannel = logging.get("guildLog") ? guild.channels.cache.get(logging.get("guildLog")) : null;
