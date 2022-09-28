@@ -15,7 +15,7 @@ module.exports = {
         else if (target == sender) return app.functions.msgHandler(message, { content: "There there, here's a personal kiss. :)" }, 0, true);
 
         var embed = {
-                color: app.config.system.embedColors.red,
+                color: app.config.system.embedColors.purple,
                 description: `**${sender} **kisses** ${target}**!`
             },
             url = (app.config.system.imgAPI + "kiss");
