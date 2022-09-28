@@ -4,7 +4,7 @@
 	6/24/2021
 
 	https://tcb.nekos.tech/source
-	https://themattchannel.com
+	https://netrocorp.net/
 */
 
 
@@ -408,7 +408,7 @@ const app = {
             var code = "";
             for (var i = 0; i < length; i++) { code += random.charAt(Math.floor(Math.random() * random.length)); };
             return code;
-        },
+        }, 
         getEmoji: function(app, emojiID, full = false) {
             var emoji = app.client.emojis.cache.find(e => e.id === emojiID) || null;
 
