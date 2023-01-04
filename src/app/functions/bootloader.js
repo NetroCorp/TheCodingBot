@@ -121,7 +121,7 @@ class BootLoader {
                             },
                             language: { // The user's desired languager
                                 type: Sequelize.STRING,
-                                defaultValue: "English",
+                                defaultValue: app.config.system.defaultLanguage || "English (en_US)",
                                 allowNull: false
                             },
                             acceptedEULA: Sequelize.BOOLEAN, // DID THE USER ACCEPT THE EOA?!

@@ -8,8 +8,7 @@ module.exports = {
     cooldown: 10,
     aliases: [],
     syntax: [],
-    execute: async(app, message, args) => {
-        var userSettings = await app.DBs.userSettings.findOne({ where: { userID: message.author.id } });
+    execute: async(app, message, args, userSettings) => {
         if (!userSettings) return app.functions.msgHandler(message, { embeds: [{ color: app.config.system.embedColors.red, description: `${app.config.system.emotes.error} **Could not set to AFK due to missing User Settings.**` }] })
 
         var reason = args.slice(0).join(" ") || "";
@@ -23,7 +22,7 @@ module.exports = {
         if (affectedRows.length > 0) {
             await app.functions.msgHandler(message, {
                 embeds: [{
-                    title: `${app.config.system.emotes.success} You're now AFK${((reason != "" ? ": " + reason: "!"))}`,
+                    title: `${app.config.system.emotes.success} ${app.lang.getLine(userSettings.get("language"), "You're now AFK")}${((reason != "" ? ": " + reason: "!"))}`,
                     color: app.config.system.embedColors.lime
                 }],
                 author: message.author
@@ -31,7 +30,7 @@ module.exports = {
                 setTimeout(function() { msg.delete() }, 6000);
             }));
         } else {
-            return app.functions.msgHandler(message, { embeds: [{ color: app.config.system.embedColors.red, description: `${app.config.system.emotes.error} **Could not set to AFK due to Database Error!**` }] })
+            return app.functions.msgHandler(message, { embeds: [{ color: app.config.system.embedColors.red, description: `${app.config.system.emotes.error} **${app.lang.getLine(userSettings.get("language"), "Could not set to AFK due to Database Error!")}**` }] })
         };
     }
 };

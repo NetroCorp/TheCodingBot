@@ -74,7 +74,7 @@ module.exports = {
             await i.update({
                 embeds: [{
                     author: { name: `Eep! Sorry about that, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
-                    title: `${app.config.system.emotes.warning} User Settings - ${title}`,
+                    title: `${app.config.system.emotes.warning} ${app.lang.getLine(userSettings.get("language"), "User Settings")} - ${title}`,
                     color: app.config.system.embedColors.orange,
                     description: "Could not save your acknowledgement. Please try again.",
                 }],
@@ -93,7 +93,7 @@ module.exports = {
                     await app.functions.msgHandler(msg, {
                         embeds: [{
                             author: { name: `Change change change, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
-                            title: `${app.config.system.emotes.question} User Settings - Change Settings`,
+                            title: `${app.config.system.emotes.question} ${app.lang.getLine(userSettings.get("language"), "User Settings")} - ${app.lang.getLine(userSettings.get("language"), "Change Settings")}`,
                             color: app.config.system.embedColors.purple,
                             description: "Alright - from the dropdown - what do you wish to change?"
                         }],
@@ -125,9 +125,9 @@ module.exports = {
                         await i.update({
                             embeds: [{
                                 author: { name: `At your request, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
-                                title: `${app.config.system.emotes.success} User Settings - ${type}`,
+                                title: `${app.config.system.emotes.success} ${app.lang.getLine(userSettings.get("language"), "User Settings")} - ${type}`,
                                 color: app.config.system.embedColors.lime,
-                                description: `Here's what just happened: You successfully ${((i.customId === "optout") ? "dis" : "en")}abled analytics.`,
+                                description: `${app.lang.getLine(userSettings.get("language"), "Here's what just happened")}: You successfully ${((i.customId === "optout") ? "dis" : "en")}abled analytics.`,
                             }],
                             components: []
                         });
@@ -142,9 +142,9 @@ module.exports = {
                             embeds: [{
                                 author: { name: `We're sad to see you go, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
 
-                                title: `${app.config.system.emotes.success} User Settings - Delete Account`,
+                                title: `${app.config.system.emotes.success} ${app.lang.getLine(userSettings.get("language"), "User Settings")} - Delete Account`,
                                 color: app.config.system.embedColors.lime,
-                                description: "Here's what just happened: You successfully deleted your account.",
+                                description: `${app.lang.getLine(userSettings.get("language"), "Here's what just happened")}: You successfully deleted your account.`,
                             }],
                             components: []
                         });
@@ -176,10 +176,34 @@ module.exports = {
                     for (var v in i.values) {
                         var val = i.values[v];
                         if (val === "language") {
+                            var languages = [],
+                                validLangCodes = [];
+
+                            if (app.config.langs) {
+                                for (var lp = 0; lp < Object.keys(app.config.langs).length; lp++) {
+                                    var lang = app.config.langs[Object.keys(app.config.langs)[lp]];
+                                    await languages.push({
+                                        label: lang.metadata.full_name,
+                                        description: lang.metadata.description,
+                                        value: lang.metadata.langCode,
+                                    });
+                                    validLangCodes.push(lang.metadata.langCode);
+
+                                };
+                            } else {
+                                await languages.push({
+                                    label: "English (en_US)",
+                                    description: "English - United States",
+                                    value: "en_US",
+                                });
+                                validLangCodes.push("en_US");
+
+                            };
+
                             await app.functions.msgHandler(msg, {
                                 embeds: [{
                                     author: { name: `Change change change, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
-                                    title: `${app.config.system.emotes.question} User Settings - Change Language`,
+                                    title: `${app.config.system.emotes.question} ${app.lang.getLine(userSettings.get("language"), "User Settings")} -${app.lang.getLine(userSettings.get("language"), "Change Language")}`,
                                     color: app.config.system.embedColors.purple,
                                     description: "Neat, choose from the dropdown your new language!"
                                 }],
@@ -188,22 +212,18 @@ module.exports = {
                                         new MessageSelectMenu()
                                         .setCustomId("select")
                                         .setPlaceholder("Nothing selected")
-                                        .addOptions([{
-                                            label: "English (en_US)",
-                                            description: "English - United States",
-                                            value: "en_US",
-                                        }]),
+                                        .addOptions(languages),
                                     )
                                 ]
                             }, 1, true, (async menumsg => {
-                                await collectLanguage(menumsg);
+                                await collectLanguage(menumsg, validLangCodes);
 
                             }));
                         } else if (val == "prefix") {
                             await app.functions.msgHandler(msg, {
                                 embeds: [{
                                     author: { name: `Change change change, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
-                                    title: `${app.config.system.emotes.question} User Settings - Change Prefix`,
+                                    title: `${app.config.system.emotes.question} ${app.lang.getLine(userSettings.get("language"), "User Settings")} - ${app.lang.getLine(userSettings.get("language"), "Change Prefix")}`,
                                     color: app.config.system.embedColors.purple,
                                     description: "Great! What should that new prefix be?\n*NOTE: If you enter a space, it will only take the first part before the space). Example: `a prefix` -> `a`*"
                                 }],
@@ -227,16 +247,17 @@ module.exports = {
             });
         };
 
-        async function collectLanguage(msg) {
+        async function collectLanguage(msg, validLangCodes) {
             const filter = i => { return ["select"].includes(i.customId) && i.user.id === message.author.id };
             const collector = message.channel.createMessageComponentCollector({ filter, max: 1, time: 30000, errors: ["time"] });
 
             collector.on("collect", async i => {
                 if (i.customId === "select" && i.values.length > 0) {
-                    for (var v in i.values) {
-                        var val = i.values[v];
-                        if (val === "en_US") {
-                            var newLang = msg.components[0]["components"][0]["options"][v]["label"]
+                    for (var clp = 0; clp < msg.components[0]["components"][0]["options"].length; clp++) {
+                        var val = msg.components[0]["components"][0]["options"][clp];
+
+                        if (i.values[0] == val["value"] && validLangCodes.includes(i.values[0])) {
+                            var newLang = val["label"]
                             const affectedRows = await app.DBs.userSettings.update({ language: newLang }, { where: { userID: message.author.id } });
 
                             if (affectedRows > 0) {
@@ -244,9 +265,9 @@ module.exports = {
                                     embeds: [{
                                         author: { name: `Whoop whoop, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
 
-                                        title: `${app.config.system.emotes.success} User Settings - Change Language`,
+                                        title: `${app.config.system.emotes.success} ${app.lang.getLine(userSettings.get("language"), "User Settings")} - ${app.lang.getLine(userSettings.get("language"), "Change Language")}`,
                                         color: app.config.system.embedColors.lime,
-                                        description: `Here's what just happened: You successfully changed your language to \`${newLang}\`.`
+                                        description: `${app.lang.getLine(userSettings.get("language"), "Here's what just happened")}: You successfully changed your language to \`${newLang}\`.`
                                     }],
                                     components: []
                                 });
@@ -283,9 +304,9 @@ module.exports = {
                             embeds: [{
                                 author: { name: `Whoop whoop, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
 
-                                title: `${app.config.system.emotes.success} User Settings - Change Prefix`,
+                                title: `${app.config.system.emotes.success} ${app.lang.getLine(userSettings.get("language"), "User Settings")} - ${app.lang.getLine(userSettings.get("language"), "Change Prefix")}`,
                                 color: app.config.system.embedColors.lime,
-                                description: `Here's what just happened: You successfully changed your prefix to \`${newPrefix}\`.`
+                                description: `${app.lang.getLine(userSettings.get("language"), "Here's what just happened")}: You successfully changed your prefix to \`${newPrefix}\`.`
                             }],
                             components: []
                         }, 1, true);

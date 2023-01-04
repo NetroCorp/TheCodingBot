@@ -8,16 +8,16 @@ module.exports = {
     cooldown: 2,
     aliases: [],
     syntax: [],
-    execute: async(app, message, args) => {
-        app.functions.msgHandler(message, `${app.config.system.emotes.wait} :ping_pong: **Pinging...**`, 0, true, (msg => {
+    execute: async(app, message, args, userSettings) => {
+        app.functions.msgHandler(message, `${app.config.system.emotes.wait} :ping_pong: **${app.lang.getLine(userSettings.get("language"), "Pinging...")}**`, 0, true, (msg => {
             app.functions.msgHandler(msg, {
                 content: "** **",
                 embeds: [{
-                    title: app.config.system.emotes.information + " **Latency Test**",
+                    title: `${app.config.system.emotes.information} **${app.lang.getLine(userSettings.get("language"), "Latency Test")}** `,
                     color: app.config.system.embedColors.blue,
                     fields: [
-                        { name: "API", value: app.client.ws.ping + "ms", inline: true },
-                        { name: "Messages", value: ((msg.createdTimestamp - message.createdTimestamp) + "ms"), inline: true }
+                        { name: app.lang.getLine(userSettings.get("language"), "API"), value: app.client.ws.ping + "ms", inline: true },
+                        { name: app.lang.getLine(userSettings.get("language"), "Messages"), value: ((msg.createdTimestamp - message.createdTimestamp) + "ms"), inline: true }
                     ]
                 }]
             }, 1, true)

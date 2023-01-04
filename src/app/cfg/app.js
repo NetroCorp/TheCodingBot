@@ -14,8 +14,8 @@ const app = {
 
     version: {
         major: 5,
-        minor: 0,
-        revision: 2,
+        minor: 1,
+        revision: 1,
         buildType: "R",
         toString: function() {
             var major = app.version.major,
@@ -166,7 +166,7 @@ const app = {
                 const userSetting = await app.DBs.userSettings.create({
                     userID: id,
                     prefix: app.config.system.defaultPrefix,
-                    language: "English",
+                    language: app.config.system.defaultLanguage || "English (en_US)",
                     acceptedEULA: false,
                     executedCommands: 0,
                     errorCommands: 0,
@@ -292,11 +292,13 @@ const app = {
             }, edit, true);
         },
         msgHandler: async function(message, options, action = 0, doReply = false, callback = null) { // action: 0 = Send, 1 = Edit
+            var userSettings = (message.author) ? await app.DBs.userSettings.findOne({ where: { userID: message.author.id } }) : "English";
+
             if (options.embeds) {
                 if (options["author"] != null) {
                     var author = options["author"];
                     if (author.id)
-                        options.embeds[0]["author"] = { name: `Hello, ${author.tag}!`, icon_url: author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) };
+                        options.embeds[0]["author"] = { name: `${(app.lang.getLine((userSettings) ? userSettings.get("language") : "English", "Hello"))}, ${author.tag}!`, icon_url: author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) };
                     delete options["author"];
                 };
                 if (!options.embeds[0]["footer"]) options.embeds[0]["footer"] = { text: app.config.system.footerText }; // Install branding.exe
@@ -365,7 +367,7 @@ const app = {
             var embedColor = (type == "error") ? app.config.system.embedColors.red : app.config.system.embedColors.yellow;
 
             var data = {};
-            if ((err.message) ? err.message.includes("Command not found") : err.includes("Command not found"))
+            if ((err.message) ? err.message.includes(app.lang.getLine(userSettings.get("language"), "Command not found")) : err.includes(app.lang.getLine(userSettings.get("language"), "Command not found")))
                 data = {
                     embeds: [{
                         title: embedTitle,
@@ -383,7 +385,7 @@ const app = {
                     embeds: [{
                         title: embedTitle,
                         color: embedColor,
-                        description: `Failed to execute \`${((command.name) ? command.name : command)}\`!`,
+                        description: `${app.lang.getLine(userSettings.get("language"), "Failed to execute")} \`${((command.name) ? command.name : command)}\`!`,
                         fields: [
                             { name: "Error Details", value: "```" + msg + "```" }
 

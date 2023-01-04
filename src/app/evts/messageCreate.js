@@ -26,14 +26,14 @@ module.exports = async(app, message) => {
             try {
                 app.functions.msgHandler(message, {
                     embeds: [{
-                        title: `${app.config.system.emotes.success} Welcome back!`,
+                        title: `${app.config.system.emotes.success} ${app.lang.getLine(userSettings.get("language"), "Welcome back!")}`,
                         color: app.config.system.embedColors.lime,
-                        description: `You were AFK for **${app.functions.TStoHR(new Date().getTime() - AFKSettings["timestamp"])}**.${(AFKSettings["mentions"] > 0) ? "\nYou were mentioned **" + AFKSettings["mentions"] + "** times!" : ""}`
+                        description: `${app.lang.getLine(userSettings.get("language"), "You were AFK for")} **${app.functions.TStoHR(new Date().getTime() - AFKSettings["timestamp"])}**.${(AFKSettings["mentions"] > 0) ? "\nYou were mentioned **" + AFKSettings["mentions"] + "** times!" : ""}`
                     }]
                 }, 0, true, (async msg => {
                     var rowsUpdated = await app.DBs.userSettings.update({ AFKSettings: null }, { where: { userID: message.author.id } });
                     if (rowsUpdated < 1)
-                        return app.functions.msgHandler(message, { content: `Something went wrong while updating your database entry!` }, 0, true);
+                        return app.functions.msgHandler(message, { content: app.lang.getLine(userSettings.get("language"), "Something went wrong while updating your database entry!") }, 0, true);
                     userSettings = await app.DBs.userSettings.findOne({ where: { userID: message.author.id } });
                     setTimeout(function() { msg.delete(); }, 6000);
                 }));
@@ -47,7 +47,7 @@ module.exports = async(app, message) => {
 
         var rowsUpdated = await app.DBs.userSettings.update({ prefix: prefix }, { where: { userID: message.author.id } });
         if (rowsUpdated < 1)
-            return app.functions.msgHandler(message, { content: `Something went wrong while updating your database entry!` }, 0, true);
+            return app.functions.msgHandler(message, { content: app.lang.getLine(userSettings.get("language"), "Something went wrong while updating your database entry!") }, 0, true);
         userSettings = await app.DBs.userSettings.findOne({ where: { userID: message.author.id } });
     };
 
@@ -63,7 +63,7 @@ module.exports = async(app, message) => {
                     var AFKSettings = JSON.parse(user["AFKSettings"]);
                     if (message.mentions.has(user["userID"])) {
                         AFKSettings["mentions"]++;
-                        AFKpeeps.push(`${app.client.users.cache.get(user["userID"]).tag} has been AFK since ${app.functions.TStoHR(new Date().getTime() - AFKSettings["timestamp"])} ago${((AFKSettings["reason"]) != "." ? ": " + AFKSettings["reason"]: "")}`);
+                        AFKpeeps.push(`${app.client.users.cache.get(user["userID"]).tag} ${app.lang.getLine(userSettings.get("language"), "has been AFK since")} ${app.functions.TStoHR(new Date().getTime() - AFKSettings["timestamp"])} ago${((AFKSettings["reason"]) != "." ? ": " + AFKSettings["reason"]: "")}`);
                         try { await app.DBs.userSettings.update({ AFKSettings: JSON.stringify(AFKSettings, null, "\t") }, { where: { userID: user["userID"] } }); } catch (Ex) {};
                     };
                 };
@@ -71,7 +71,7 @@ module.exports = async(app, message) => {
 
             if (AFKpeeps.length > 0)
                 app.functions.msgHandler(message, {
-                    content: `${AFKpeeps.join("\n") || "Something went wrong while fetching AFK data."}`
+                    content: `${AFKpeeps.join("\n") || app.lang.getLine(userSettings.get("langugage"), "Something went wrong while fetching AFK data.")}`
                 }, 0, true);
             return;
         } else return;
@@ -87,7 +87,7 @@ module.exports = async(app, message) => {
     };
 
     var command = app.commands.get(commandName) || app.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-    if (!command) return app.functions.ErrorHandler(app, userSettings, message, commandName, new Error("Command not found."), "warning");
+    if (!command) return app.functions.ErrorHandler(app, userSettings, message, commandName, new Error(app.lang.getLine(userSettings.get("language"), "Command not found.")), "warning");
 
     if (!args ||
         args && args.slice(0))
@@ -105,18 +105,11 @@ module.exports = async(app, message) => {
             if (userCooldown.length > 0) {
                 var cooldownTime = (userCooldown[0].time - message.createdTimestamp);
                 if (cooldownTime > 1000) {
-                    var responses = [
-                        "I'm not *that* fast! S-Slow it down!", "This is difficult, you know...",
-                        "Never let a computer know you're in a hurry...", "A computer will do what you tell it to do, but that may be much different from what you had in mind. :pensive:",
-                        "L-Let me have my boba tea first!", "I think I am, therefore, I am.... I think.",
-                        "Where there's a will, there's a relative!", "I-I swear I'm not lazy...",
-                        "Are we there yet?", "<elevator music>",
-                        "No need to step on the Gas! Gas! Gas!", "Calm down a bit- p-please!"
-                    ];
+                    var responses = app.lang.getLine(userSettings.get("language"), "coolDownResponse");
                     return app.functions.msgHandler(message, {
                         embeds: [{
                             color: app.config.system.embedColors.red,
-                            description: `${responses[Math.floor(Math.random() * responses.length)]}\n*(On cooldown for ${app.functions.TStoHR(cooldownTime)})*`
+                            description: `${responses[Math.floor(Math.random() * responses.length)]}\n*(${app.lang.getLine(userSettings.get("language"), "On cooldown for")} ${app.functions.TStoHR(cooldownTime)})*`
                         }]
                     }, 0, true);
                 } else {
@@ -130,7 +123,7 @@ module.exports = async(app, message) => {
             if (app.config.system.commandState == "Disabled") {
                 app.logger.info("DISCORD", `[MESSAGE] Return ${message.author.id} command: Disabled.`);
 
-                return app.functions.ErrorHandler(app, userSettings, message, command.name, new Error("Commands are disabled!"), "warning");
+                return app.functions.ErrorHandler(app, userSettings, message, command.name, new Error(app.lang.getLine(userSettings.get("language"), "Commands are disabled!")), "warning");
 
             };
         };
@@ -149,7 +142,7 @@ module.exports = async(app, message) => {
                     eulaResult = await eula(app, message);
                     if (eulaResult["denied"]) return;
                 } catch (Ex) {
-                    return app.functions.ErrorHandler(app, userSettings, message, command.name, new Error("Nya.. End-User Agreement failed to load. How does that even happen..."), "error");
+                    return app.functions.ErrorHandler(app, userSettings, message, command.name, new Error(`Nya.. ${app.lang.getLine(userSettings.get("language"), "End-User Agreement failed to load. How does that even happen...")}`), "error");
                 };
 
             };
@@ -162,7 +155,7 @@ module.exports = async(app, message) => {
                 try {
                     await app.functions.clearCache(command.file); // Clear cache :>
                     command = require(command.file);
-                    await command.execute(app, message, args);
+                    await command.execute(app, message, args, userSettings);
                     if (!userSettings.get('optedOut'))
                         userSettings.update({ executedCommands: (userSettings.get('executedCommands') + 1) }, { where: { userID: message.author.id } });
                     if (command.cooldown != null) {

@@ -1,6 +1,9 @@
 module.exports = async(app, message) => {
     if (!app.client.eulaMsgSent) app.client.eulaMsgSent = [];
 
+    var userSettings = await app.DBs.userSettings.findOne({ where: { userID: message.author.id } });
+
+
     var buttonStuffWaiting = true,
         denied = true;
     const { MessageActionRow, MessageButton } = app.modules["discord.js"];
@@ -8,11 +11,11 @@ module.exports = async(app, message) => {
         .addComponents(
             new MessageButton()
             .setCustomId('agree')
-            .setLabel('I agree to these terms.')
+            .setLabel(app.lang.getLine(userSettings.get("language"), 'I agree to these terms.'))
             .setStyle('SUCCESS'),
             new MessageButton()
             .setCustomId('disagree')
-            .setLabel('I disagree to these terms.')
+            .setLabel(app.lang.getLine(userSettings.get("language"), 'I disagree to these terms.'))
             .setStyle('DANGER')
         );
 
@@ -26,9 +29,9 @@ module.exports = async(app, message) => {
                 if (affectedRows > 0) {
                     await i.update({
                         embeds: [{
-                            title: `${app.config.system.emotes.success} **End-User License Agreement**`,
+                            title: `${app.config.system.emotes.success} **${app.lang.getLine(userSettings.get("language"), "End-User License Agreement")}**`,
                             color: app.config.system.embedColors.lime,
-                            description: "You successfully agreed to the EOA! Thank you and have fun!\n(You may need to rerun your command again.)",
+                            description: `${app.lang.getLine(userSettings.get("language"), "You successfully agreed to the EULA! Thank you and have fun!")}\n${app.lang.getLine(userSettings.get("language"), "(You may need to rerun your command again.)")}`,
                             footer: { text: app.config.system.footerText }
                         }],
                         components: []
@@ -39,9 +42,9 @@ module.exports = async(app, message) => {
                 } else {
                     await i.update({
                         embeds: [{
-                            title: `${app.config.system.emotes.warning} **End-User License Agreement**`,
+                            title: `${app.config.system.emotes.warning} **${app.lang.getLine(userSettings.get("language"), "End-User License Agreement")}**`,
                             color: app.config.system.embedColors.orange,
-                            description: "Could not save your acknowledgement. Please try again.",
+                            description: app.lang.getLine(userSettings.get("language"), "Could not save your acknowledgement. Please try again."),
                             footer: { text: app.config.system.footerText }
                         }],
                         components: []
@@ -53,9 +56,9 @@ module.exports = async(app, message) => {
             } else if (i.customId === 'disagree') {
                 await i.update({
                     embeds: [{
-                        title: `${app.config.system.emotes.error} **End-User License Agreement**`,
+                        title: `${app.config.system.emotes.error} **${app.lang.getLine(userSettings.get("language"), "End-User License Agreement")}**`,
                         color: app.config.system.embedColors.red,
-                        description: "You denied the EOA.",
+                        description: app.lang.getLine(userSettings.get("language"), "You denied the EULA."),
                         footer: { text: app.config.system.footerText }
                     }],
                     components: []
@@ -69,9 +72,9 @@ module.exports = async(app, message) => {
             if (collected.size < 1) {
                 app.functions.msgHandler(msg, {
                     embeds: [{
-                        title: `${app.config.system.emotes.error} **End-User License Agreement**`,
+                        title: `${app.config.system.emotes.error} **${app.lang.getLine(userSettings.get("language"), "End-User License Agreement")}**`,
                         color: app.config.system.embedColors.red,
-                        description: "Operation timed out."
+                        description: app.lang.getLine(userSettings.get("language"), "Operation timed out.")
                     }],
                     components: []
                 }, 1, true);
@@ -80,20 +83,25 @@ module.exports = async(app, message) => {
         });
     };
 
-    var fields = require("./eula-data.json");
+    fields = [];
+    if (userSettings)
+        fields = app.lang.getLine(userSettings.get("language") || "English", "EULA");
+    else
+        fields = app.lang.getLine("English", "EULA");
+
     for (var i = 0; i < fields.length; i++) { // Placeholder moment
         var text = fields[i]["value"];
         if (text != null) {
-            text = text.replaceAll("PREFIX", "Pref");
+            //            text = text.replaceAll("PREFIX", "Pref");
             fields[i]["value"] = text;
         };
     };
 
     await app.functions.msgHandler(message, {
         embeds: [{
-            title: `${app.config.system.emotes.question} **End-User License Agreement**`,
+            title: `${app.config.system.emotes.question} **${app.lang.getLine(userSettings.get("language"), "End-User License Agreement")}**`,
             color: app.config.system.embedColors.purple,
-            description: "Before continuing, you must agree to the bot's End-User License Agreement.",
+            description: app.lang.getLine(userSettings.get("language"), "Before continuing, you must agree to the bot's End-User License Agreement."),
             fields: fields
         }],
         components: [row]

@@ -51,7 +51,7 @@ module.exports = {
                         }, 1, true, (async() => {
                             app.logger.debug("SYS", `${app.name} ${actionDoing.toLowerCase()} as of ${new Date()}.`);
                             if (type == "Restart") {
-                                try { app.modules.fs.writeFileSync(process.cwd() + "/cache/restart.tmp", msg.channel.id + "-" + msg.id); } catch (Ex) {};
+                                try { app.modules.fs.writeFileSync(process.cwd() + "/app/cache/restart.tmp", msg.channel.id + "-" + msg.id); } catch (Ex) {};
                                 await process.exitHandler({ app: app, cleanup: true, exit: false, restart: true }, 0);
 
                             } else { process.exitHandler({ app: app, cleanup: true, exit: true }, 0); };

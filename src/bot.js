@@ -210,6 +210,18 @@ async function bot(debug) {
     logger.info("SYS", `Enabling configuration...`);
     if (!process.waitingForCleanup) await bootloader.loadHandler(app, "configuration", configuration);
 
+    if (debug) console.log("-> Init: Languages");
+    const LanguageLoader = require("./app/lang/lang.js");
+    const languageloader = new LanguageLoader(app, "English");
+    app.lang = languageloader;
+    const languages = await app.modules.fs.readdirSync('./app/lang').filter(file => file.endsWith('.json'));
+    if (debug) console.log(` > Languages: ${languages.length}`);
+    if (debug) logger.debug("SYS", `Languages files are now ready to load!`);
+
+
+    logger.info("SYS", `Enabling languages...`);
+    if (!process.waitingForCleanup) await languageloader.loadLang(languages);
+
 
     if (debug) console.log("-> Init: Discord Client...");
     const { Client } = app.modules["discord.js"];

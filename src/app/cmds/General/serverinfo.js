@@ -28,29 +28,29 @@ module.exports = {
                 fields: [
                     { name: "ID", value: guild.id, inline: true },
                     { name: "Acronym", value: guild.acronym, inline: true },
-                    { name: "Boosts", value: guild["premiumSubscriptionCount"].toString(), inline: true },
+                    { name: "Boosts", value: guild.premiumSubscriptionCount.toString() || "N/A", inline: true },
                     { name: "Preferred Locale", value: guild.preferredLocale, inline: true },
                     { name: "Owner", value: `<@${guild.ownerId}> (${guild.ownerId})`, inline: true },
                     { name: "Features", value: ((guild.features.length > 0) ? "`" + guild.features.join("`, `") + "`" : "No special features :(") },
 
-                    { name: "Channels", value: guild.channels.cache.size.toString(), inline: true },
-                    { name: "Roles", value: guild.roles.cache.size.toString(), inline: true },
-                    { name: "Bans", value: guild.bans.cache.size.toString(), inline: true },
-                    { name: "Invites", value: guild.invites.cache.size.toString(), inline: true },
-                    { name: "Emojis", value: guild.emojis.cache.size.toString(), inline: true },
-                    { name: "Stickers", value: guild.stickers.cache.size.toString(), inline: true },
+                    { name: "Channels", value: guild.channels.cache.size.toString() || "N/A", inline: true },
+                    { name: "Roles", value: guild.roles.cache.size.toString() || "N/A", inline: true },
+                    { name: "Bans", value: guild.bans.cache.size.toString() || "N/A", inline: true },
 
-                    { name: "Total Members", value: members.total.toString(), inline: true },
-                    { name: "Users", value: members.users.toString(), inline: true },
-                    { name: "Bots", value: members.bots.toString(), inline: true }
+                    { name: "Invites", value: guild.invites.cache.size.toString() || "N/A", inline: true },
+                    { name: "Emojis", value: guild.emojis.cache.size.toString() || "N/A", inline: true },
+                    { name: "Stickers", value: guild.stickers.cache.size.toString() || "N/A", inline: true },
 
+                    { name: "Total Members", value: members.total.toString() || "N/A", inline: true },
+                    { name: "Users", value: members.users.toString() || "N/A", inline: true },
+                    { name: "Bots", value: members.bots.toString() || "N/A", inline: true }
                 ]
             };
 
             if (guild.description != null) embed.description = guild.description;
-            if (guild["vanityURLCode"]) embed.fields.push({ name: "Vanity URL", value: "https://discord.gg/" + guild["vanityURLCode"], inline: true }, { name: "Vanity URL Uses", value: guild["vanityURLUses"].toString(), inline: true });
+            if (guild.vanityURLCode) embed.fields.push({ name: "Vanity URL", value: "https://discord.gg/" + guild["vanityURLCode"], inline: true }, { name: "Vanity Uses", value: (guild.vanityURLUses != null) ? guild.vanityURLUses.toString() : "None", inline: true });
 
-            embed.fields.push({ "name": "Server Created", "value": new Date(guild.createdTimestamp).toString() }, { "name": app.name + " Joined", "value": new Date(guild.joinedTimestamp).toString() });
+            embed.fields.push({ "name": "Server Created", "value": new Date(guild.createdTimestamp).toString() || "N/A" }, { "name": `${app.name} Joined`, "value": new Date(guild.joinedTimestamp).toString() || "N/A" });
 
             if (guild.icon != null)
                 embed.thumbnail = { url: `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.${app.functions.isAnimated(guild.icon) ? "gif": "png"}?size=1024` };
@@ -68,6 +68,7 @@ module.exports = {
             app.functions.msgHandler(message, options);
 
         } catch (Ex) {
+            console.log(Ex);	
             return app.functions.msgHandler(message, {
                 embeds: [{
                     description: `${app.config.system.emotes.error} **${Ex.message}**`,

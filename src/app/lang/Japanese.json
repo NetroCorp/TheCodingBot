@@ -1,0 +1,123 @@
+{
+    "metadata": {
+        "name": "Japanese",
+        "full_name": "Japanese (ja_JP)",
+        "description": "日本語 - 日本",
+        "langCode": "ja_JP",
+        "translator": "TMC Software",
+        "version": "0.0.0.0"
+    },
+    "translations": {
+        "End-User License Agreement": "エンドユーザーラーイセンス契約",
+        "End-User Agreement failed to load. How does that even happen...": "エンドーユーザー使用許諾契約の読み込みに失敗しました。 それはどのように起こりますか...",
+        "Before continuing, you must agree to the bot's End-User License Agreement.": "続行する前に、ボットのエンドユーザー使用許諾契ー約に同意する必要があります。",
+        "EULA": [
+            { "name": "**!! 重要 !!**", "value": "おい！ 続行する前に、[エンドユーザー使用許諾契約書](https://tcb.nekos.tech/eula)をお読みください。" },
+            { "name": "**このボットには利用規約とプライバシーポリシーがあります！**", "value": "[利用規約](https://tcb.nekos.tech/terms)と[プライバシーポリシー](https://tcb.nekos.tech/privacy)もお読みください。" },
+            { "name": "**続けることで...**", "value": "あなたはあなたが読んだことに同意しています[エンドユーザー使用許諾契約](https://tcb.nekos.tech/eula)、[利用規約](https://tcb.nekos.tech/terms)、および[プライバシーポリシー](https://tcb.nekos.tech/privacy)！" }
+        ],
+        "I agree to these terms.": "私はこれらの条件に同意します。",
+        "I disagree to these terms.": "私はこれらの条件に同意しません。",
+        "Operation timed out.": "操作がタイムアウトしました。",
+        "You denied the EULA.": "君はEULAを拒否しました。",
+        "You successfully agreed to the EULA! Thank you and have fun!": "あなたはEULAに首尾よく同意しました！ ありがとう、楽しんでください！",
+        "(You may need to rerun your command again.)": "（コマンドを再実行する必要がある場合があります。）",
+        "Could not save your acknowledgement. Please try again.": "謝辞を保存できませんでした。 もう一度やり直してください。",
+
+
+        "Hello": "こんにちは",
+        "Woop woop": "ウープウープ",
+        "Something went wrong while updating your database entry!": "データベースエントリの更新中に問題が発生しました。",
+        "Failed to execute": "実行に失敗しました",
+        "Error": "エラー",
+        "Error Details": "エラー詳細",
+        "Command not found.": "コマンドが見つかりません。",
+        "Commands are disabled.": "コマンドが無 身体障害者 。",
+
+
+        "Pinging...": "Pinging...",
+        "Latency Test": "レイテンシーテスト",
+        "API": "API",
+        "Messages": "メッセージ",
+
+
+        "All about your favorite bot": "All about your favorite bot",
+        "Bot Information": "ボット情報",
+        "User Tag": "ユーザータグ",
+        "User ID": "ユーザーID",
+        "Bot Uptime": "ボットの稼働時間",
+        "Bot Version": "ボットバージョン",
+        "Emote Count": "エモートカウント",
+        "Embed Color Count": "埋め込みカラーカウント",
+        "RPS Count": "RPSカウント",
+        "Bot Memory Usage": "ボットのメモリ使用量",
+        "Servers I'm In": "Servers I'm In",
+        "Host System Information": "ホストシステム情報",
+        "NodeJS Version": "NodeJSバージョン",
+        "NodeJS Uptime": "NodeJS の稼働時間",
+        "NodeJS Execution Path": "NodeJS 実行パス",
+        "Process PID": "プロセスPID",
+        "System Platform": "システムプラットフォーム",
+        "Kernel Version": "カーネルバージョン",
+        "System Version": "システムバージョン",
+
+
+        "Help": "ヘルプ",
+        "Help for": "のヘルプ",
+        "Category": "カテゴリー",
+        "Uncategorized": "未分類",
+        "Server Only?": "サーバーのみ？",
+        "Permissions": "許可",
+        "Cooldown": "クールダウン",
+        "Aliases": "エイリアス",
+        "Syntax": "構文",
+        "Heads up!": "注意喚起！",
+        "Required": "必修",
+        "Optional": "オプショナル",
+
+
+        "You're now AFK": "あなたは今ですAFK",
+        "Could not set to AFK due to Database Error!": "データベースエラーのため、AFK設定できませんでした！",
+        "Something went wrong while fetching AFK data.": "AFKデータのフェッチ中に問題が発生しました。",
+        "Welcome back!": "いらっしゃいませ戻る!",
+        "You were AFK for": "あなたはAFKでした",
+        "has been AFK since": "以来AFKされています",
+
+
+        "User Settings": "ユーザー設定",
+        "Change Settings": "設定を変更する",
+        "Change Language": "言語を変くだ",
+        "Change Prefix": "プレフィックスの更",
+        "Here's what just happened": "これがちょうど起こったことです",
+
+
+        "Some magic, please!": "いくつか魔法,  お願いします！",
+        "Question": "質問",
+        "Answer": "答え",
+        "8ballResponse": {
+            "はい！": "lime",
+            "確かに": "lime",
+            "星に手を伸ばせ！": "lime",
+            "間違いなく！": "lime",
+            "いいえ。": "red",
+            "それについて考えさえしないでください。": "red",
+            "なんでそんなことするの！？": "red",
+            "しないでください。": "red",
+            "実はわからない…": "purple",
+            "考えさせて": "purple",
+            "うーん...": "purple",
+            "未来と同じように、私は何に答えるべきかわからない。": "purple"
+        },
+
+
+        "coolDownResponse": [
+            "私はそ*れほど*速くはありません！ S-遅くして！", "これは難しいです、あなたは知っています...",
+            "たが急いいるとをコンピュータに決して知らせないでください...", "コンピューターはあなたが指示したことを実行しますが、それはあなたが考えていたものとは大きく異なるかもしれません。:pensive:",
+            "L-最初にボバティーを飲ませてく！", "我思う、故に, 我あり... 我思う。",
+            "意志があるところには親戚がいます！", "私-私は怠け者ではないことを誓います...",
+            "私たちもうそこに？", "<エレベーター音楽>",
+            "ガスを踏む必要はありません！ ガス！ ガス！", "少し落ち着いてください- p-お願いします！"
+        ],
+        "On cooldown for": "ためにオンクールダウン"
+    }
+}

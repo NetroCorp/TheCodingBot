@@ -1,0 +1,123 @@
+{
+    "metadata": {
+        "name": "English",
+        "full_name": "English (en_US)",
+        "description": "English - United States",
+        "langCode": "en_US",
+        "translator": "TMC Software",
+        "version": "1.0.0.0"
+    },
+    "translations": {
+        "End-User License Agreement": "End-User License Agreement",
+        "End-User Agreement failed to load. How does that even happen...": "End-User Agreement failed to load. How does that even happen...",
+        "Before continuing, you must agree to the bot's End-User License Agreement.": "Before continuing, you must agree to the bot's End-User License Agreement.",
+        "EULA": [
+            { "name": "**!! IMPORTANT !!**", "value": "Hey! Before you continue, please read the [End-User License Agreement](https://tcb.nekos.tech/eula)." },
+            { "name": "**This bot has a Terms of Service and Privacy Policy!**", "value": "Please also read the [Terms of Service](https://tcb.nekos.tech/terms) and [Privacy Policy](https://tcb.nekos.tech/privacy)!" },
+            { "name": "**By continuing...**", "value": "You're agreeing you've read the [End-User License Agreement](https://tcb.nekos.tech/eula), [Terms of Service](https://tcb.nekos.tech/terms), and [Privacy Policy](https://tcb.nekos.tech/privacy)!" }
+        ],
+        "I agree to these terms.": "I agree to these terms.",
+        "I disagree to these terms.": "I disagree to these terms.",
+        "Operation timed out.": "Operation timed out.",
+        "You denied the EULA.": "You denied the EULA.",
+        "You successfully agreed to the EULA! Thank you and have fun!": "You successfully agreed to the EULA! Thank you and have fun!",
+        "(You may need to rerun your command again.)": "(You may need to rerun your command again.)",
+        "Could not save your acknowledgement. Please try again.": "Could not save your acknowledgement. Please try again.",
+
+
+        "Hello": "Hello",
+        "Woop woop": "Woop woop",
+        "Something went wrong while updating your database entry!": "Something went wrong while updating your database entry!",
+        "Failed to execute": "Failed to execute",
+        "Error": "Error",
+        "Error Details": "Error Details",
+        "Command not found.": "Command not found.",
+        "Commands are disabled.": "Commands are disabled.",
+
+
+        "Pinging...": "Pinging...",
+        "Latency Test": "Latency Test",
+        "API": "API",
+        "Messages": "Messages",
+
+
+        "All about your favorite bot": "All about your favorite bot",
+        "Bot Information": "Bot Information",
+        "User Tag": "User Tag",
+        "User ID": "User ID",
+        "Bot Uptime": "Bot Uptime",
+        "Bot Version": "Bot Version",
+        "Emote Count": "Emote Count",
+        "Embed Color Count": "Embed Color Count",
+        "RPS Count": "RPS Count",
+        "Bot Memory Usage": "Bot Memory Usage",
+        "Servers I'm In": "Servers I'm In",
+        "Host System Information": "Host System Information",
+        "NodeJS Version": "NodeJS Version",
+        "NodeJS Uptime": "NodeJS Uptime",
+        "NodeJS Execution Path": "NodeJS Execution Path",
+        "Process PID": "Process PID",
+        "System Platform": "System Platform",
+        "Kernel Version": "Kernel Version",
+        "System Version": "System Version",
+
+
+        "Help": "Help",
+        "Help for": "Help for",
+        "Category": "Category",
+        "Uncategorized": "Uncategorized",
+        "Server Only?": "Server Only?",
+        "Permissions": "Permissions",
+        "Cooldown": "Cooldown",
+        "Aliases": "Aliases",
+        "Syntax": "Syntax",
+        "Heads up!": "Heads up!",
+        "Required": "Required",
+        "Optional": "Optional",
+
+
+        "You're now AFK": "You're now AFK",
+        "Could not set to AFK due to Database Error!": "Could not set to AFK due to Database Error!",
+        "Something went wrong while fetching AFK data.": "Something went wrong while fetching AFK data.",
+        "Welcome back!": "Welcome back!",
+        "You were AFK for": "You were AFK for",
+        "has been AFK since": "has been AFK since",
+
+
+        "User Settings": "User Settings",
+        "Change Settings": "Change Settings",
+        "Change Language": "Change Language",
+        "Change Prefix": "Change Prefix",
+        "Here's what just happened": "Here's what just happened",
+
+
+        "Some magic, please!": "Some magic, please!",
+        "Question": "Question",
+        "Answer": "Answer",
+        "8ballResponse": {
+            "Yes!": "lime",
+            "For sure": "lime",
+            "Reach for the stars!": "lime",
+            "Definitely!": "lime",
+            "No.": "red",
+            "Don't even think about it.": "red",
+            "Why would you do that!?": "red",
+            "Don't.": "red",
+            "I actually don't know..": "purple",
+            "Let me think about it": "purple",
+            "Uhh...": "purple",
+            "Just like the future, I'm uncertain on what to answer.": "purple"
+        },
+
+
+        "coolDownResponse": [
+            "I'm not *that* fast! S-Slow it down!", "This is difficult, you know...",
+            "Never let a computer know you're in a hurry...", "A computer will do what you tell it to do, but that may be much different from what you had in mind. :pensive:",
+            "L-Let me have my boba tea first!", "I think I am, therefore, I am.... I think.",
+            "Where there's a will, there's a relative!", "I-I swear I'm not lazy...",
+            "Are we there yet?", "<elevator music>",
+            "No need to step on the Gas! Gas! Gas!", "Calm down a bit- p-please!"
+        ],
+        "On cooldown for": "On cooldown for"
+    }
+}

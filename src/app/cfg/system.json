@@ -1,5 +1,5 @@
 {
-    "footerText": "APPNAME, © TMC Software 2018-currYear.",
+    "footerText": "APPNAME, © Netro Corporation 2018-currYear.",
     "commandState": "Enabled",
     "defaultPrefix": "tB/",
     "rotatingStatus": {
@@ -138,7 +138,7 @@
     },
 
     "logURL": "https://tcb.nekos.tech/bot/",
-    "imgAPI": "https://api.themattchannel.com/v1/imgs/",
+    "imgAPI": "https://api.netrocorp.net/v1/imgs/",
 
 
     "owners": [
