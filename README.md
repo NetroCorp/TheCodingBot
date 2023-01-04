@@ -39,6 +39,8 @@ This guide will assume you've left `app` in `src` (the way it should be).
 | 5.0.0   | 3/10/2022    |
 | 5.0.1   | 3/15/2022    |
 | 5.0.2   | 3/28/2022    |
+| 5.1.0   | 4/2/2022     |
+| 5.1.1   | 1/4/2023     |
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
