@@ -1,132 +1,193 @@
-/*
-	TheCodingBot v6
-	https://tcb.nekos.tech
-*/
+//
+// TheCodingBot
+// Netro Corporation
+//
+// https://codingbot.gg
 
-// Version 6 of TheCodingBot
-// Can you believe we've come this far?
 
-async function bot(debug) {
+const start = async(debugMode) => {
+	// Init
 	const startTime = new Date().getTime();
-	try {
-		console.log(` -- Starting as of ${new Date(startTime).toString()} -- `);
-
-		// Change directory
-		try {
-			if (process.cwd().split("\\").slice(-1) != "src") // attempt to change into 'src'
-				process.chdir(process.cwd() + "/src");
-		} catch (Ex) {}; // Assume it's okay to continue.
-
-		// Import ourselves and other functions
-		const app = require(`${process.cwd()}/app/cfg/app.js`);
-		app.debugMode = debug;
-		app.config = require(`${process.cwd()}/app/cfg/config.js`);
-		app.config.dbs = require(`${process.cwd()}/app/cfg/database.js`);
-		app.functions = require(`${process.cwd()}/app/func/main.js`)();
-		app.functions.setContext(app);
-
-		process.stdin.resume();
-		process.on('exit', app.functions.exitHandler.bind(null,{cleanup:true}));
-		process.on('SIGINT', app.functions.exitHandler.bind(null, {exit:true}));
-		process.on('SIGUSR1', app.functions.exitHandler.bind(null, {exit:true}));
-		process.on('SIGUSR2', app.functions.exitHandler.bind(null, {exit:true}));
-		process.on('uncaughtException', (error) => {
-			if (app.logger)
-				app.logger.error("SYS", `An uncaught exception just occurred! ${error}\n${error.stack}!`);
-			else
-				console.error(`An uncaught exception just occurred! ${error}\n${error.stack}!`);
-		});
-
-
-		// Import logger (so we look pretty :)
-		app.logger = require(`${process.cwd()}/app/func/logger.js`)();
-		app.logger.setContext(app);
-		app.logger.info("SYS", `Hello world of ${app.name}! Logger configured!`);
-
-		// Load dependencies
-		app.logger.info("SYS", `Loading ${app.dependencies.length} dependencies...`);
-		app.modules = {};
-		app.functions.loadDependencies(app.dependencies);
-
-
-		// Import language handler & load languages
-		app.lang = require(`${process.cwd()}/app/lang/main.js`)();
-		app.lang.setContext(app);
-		const languages = await app.modules.fs.readdirSync(`${process.cwd()}/app/lang`).filter(file => file.endsWith('.lang.js'));
-		app.logger.info("SYS", `Loading ${languages.length} languages...`);
-		await app.lang.load(languages);
-
-
-		// Define our Client lol
-		app.logger.info("SYS", "Loading client...");
-		const { Client, GatewayIntentBits } = app.modules["discord.js"];
-		app.client = new Client({
-			intents: [
-				GatewayIntentBits.Guilds,
-				GatewayIntentBits.GuildMembers,
-				GatewayIntentBits.GuildBans,
-				GatewayIntentBits.GuildEmojisAndStickers,
-				GatewayIntentBits.GuildIntegrations,
-				GatewayIntentBits.GuildWebhooks,
-				GatewayIntentBits.GuildInvites,
-				GatewayIntentBits.GuildVoiceStates,
-				GatewayIntentBits.GuildPresences,
-				GatewayIntentBits.GuildMessages,
-				GatewayIntentBits.GuildMessageReactions,
-				GatewayIntentBits.GuildMessageTyping,
-				GatewayIntentBits.DirectMessages,
-				GatewayIntentBits.DirectMessageReactions,
-				GatewayIntentBits.DirectMessageTyping
-			]
-		});
-
-
-		// Load events
-		// const events = await app.modules.fs.readdirSync(`${process.cwd()}/app/evts`).filter(file => file.endsWith('.js'));
-		const events = await app.functions.getFiles(`${process.cwd()}/app/evts`, ["", ".js"]);
-		app.logger.info("SYS", `Loading ${events.length} events...`);
-		await app.functions.loadEvents(events);
-
-
-
-		// Load commands
-		app.client.slashCommands = new app.modules["discord.js"].Collection();
-		const commands = await app.functions.getFiles(`${process.cwd()}/app/cmds`, ["", ".js"]);
-		app.logger.info("SYS", `Loading ${commands.length} commands...`);
-		await app.functions.loadCommands(commands);
-
-		// Import custom interaction functions (i.e. for hug commands, etc.)
-		app.functions.interactions = require(`${process.cwd()}/app/func/interactions.js`)();
-		app.functions.interactions.setContext(app);
-		app.logger.info("SYS", `Custom interaction functions imported.`);
-
-		// Get our database online pl0x
-		app.db = null, app.DBs = {};
-		app.databases = require(`${process.cwd()}/app/func/database.js`)();
-		app.logger.info("SYS", `Loading databases...`);
-		app.databases.setContext(app);
-		await app.databases.init(app.config.dbs);
-		app.logger.info("SYS", `Loaded databases.`);
-
-		// Here we gooooooooo!
-		app.client
-			.login(process.env.DISCORD_BOT_TOKEN)
-			.then(() => app.logger.info("DISCORD", "Logged in!"))
-			.catch((err) => app.logger.error("DISCORD", err));
-
-	} catch (Ex) {
-		console.log("[] Something terribly went wrong and now I must exit. Until next time. :(");
-		console.log(Ex);
+	const botDirectory = `${process.cwd()}/src/app`;
+	const app = require(`${botDirectory}/cfg/system.js`);
+	app.debugMode = debugMode;
+	app.startUp = {
+		startTime,
+		finishTime: 0
 	};
-}; // hello
+	app.botDirectory = botDirectory;
+	app.functions = require(`${botDirectory}/func/main.js`)(app);
 
-// Details on how this works is located in ../index.js.
-const cmdArgs = process.argv.slice(2);
-switch (cmdArgs[0]) {
-	case "true":
-		bot(true);
-		break;
-	default:
-		bot();
-		break;
+	app.log = require(`${botDirectory}/func/logger.js`)(app);
+	app.log.debug("SYSTEM", "Hello World! Now starting up!");
+
+	// Import dependencies
+	if (app.system.dependencies) {
+		app.log.info("SYSTEM", "Importing dependencies...");
+		if (!app.dependencies) app.dependencies = {};
+		for (var i = 0; i < app.system.dependencies.length; i++) {
+			const startImport = new Date().getTime();
+			let dependency = app.system.dependencies[i];
+			try {
+				app.functions.clearCache(dependency.name);
+				app.dependencies[dependency.name] = require(dependency.name);
+				app.log.debug("SYSTEM", `Imported dependency - ${dependency.name} in ${new Date().getTime() - startImport}ms.`);
+
+				// Additional configuration for some modules if needed
+				if (dependency.name == "dotenv") app.dependencies[dependency.name].config();
+			} catch (Ex) {
+				let missingMod = Ex.message.includes("Cannot find module");
+				if (missingMod) { app.log.error("SYSTEM", `Could not import module - ${dependency.name}!`); }
+				else console.log(Ex);
+				if (dependency.required || !missingMod) { process.exit(-1); };
+			};
+		};
+	};
+	const { Client, GatewayIntentBits, Partials, Collection, PermissionsBitField } = app.dependencies["discord.js"];
+
+	// Import functions
+	app.functions.updateChecker = require(`${botDirectory}/func/update.js`)(app);
+	await app.functions.updateChecker.init();
+
+	app.functions.database = require(`${botDirectory}/func/database.js`)(app);
+	await app.functions.database.init();
+
+	// Load client
+	app.log.info("SYSTEM", "Configuring Discord Client...");
+	app.client = new Client({
+		intents: [
+			GatewayIntentBits.Guilds,
+			GatewayIntentBits.GuildMessages,
+			GatewayIntentBits.GuildMessageReactions,
+			GatewayIntentBits.DirectMessages,
+			GatewayIntentBits.MessageContent,
+		],
+		partials: [
+			Partials.Channel,
+			Partials.Message,
+			Partials.User,
+			Partials.GuildMember,
+			Partials.Reaction
+		]
+	});
+
+	// Import events
+	app.log.info("SYSTEM", "Importing events...");
+	app.events = new Collection();
+	app.dependencies.fs.readdirSync(`${botDirectory}/evts/`).forEach(dir => {
+		const events = app.dependencies.fs.readdirSync(`${botDirectory}/evts/${dir}`).filter(file => file.endsWith('.js'));
+		for (let file of events) {
+			const startImport = new Date().getTime(),
+				fileLocation = `${botDirectory}/evts/${dir}/${file}`;
+			app.functions.clearCache(fileLocation);
+			try {
+				let event = require(fileLocation)();
+				const eventMeta = event.meta();
+				if (eventMeta.type == "rest") app.client.rest.on(eventMeta.name, (...args) => event.run(app, args));
+				else app.client.on(eventMeta.name, (...args) => event.run(app, args));
+
+				app.log.debug("SYSTEM", `Imported ${eventMeta.type} event - ${eventMeta.name} in ${new Date().getTime() - startImport}ms.`);
+			} catch (Ex) {
+				app.log.error("SYSTEM", `Could not load event - ${file}!`);
+				console.log(Ex);
+			};
+		};
+	});
+
+	// Import mods
+	try {
+		const mods = require(`${botDirectory}/mods/modules.json`);
+		if (!app.modules) app.modules = {};
+		for (let mod of mods) {
+			const startImport = new Date().getTime(),
+				fileLocation = `${botDirectory}/mods/${mod.file}`;
+			let missingMod = false;
+			if (mod.dependencies) { // Looks like this module requires some more dependencies!
+				for (var i = 0; i < mod.dependencies.length; i++) {
+					const startImport = new Date().getTime();
+					let dependency = mod.dependencies[i];
+					try {
+						app.functions.clearCache(dependency.name);
+						app.dependencies[dependency.name] = require(dependency.name);
+						app.log.debug("SYSTEM", `Imported dependency - ${dependency.name} for ${mod.name} in ${new Date().getTime() - startImport}ms.`);
+					} catch (Ex) {
+						missingMod = Ex.message.includes("Cannot find module");
+						if (missingMod) { app.log.error("SYSTEM", `Could not import dependency - ${dependency.name} for ${mod.name}!`); }
+						else console.log(Ex);
+						if (dependency.required || !missingMod) {
+							app.log.warn("SYSTEM", `Dependency import failed for ${mod.name}. This module will be diasbled.`);
+							break;
+						};
+					};
+				};
+			};
+			if (missingMod) continue;
+
+			try {
+				app.functions.clearCache(fileLocation);
+				let modData = require(fileLocation)(app);
+				await modData.init();
+
+				app.log.debug("SYSTEM", `Imported module - ${mod.name} in ${new Date().getTime() - startImport}ms`);
+			} catch (Ex) {
+				app.log.error("SYSTEM", `Could not load module - ${mod.name}!`);
+				console.log(Ex);
+			};
+		};
+	} catch (Ex) {
+		app.log.error("SYSTEM", `Could not load modules (is the file there and JSON is parsing correctly?).`);
+		if (!Ex.message.includes("Cannot find module") && !Ex.message.includes("modules.json")) console.log(Ex);
+	};
+
+	// Import commands
+	app.log.info("SYSTEM", "Importing commands...");
+	app.commands = {
+		slash: new Collection(),
+		prefix: new Collection(),
+		slash_data: []
+	};
+	
+	app.dependencies.fs.readdirSync(`${botDirectory}/cmds/`).forEach(dir => {
+		const commands = app.dependencies.fs.readdirSync(`${botDirectory}/cmds/${dir}`).filter(file => file.endsWith('.js'));
+		for (let file of commands) {
+			const startImport = new Date().getTime(),
+				fileLocation = `${botDirectory}/cmds/${dir}/${file}`;
+			app.functions.clearCache(fileLocation);
+			try {
+				let command = require(fileLocation)();
+				const commandMeta = command.meta();
+				if (process.env.COMMANDS_SLASH_ENABLED == "true" && commandMeta.supportsSlash) {
+					app.commands.slash.set(commandMeta.name, command);
+					app.commands.slash_data.push({
+						name: commandMeta.name,
+						type: commandMeta.type || 1,
+						description: commandMeta.description,
+						options: commandMeta.options,
+						default_permission: commandMeta.permissions.DEFAULT_PERMISSIONS || null,
+						default_member_permissions: commandMeta.permissions.DEFAULT_MEMBER_PERMISSIONS ? PermissionsBitField.resolve(commandMeta.permissions.DEFAULT_MEMBER_PERMISSIONS).toString() : null,
+					});
+					app.log.debug("SYSTEM", `Imported slash command - ${commandMeta.name} in ${new Date().getTime() - startImport}ms.`);
+				};
+				if (process.env.COMMANDS_PREFIX_ENABLED == "true" && commandMeta.supportsPrefix) {
+					app.commands.prefix.set(commandMeta.name, command);
+					app.log.debug("SYSTEM", `Imported prefix command - ${commandMeta.name} in ${new Date().getTime() - startImport}ms.`);
+				};
+
+			} catch (Ex) {
+				app.log.error("SYSTEM", `Could not load command - ${file}!`);
+				console.log(Ex);
+			};
+		};
+	});
+
+	// Login now!!
+	app.log.info("DISCORD", "Now logging in...");
+	app.client.login(process.env.BOT_TOKEN).catch((err) => {
+		app.log.error("DISCORD", "Failed to login!");
+		console.log(err);
+		process.exit(-1);
+	});
+
 };
+module.exports = function(debugMode) { return start(debugMode) }
+if (require.main === module) { console.log("\x1b[31mPlease call index.js.\x1b[0m"); };

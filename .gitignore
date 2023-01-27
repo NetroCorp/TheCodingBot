@@ -9,15 +9,14 @@
 node_modules/
 
 ## -- THECODINGBOT RELATED IGNORES --
-README.md.dev
-.env
 src/app/cache/*
-src/app/cfg/config.js
-src/app/cfg/app.sqlite
-*.ignore
 
 ## -- OTHER --
 #my/life
 #memes/
 # Let's commit those, actually.
 # Or do we?
+#
+#
+# It's quite crazy what funnies I could be hiding
+# but all my funnies won't be just in this file.

@@ -1,91 +1,149 @@
-/*
-	TheCodingBot v6
-	https://tcb.nekos.tech
-*/
+//
+// TheCodingBot
+// Netro Corporation
+//
+// https://codingbot.gg
 
-class database {
-	constructor() {
-		this.app = null;
-	}
-
-	setContext(app) {
+class Database {
+	constructor(app) {
 		this.app = app;
 	}
 
-	init(databases) {
-		const startTime = new Date().getTime();
-		const Sequelize = this.app.modules["sequelize"];
-		if (!Sequelize) return this.app.logger.error("SYS", `Failed to databases! Sequelize package does not exist.`);
-
-		Object.keys(databases).forEach(db => {
-			db = databases[db];
-			let dbName = db.database;
-			if (dbName == "APPNAME") dbName = this.app.name;
-			
-			try {
-				this.app.logger.info("SYS", `Loading database: ${dbName}...`);
-				const dbCfg = db.cfg;
-				dbCfg["logging"] = data => { if (this.app.debugMode) this.app.logger.debug("DB", data); };
-
-				this.app.db = new Sequelize(dbName, db.username, db.password, dbCfg);
-				Object.keys(db.tables).forEach(async table => {
-					if (!this.app.DBs[dbName])
-						this.app.DBs[dbName] = {
-							[table]: {}
-						};
-
-					Object.keys(db.tables[table]).forEach(entry => {
-						db.tables[table][entry]["type"] = Sequelize[db.tables[table][entry]["type"]];
-					});
-					this.app.DBs[dbName][table] = await this.app.db.define(table, db.tables[table]);
-
-
-					if (this.app.DBs[dbName][table]) {
-						this.app.logger.debug("DB", `Syncing database ${dbName} table: ${table}...`);
-						await this.app.DBs[dbName][table].sync();
-					}; // Sync go brrr (Make sure the tables and stuff are created)
-				});
-
-				this.app.logger.info("SYS", `Loaded database: ${dbName} in ${new Date().getTime() - startTime}ms.`);
-			} catch (Ex) {
-				this.app.logger.error("SYS", `Failed to database: ${dbName}. ${Ex.message}\n${Ex.stack}`);
-			};
-		});
-	}
-
-	unload() {
-		if (!this.app.db) return "NO_DB";
-
-		this.app.db.close();
-	}
-
-	async createUser(userID) {
-		const Sequelize = this.app.modules["sequelize"];
-
-		if (!this.app.db) return "NO_DB";
-
+	init = async() => {
+		const Sequelize = this.app.dependencies["sequelize"];
+		if (!Sequelize) return this.app.log("DATABASE", "Missing Sequelize package.");
 		try {
-            const userSetting = await this.app.DBs[this.app.name].userSettings.create({
-                userID: userID,
-				language: this.app.config.system.defaultLanguage || "English (en_US)",
-                acceptedEULA: false,
-				AFKSettings: null,
-                optedOut: false
-            });
-            const analytical = await this.app.DBs[this.app.name].analytics.create({
-                userID: userID,
-				commandsExecuted: 0,
-                commandsError: 0
-            });
-            this.app.logger.success("DB", `User data for ${userID} created in database!`);
+			if (!this.app.DBs) this.app.DBs = {};
 
-            return userSetting;
+			const dbSettings = {
+				username: process.env.EXT_MYSQL_DATABASE ? process.env.EXT_MYSQL_USER : "TheCodingBot",
+				password: process.env.EXT_MYSQL_DATABASE ? process.env.EXT_MYSQL_PASSWORD : process.env.DOCKER_MYSQL_PASSWORD,
+				database:  process.env.EXT_MYSQL_DATABASE ?  process.env.EXT_MYSQL_DATABASE : "TheCodingBot",
+				dbCfg: {
+					dialect: "mysql",
+					host: process.env.EXT_MYSQL_DATABASE ? process.env.EXT_MYSQL_HOST : "0.0.0.0"
+				},
+				tableCfg: {},
+				tables: {
+					servers: {
+						serverID: {
+							type: Sequelize.DataTypes.INTEGER,
+							unique: true,
+							primaryKey: true,
+							autoIncrement: true
+						},
+						protection: {
+							type: Sequelize.DataTypes.STRING,
+							allowNull: false,
+							// Have to create hacky function for JSON
+							get: () => { return JSON.parse(this.getDataValue("protection")) },
+							set: (value) => { return this.setDataValue("protection", JSON.stringify(value)) }
+						},
+						logChannels: {
+							type: Sequelize.DataTypes.STRING,
+							allowNull: false,
+							// Have to create hacky function for JSON
+							get: () => { return JSON.parse(this.getDataValue("logChannels")) },
+							set: (value) => { return this.setDataValue("logChannels", JSON.stringify(value)) }
+						},
+						greeting: {
+							type: Sequelize.DataTypes.STRING,
+							allowNull: false,
+							// Have to create hacky function for JSON
+							get: () => { return JSON.parse(this.getDataValue("greeting")) },
+							set: (value) => { return this.setDataValue("greeting", JSON.stringify(value)) }
+						}
+					},
+
+					users: {
+						userID: {
+							type: Sequelize.DataTypes.INTEGER,
+							unique: true,
+							primaryKey: true,
+							autoIncrement: true
+						},
+						AFKSettings: {
+							type: Sequelize.DataTypes.STRING,
+							allowNull: false,
+							// Have to create hacky function for JSON
+							get: () => { return JSON.parse(this.getDataValue("AFKSettings")) },
+							set: (value) => { return this.setDataValue("AFKSettings", JSON.stringify(value)) }
+						}
+					},
+
+					cases: {
+						entryID: {
+							type: Sequelize.DataTypes.INTEGER,
+							unique: true,
+							primaryKey: true,
+							autoIncrement: true
+						},
+						serverID: {
+							type: Sequelize.DataTypes.INTEGER,
+							allowNull: false
+						},
+						caseID: {
+							type: Sequelize.DataTypes.INTEGER,
+							allowNull: false
+						},
+						targetID: {
+							type: Sequelize.DataTypes.INTEGER,
+							allowNull: false
+						},
+						modID: {
+							type: Sequelize.DataTypes.INTEGER,
+							allowNull: false
+						},
+						type: {
+							type: Sequelize.DataTypes.INTEGER,
+							allowNull: false
+						},
+						auditID: {
+							type: Sequelize.DataTypes.INTEGER,
+							allowNull: false
+						}
+					},
+
+					caseNotes: {
+						entryID: {
+							type: Sequelize.DataTypes.INTEGER,
+							unique: true,
+							primaryKey: true,
+							autoIncrement: true
+						},
+						caseID: {
+							type: Sequelize.DataTypes.INTEGER,
+							allowNull: false
+						},
+						modID: {
+							type: Sequelize.DataTypes.INTEGER,
+							allowNull: false
+						},
+						note: {
+							type: Sequelize.DataTypes.STRING,
+							allowNull: false
+						}
+					}
+				}
+			};
+
+			const dbName = dbSettings.database;
+			this.app.log.info("DATABASE", `Connecting to database ${dbName}...`);
+			dbSettings.dbCfg["logging"] = data => { if (this.app.debugMode) this.app.log.debug("DATABASE", data); };
+			this.app.db = new Sequelize(dbName, dbSettings.username, dbSettings.password, dbSettings.dbCfg);
+			await Object.keys(dbSettings.tables).forEach(async table => {
+				if (!this.app.DBs[dbName]) this.app.DBs[dbName] = { [table]: {} };
+				const tbCfg = dbSettings.tableCfg[table] || {};
+				this.app.DBs[dbName][table] = await this.app.db.define(table, dbSettings.tables[table], tbCfg);
+				if (this.app.DBs[dbName][table]) {
+					this.app.log.debug("DATABASE", `Syncing database ${dbName} table: ${table}...`);
+					await this.app.DBs[dbName][table].sync();
+				};
+			});
 		} catch (Ex) {
-			this.app.logger.error("DB", `Failed to create user ${userID}. ${Ex.message}\n${Ex.stack}`);
-			return 1;
+			this.app.log.error("DATABASE", `Something went wrong while loading the database! ${Ex.message}`);
 		};
 	}
 }
 
-// module.exports = database;
-module.exports = function() { return new database() };
+module.exports = function(app) { return new Database(app) }

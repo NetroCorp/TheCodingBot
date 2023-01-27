@@ -1,20 +1,31 @@
 # TheCodingBot
-Welcome to TheCodingBot, the hobby Discord bot created by TheCodingGuy#6697. Packed with moderation, fun, and craziness, it's the only bot you'll ever need! ~~Until Discord updates their API and breaks the bot. :^)~~
 
-## Version 6
-Version 6 is the next generation of TheCodingBot. Currently written in Discord.JS v14, it contains all the latest groundbreaking new features of Discord - like slash commands!
+## Introduction
+This is TheCodingBot, reimagined. Built to support modules (like a dashboard) and much more.
 
-**WARNING:** TCBv6 is not considered officially stable. Check back soon, though. :eyes:
+## Get online!
+:warning: **Heads up!** Docker support is still being worked on.
+TheCodingBot is built with Docker support. You may also use the traditional method if you prefer.
 
-And, I have no idea when Version 6 will release as my schedule is as haywire as this code.
- ...well, maybe worse than the code, but- anyways!
+ - With Docker
+	1. Install Docker & Docker Compose on the machine you'll run the bot on.
+	2. Make a copy of `.env.example` as `.env`.
+	3. In `.env`, follow the instructions and fill in any missing values.
+	4. PUT THE INSTRUCTION HERE!!!
+ - Without Docker
+	1. Install latest NodeJS on the machine you'll run the bot on.
+	2. Make a copy of `.env.example` as `.env`.
+	3. In `.env`, follow the instructions and fill in any missing values.
+	4. Now run one of the following:
+		- Production: `npm run prod`
+		- Development/Debug: `npm run debug`
 
-## Proper instructions
-Coming soon, because we ain't fully stable yet!
 
 ## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-I'm not gonna hold your hand the entire way through. If you are genuinely confused on something I wrote, I'll assist.
-And no, I'm not gonna merge anything and everything into the branch. I'll most likely make small changes to fit the code (if needed) and then merge it.
- - :warning: **If the code is fully unable to merge, the idea is stolen, doesn't make sense, etc. I will *not* accept your request.**
-And before you say anything, no I'm not strict, I'm just trying to set some order around here. kthx.
+You are more than welcome to contribute to TheCodingBot.
+ - :warning: **Please note:** no code that is stolen, useless, and/or fails to merge properly, the pull request will be closed.
+
+
+
+
+_&copy; Netro Corporation 2018-2023. TheCodingBot is licensed under MIT. Please credit if you would like._

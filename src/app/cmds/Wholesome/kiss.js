@@ -1,50 +1,66 @@
-module.exports = {
-    name: "kiss",
-    description: "Kiss someone 😳!",
-    author: ["Aisuruneko"],
-    aliases: [],
-    syntax: [],
-    permissions: ["DEFAULT"],
-    cooldown: 2,
-    guildOnly: false,
-    hidden: false,
-    options: [{
-        name: 'user',
-        description: 'The user you want to kiss.',
-        type: 6,
-        required: true
-    }],
+//
+// TheCodingBot
+// Netro Corporation
+//
+// https://codingbot.gg
 
-    execute: (app, interaction, args) => {
-        app.functions.interactions.getImg("kiss")
-            .then((response) => {
-                const kissedUser = interaction.guild.members.cache.get(interaction.options.get('user').value);
-                let msg = `${interaction.user.toString()} **${app.lang.get(interaction.userInfo.get("language"), "commands.kiss.kisses")}** ${kissedUser.user.toString()}`;
+class command {
+	constructor() {
+	}
 
-                if (interaction.user.id === kissedUser.user.id) msg = `**${app.lang.get(interaction.userInfo.get("language"), "commands.kiss.personal")}** ${interaction.user.username}`;
+	meta = () => {
+		return {
+			name: "kiss",
+			description: "Kiss someone!",
+			author: "Aisuruneko",
+			version: "1.0.0",
 
-                interaction.followUp({
-                    content: msg,
-                    embeds: [{
-                        // title: app.lang.get(interaction.userInfo.get("language"), "commands.kiss.title"),
-                        // description: `${msg}`,
-                        color: app.config.system.embedColors.lime,
-                        image: { url: response.data.url },
-                        footer: { text: app.config.system.footerText }
-                    }]
-                });
-            })
-            .catch((response) => {
-                interaction.followUp({
-                    embeds: [{
-                        title: app.lang.get(interaction.userInfo.get("language"), "commands.kiss.title"),
-                        color: app.config.system.embedColors.red,
-                        fields: [
-                            { name: app.lang.get(interaction.userInfo.get("language"), "errors.generic"), value: response.error }
-                        ],
-                        footer: { text: app.config.system.footerText }
-                    }]
-                });
-            })
-    }
+			supportsPrefix: true,
+			supportsSlash: true,
+
+			options: [
+				{
+					name: "user",
+					description: "The user you wish to kiss",
+					type: 6,
+					required: true
+				}
+			],
+			permissions: {
+				DEFAULT_MEMBER_PERMISSIONS: ["SendMessages"]
+			}
+		};
+	}
+
+	slashRun = async(app, interaction) => {
+		await interaction.reply(await this.execute(app, interaction.user.toString(), interaction.guild.members.cache.get(interaction.options.get("user").value).user.toString()));
+	}
+
+	messageRun = async(app, message, args) => {
+		await message.reply(await this.execute(app, message.author.toString(), args[0]));
+	}
+
+	execute = (app, executor, target) => {
+		if (!target) return { content: `Specify someone to ${this.meta().name}!`};
+		return app.functions.fetchFromAPI(1, `/imgs/${this.meta().name}`).then((response) => {
+			return {
+				content: `**${executor}** kisses **${target}**!`,
+				embeds: [{
+					color: app.system.embedColors.lime,
+					image: { url: response.data.url },
+					footer: { text: app.footerText }
+				}]
+			};
+		}).catch((response) => {
+			return {
+				embeds: [{
+					color: app.system.embedColors.red,
+					description: `${(response.message) ? response.message : response.error}`,
+					footer: { text: app.footerText }
+				}]
+			};
+		});
+	}
 }
+
+module.exports = function() { return new command() }

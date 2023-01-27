@@ -1,9 +1,10 @@
-/*
-	TheCodingBot v6
-	https://tcb.nekos.tech
-*/
+//
+// TheCodingBot
+// Netro Corporation
+//
+// https://codingbot.gg
 
-const loggingcolors = {
+const logColors = {
 	"Reset": "\x1b[0m",
 
 	"FgBlack": "\x1b[30m",
@@ -25,36 +26,36 @@ const loggingcolors = {
 	"BgWhite": "\x1b[47m"
 };
 
-const knownLocations = { "SYS": loggingcolors.FgGreen, "DISCORD": loggingcolors.FgMagenta, "WEB": loggingcolors.FgBlue, "DB": loggingcolors.FgYellow };
-const knownTypes = { "X": loggingcolors.FgRed, "i": loggingcolors.FgBlue, "!": loggingcolors.FgYellow, "S": loggingcolors.FgGreen, "D": loggingcolors.FgMagenta };
+const knownLocations = { "SYSTEM": logColors.FgGreen, "DISCORD": logColors.FgMagenta, "DATABASE": logColors.FgYellow };
+const knownTypes = { "ERROR": logColors.FgRed, "INFO": logColors.FgBlue, "WARN": logColors.FgYellow, "SUCCESS": logColors.FgGreen, "DEBUG": logColors.FgMagenta };
 
-// Okay, the legit function begin here.
 class Logger {
-	constructor() {
-		this.app = null;
-	}
-
-	setContext(app) {
+	constructor(app) {
 		this.app = app;
 	}
 
-	getTimestamp = () => { return `${loggingcolors.Reset}[${loggingcolors.FgCyan}${this.app.functions.convertTimestamp(new Date().getTime(), true, true)}${loggingcolors.Reset}] `; };
+	genDT = () => {
+		const currently = new Date();
+		return `${logColors.FgCyan}${currently.toLocaleDateString() + " " + currently.toLocaleTimeString()}`;
+	};
 
-	log = function(type, location, message, useTimeStamp, logToFile) { // no need to = true or = false, we should have the passed already.
-		const typecolor = knownTypes[type] || loggingcolors.FgWhite;
-		const locationcolor = knownLocations[location] || loggingcolors.FgWhite;
-		console.log(`${((useTimeStamp) ? this.getTimestamp() : "")}${loggingcolors.Reset}[${typecolor}${type}${loggingcolors.Reset}] [${locationcolor}${location}${loggingcolors.Reset}] ${message}`);
+	genMsg = (type, location, msg) => {
+		const typeColor = knownTypes[type] || logColors.FgWhite;
+		const locationColor = knownLocations[location] || logColors.FgWhite;
+		
+		// [DATE TIME - TYPE] FROM: MSG
+		console.log(
+			`${logColors.Reset}[${this.genDT()}${logColors.Reset} - ${typeColor}${type}${logColors.Reset}] ` +
+			`${locationColor}${location}${logColors.Reset}: ` +
+			msg
+		);
 	}
 
-	error = (location, message, useTimeStamp = true, logToFile = true) => { this.log("X", location, message, useTimeStamp, logToFile); };
-	info = (location, message, useTimeStamp = true, logToFile = true) => { this.log("i", location, message, useTimeStamp, logToFile); };
-	warn = (location, message, useTimeStamp = true, logToFile = true) => { this.log("!", location, message, useTimeStamp, logToFile); };
-	success = (location, message, useTimeStamp = true, logToFile = true) => { this.log("S", location, message, useTimeStamp, logToFile); };
-	debug = (location, message, useTimeStamp = true, logToFile = true) => { if (this.app.debugMode) this.log("D", location, message, useTimeStamp, logToFile); };
-	bigWarn = async(message, useTimeStamp = true, logToFile = true) => {
-		console.log(`${((useTimeStamp) ? this.getTimestamp() : "")}${loggingcolors.BgRed}WARNING: ${message}${loggingcolors.Reset}`);
-	};
+	error = (from, msg) => { this.genMsg("ERROR", from, msg); }
+	info = (from, msg) => { this.genMsg("INFO", from, msg); }
+	warn = (from, msg) => { this.genMsg("WARN", from, msg); }
+	success = (from, msg) => { this.genMsg("SUCCESS", from, msg); }
+	debug = (from, msg) => { if (this.app.debugMode) this.genMsg("DEBUG", from, msg); };
 }
 
-// module.exports = Logger;
-module.exports = function() { return new Logger() };
+module.exports = function(app) { return new Logger(app) }

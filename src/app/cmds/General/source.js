@@ -1,27 +1,48 @@
-/*
-	TheCodingBot v6
-	https://tcb.nekos.tech
-*/
+//
+// TheCodingBot
+// Netro Corporation
+//
+// https://codingbot.gg
 
-module.exports = {
-	name: "source",
-	description: "Source Code?? Where??",
-	author: ["Aisuruneko"],
-	aliases: [],
-	syntax: [],
-	permissions: [ "DEFAULT" ],
-	cooldown: 2,
-	guildOnly: false,
-	hidden: false,
+class command {
+	constructor() {
+	}
 
-	execute: async(app, interaction) => {
-		interaction.followUp({
+	meta = () => {
+		return {
+			name: "source",
+			description: "Bot is open source??",
+			author: "Aisuruneko",
+			version: "1.0.0",
+
+			supportsPrefix: true,
+			supportsSlash: true,
+
+			options: [],
+			permissions: {
+				DEFAULT_MEMBER_PERMISSIONS: ["SendMessages"]
+			}
+		};
+	}
+
+	slashRun = async(app, interaction) => {
+		await interaction.reply(this.execute(app));
+	}
+
+	messageRun = async(app, message) => {
+		await message.reply(this.execute(app));
+	}
+
+	execute = (app) => {
+		return {
 			embeds: [{
-				title: app.lang.get(interaction.userInfo.get("language"), "commands.source.title"),
-				description: app.lang.get(interaction.userInfo.get("language"), "commands.source.description").replace("%SOURCELINK%", "https://tcb.nekos.tech/source"),
-				color: app.config.system.embedColors.blue,
-				footer: { text: app.config.system.footerText }
+				title: "TheCodingBot",
+				color: app.system.embedColors.blue,
+				description: "TheCodingBot is also made possible by those on the GitHub (thanks!)\nYou can obtain the source code and contribute at [here](https://codingbot.gg/source).",
+				footer: { text: app.footerText }
 			}]
-		});
+		};
 	}
 }
+
+module.exports = function() { return new command() }

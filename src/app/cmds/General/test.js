@@ -1,20 +1,41 @@
-/*
-	TheCodingBot v6
-	https://tcb.nekos.tech
-*/
+//
+// TheCodingBot
+// Netro Corporation
+//
+// https://codingbot.gg
 
-module.exports = {
-	name: "test",
-	description: "Test command.",
-	author: ["Aisuruneko"],
-	aliases: [],
-	syntax: [],
-	permissions: [ "DEFAULT" ],
-	cooldown: 2,
-	guildOnly: false,
-	hidden: false,
+class command {
+	constructor() {
+	}
 
-	execute: async(app, interaction) => {
-		interaction.followUp({ content: app.lang.get(interaction.userInfo.get("language"), "commands.test.test") });
+	meta = () => {
+		return {
+			name: "test",
+			description: "Test command!",
+			author: "Aisuruneko",
+			version: "1.0.0",
+
+			supportsPrefix: true,
+			supportsSlash: true,
+
+			options: [],
+			permissions: {
+				DEFAULT_MEMBER_PERMISSIONS: ["SendMessages"]
+			}
+		};
+	}
+
+	slashRun = async(app, interaction) => {
+		await interaction.reply(this.execute(app));
+	}
+
+	messageRun = async(app, message) => {
+		await message.reply(this.execute(app));
+	}
+
+	execute = (app) => {
+		return "Hello world!";
 	}
 }
+
+module.exports = function() { return new command() }
