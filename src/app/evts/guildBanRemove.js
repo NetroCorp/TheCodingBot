@@ -19,7 +19,7 @@ module.exports = async(app, ban) => {
         title: ((user.bot) ? "Bot" : "User") + " Unbanned!",
         color: app.config.system.embedColors.lime,
         fields: [
-            { name: "Full Tag", value: user.tag, inline: true },
+            { name: "Full Tag", value: app.functions.pomeloHandler(user), inline: true },
             { name: "ID", value: user.id, inline: true },
             { name: "Unbanned at", value: new Date().toString() }
         ]
@@ -38,7 +38,7 @@ module.exports = async(app, ban) => {
         if (banLog) {
             const { executor } = banLog;
 
-            embed.fields.push({ name: "Unbanned by", value: `${executor.tag} (${executor.id})` });
+            embed.fields.push({ name: "Unbanned by", value: `${app.functions.pomeloHandler(executor)} (${executor.id})` });
 
             if (banLog.reason)
                 embed.fields.push({ name: "Reason", value: banLog.reason });

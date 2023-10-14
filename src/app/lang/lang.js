@@ -3,8 +3,8 @@
 	Language
 	3/29/2022
 
-	https://tcb.nekos.tech/source
-	https://themattchannel.com
+	https://codingbot.gg/source
+	https://netrocorp.net
 */
 
 class Language {

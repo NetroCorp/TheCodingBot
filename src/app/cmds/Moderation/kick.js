@@ -45,12 +45,12 @@ module.exports = {
             if (!guildMember.kickable) return KickError("That user is higher than me... sorry kiddo.");
 
             try {
-                var kickReason = message.author.tag + " " + ((reason) ? reason : "provided no reason for the kick.");
+                var kickReason = app.functions.pomeloHandler(message.author) + " " + ((reason) ? reason : "provided no reason for the kick.");
                 message.guild.members.kick(userID, { reason: kickReason }).then(() => {
                     var embed = {
                         title: `${app.config.system.emotes.success} Kick Success!`,
                         color: app.config.system.embedColors.lime,
-                        description: `Yeet! The boot has kicked ${user.tag} out!`,
+                        description: `Yeet! The boot has kicked ${app.functions.pomeloHandler(user)} out!`,
                         fields: []
                     };
                     if (reason) embed.fields.push({ name: "Reason", value: ((reason) ? reason : "Missing reason yet this is here???") });

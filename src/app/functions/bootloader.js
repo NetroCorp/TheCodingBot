@@ -3,8 +3,8 @@
 	Bootloader
 	6/24/2021
 
-	https://tcb.nekos.tech/source
-	https://themattchannel.com
+	https://codingbot.gg/source
+	https://netrocorp.net
 */
 
 class BootLoader {
@@ -16,8 +16,8 @@ class BootLoader {
         console.log(" / / / _ \\/ -_) /__/ _ \\/ _  / / _ \\/ _ `/ _  / _ \\/ __/ ");
         console.log("/_/ /_//_/\\__/\\___/\\___/\\_,_/_/_//_/\\_, /____/\\___/\\__/ ");
         console.log("				   /___/                               ");
-        // console.log("           Copyright TMC Software 2018-2021.          ");
-        console.log("           Copyright TMC Software 2018-" + new Date().getFullYear() + ".          ");
+        // console.log("        Copyright Netro Corporation 2018-2021.          ");
+        console.log("        Copyright Netro Corporation 2018-" + new Date().getFullYear() + ".          ");
         console.log("\n\n");
     }
 

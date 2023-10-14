@@ -26,18 +26,25 @@ module.exports = {
                 var user = await app.client.api.users(userID).get();
                 if (!user)
                     throw new Error("That user does not exist.");
-                user.tag = `${user.username}#${user.discriminator}`; // Manually add this so it looks cool
 
                 var embed = {
-                    title: `${app.config.system.emotes.information} **${user.tag} ${(user.bot ? "*[BOT]*" : "")}**`,
+                    title: `${app.config.system.emotes.information} **${app.functions.pomeloHandler(user)} ${(user.bot ? "*[BOT]*" : "")}**`,
                     color: (user["accent_color"]) ? user["accent_color"] : app.config.system.embedColors.blue,
                     fields: [
                         { name: "Username", value: user.username, inline: true },
-                        { name: "Discriminator", value: user.discriminator, inline: true },
-                        { name: "Full Tag", value: user.tag, inline: true },
-                        { name: "User ID", value: user.id, inline: false },
+
                     ]
                 };
+
+				// PATCH 2023-10-13
+				if (user.discriminator != "0") {
+					embed.fields.push(
+                        { name: "Discriminator", value: user.discriminator, inline: true },
+                        { name: "Full Tag", value: app.functions.pomeloHandler(user), inline: true },
+					);
+				};
+				embed.fields.push({ name: "User ID", value: user.id, inline: false });
+				// END PATCH 2023-10-13
 
                 if (user.avatar != null)
                     embed["thumbnail"] = { url: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${app.functions.isAnimated(user.avatar) ? "gif": "png"}?size=1024` };

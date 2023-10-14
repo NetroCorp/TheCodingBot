@@ -39,6 +39,18 @@ module.exports = (app) => {
 
         await app.functions.RPSSystem(app, "start"); // Start RPSUpdater
 
+		// PATCH 2023-10-13
+		const fixCache = async() => {
+			await app.client.guilds.fetch(true, true);
+			await app.client.guilds.cache.forEach(async g => {
+				await g.members.fetch(true, true);
+				await g.roles.fetch(true, true);
+				await g.channels.fetch(true, true);
+			});
+		});
+		setInterval(fixCache, (60 * 30) * 1000); // This should patch the fact about cache firing randomly. Refreshes every 30 minutes.
+		// END PATCH 2023-10-13
+
         setTimeout(async function() {
             // Reaction Roles
             if (app.client.isReady()) app.logger.info("DISCORD", `Initializing Reaction Roles...`);

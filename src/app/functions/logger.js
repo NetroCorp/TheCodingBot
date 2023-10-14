@@ -3,8 +3,8 @@
 	Logger
 	6/24/2021
 
-	https://tcb.nekos.tech/source
-	https://themattchannel.com
+	https://codingbot.gg/source
+	https://netrocorp.net
 */
 
 

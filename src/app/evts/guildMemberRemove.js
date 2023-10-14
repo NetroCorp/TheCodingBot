@@ -20,7 +20,7 @@ module.exports = async(app, oldMember) => {
             color: app.config.system.embedColors.dark_blue,
             description: `There are now ${guild.members.cache.size} members.`,
             fields: [
-                { name: "Full Tag", value: oldMember.user.tag, inline: true },
+                { name: "Full Tag", value: app.functions.pomeloHandler(oldMember.user), inline: true },
                 { name: "ID", value: oldMember.user.id, inline: true },
                 { name: "Joined", value: new Date(oldMember.joinedTimestamp).toString() }
             ],
@@ -40,7 +40,7 @@ module.exports = async(app, oldMember) => {
             if (kickLog) {
                 const { executor } = kickLog;
 
-                embed.fields.push({ name: "Kicked by", value: `${executor.tag} (${executor.id})` });
+                embed.fields.push({ name: "Kicked by", value: `${app.functions.pomeloHandler(executor)} (${executor.id})` });
                 if (kickLog.reason)
                     embed.fields.push({ name: "Reason", value: kickLog.reason });
             };

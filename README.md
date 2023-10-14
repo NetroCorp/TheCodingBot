@@ -4,7 +4,7 @@ Packed with moderation, fun, and craziness. The only bot you'll ever need.
 ~~..until Discord updates their API and breaks the bot. :^)~~
 
 
-## Version 5 is in ACTIVE (and somewhat) HEAVY DEVELOPMENT
+## This is the last version of TheCodingBot.
 Do not expect anything to work as intended. As if, anything ever worked anyways. :P
 Expect some changes to explode :^)
 
@@ -14,7 +14,7 @@ Expect some changes to explode :^)
 This guide will assume you've left `app` in `src` (the way it should be).
 - First, you'll need to ensure you have [NodeJS](https://nodejs.org/) installed.
 - Then, download this branch.
-  - You can download easily by `git clone TMC-Software/TheCodingBot`.
+  - You can download easily by `git clone NetroCorp/TheCodingBot`.
   - If you don't know how to obtain this......... there's tutorials. This guide assumes you know how.
 - Afterwards, fire up a terminal/command prompt and run `npm install` in the newly created directory, wait for packages to install. Kill some time by completing the next few steps.
   - :information_source: **Wherever `package-lock.json` is, just run that command there.**
@@ -41,18 +41,16 @@ This guide will assume you've left `app` in `src` (the way it should be).
 | 5.0.2   | 3/28/2022    |
 | 5.1.0   | 4/2/2022     |
 | 5.1.1   | 1/4/2023     |
+| 5.2.0   | 10/13/2023   |
 
 ## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-I'm not gonna hold your hand the entire way through. If you are genuinely confused on something I wrote, I'll assist.
-And no, I'm not gonna merge anything and everything into the branch. I'll most likely make small changes to fit the code (if needed) and then merge it.
- - :warning: **If the code is fully unable to merge, the idea is stolen, doesn't make sense, etc. I will *not* accept your request.**
-And before you say anything, no I'm not strict, I'm just trying to set some order around here. kthx.
+Pull requests for emergency patches are welcome. Otherwise, pull requests will not be merged.
 
 
 ## History
-TheCodingBot started off as a small hobby project back in 2018. To date - as of 2022 - TheCodingBot has seen so much happen with Discord. The bot currently has 75+ servers and for some reason will not verify with Discord.
+TheCodingBot started off as a small hobby project back in 2018. TheCodingBot got verified in 2022, and had 164 total servers it was in.
+On October 13th, 2023, it was announced that TheCodingBot would enter emergency patch maintenance only.
 
 ## Disclaimer
-This bot is licensed under MIT, meaning that this bot is provided "AS IS". For the best experience, always keep your fork up-to-date or utilize the [current bot](https://discord.com/oauth2/authorize?client_id=438532019924893707&permissions=8&scope=applications.commands%20bot).
+This bot is licensed under MIT, meaning that this bot is provided "AS IS". For the best experience, always keep your fork up-to-date or utilize the [current bot](https://the.codingbot.gg).
 For further support, join the [Discord Server](https://discord.gg/HdKeWtV)!

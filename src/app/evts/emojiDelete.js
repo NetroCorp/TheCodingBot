@@ -36,7 +36,7 @@ module.exports = async(app, oldEmoji) => {
         if (emojiLog) {
             const { executor } = emojiLog;
 
-            embed.fields.push({ name: "Deleted by", value: `${executor.tag} (${executor.id})` })
+            embed.fields.push({ name: "Deleted by", value: `${app.functions.pomeloHandler(executor)} (${executor.id})` })
             embed["thumbnail"] = { url: `https://cdn.discordapp.com/emojis/${oldEmoji.id}.${(oldEmoji.animated) ? "gif" : "png"}` };
         };
     }; // May be missing permissions to fetch audit log.

@@ -4,7 +4,7 @@
         "full_name": "Japanese (ja_JP)",
         "description": "日本語 - 日本",
         "langCode": "ja_JP",
-        "translator": "TMC Software",
+        "translator": "Netro Corporation",
         "version": "0.0.0.0"
     },
     "translations": {
@@ -12,9 +12,9 @@
         "End-User Agreement failed to load. How does that even happen...": "エンドーユーザー使用許諾契約の読み込みに失敗しました。 それはどのように起こりますか...",
         "Before continuing, you must agree to the bot's End-User License Agreement.": "続行する前に、ボットのエンドユーザー使用許諾契ー約に同意する必要があります。",
         "EULA": [
-            { "name": "**!! 重要 !!**", "value": "おい！ 続行する前に、[エンドユーザー使用許諾契約書](https://tcb.nekos.tech/eula)をお読みください。" },
-            { "name": "**このボットには利用規約とプライバシーポリシーがあります！**", "value": "[利用規約](https://tcb.nekos.tech/terms)と[プライバシーポリシー](https://tcb.nekos.tech/privacy)もお読みください。" },
-            { "name": "**続けることで...**", "value": "あなたはあなたが読んだことに同意しています[エンドユーザー使用許諾契約](https://tcb.nekos.tech/eula)、[利用規約](https://tcb.nekos.tech/terms)、および[プライバシーポリシー](https://tcb.nekos.tech/privacy)！" }
+            { "name": "**!! 重要 !!**", "value": "おい！ 続行する前に、[エンドユーザー使用許諾契約書](https://codingbot.gg/eula)をお読みください。" },
+            { "name": "**このボットには利用規約とプライバシーポリシーがあります！**", "value": "[利用規約](https://codingbot.gg/terms)と[プライバシーポリシー](https://codingbot.gg/privacy)もお読みください。" },
+            { "name": "**続けることで...**", "value": "あなたはあなたが読んだことに同意しています[エンドユーザー使用許諾契約](https://codingbot.gg/eula)、[利用規約](https://codingbot.gg/terms)、および[プライバシーポリシー](https://codingbot.gg/privacy)！" }
         ],
         "I agree to these terms.": "私はこれらの条件に同意します。",
         "I disagree to these terms.": "私はこれらの条件に同意しません。",

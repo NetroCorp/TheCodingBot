@@ -31,7 +31,7 @@ module.exports = async(app, message) => {
         ]
     };
 
-    if (message.author) embs["author"] = { name: `Message by ${message.author.tag} (${ message.author.id}) deleted.`, icon_url: message.author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) };
+    if (message.author) embs["author"] = { name: `Message by ${app.functions.pomeloHandler(message.author)} (${ message.author.id}) deleted.`, icon_url: message.author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) };
     const fetchedLogs = await message.guild.fetchAuditLogs({
         limit: 6,
         type: "MESSAGE_DELETE",
@@ -44,7 +44,7 @@ module.exports = async(app, message) => {
         );
         if (deleteLog) { // If none, we may be missing permissions to fetch audit log.
             const { executor } = deleteLog;
-            embs.fields.push({ name: "Deleted by", value: (executor) ? `${executor.tag} (${executor.id})` : "Unknown" });
+            embs.fields.push({ name: "Deleted by", value: (executor) ? `${app.functions.pomeloHandler(executor)} (${executor.id})` : "Unknown" });
             embs["thumbnail"] = executor;
 
         };

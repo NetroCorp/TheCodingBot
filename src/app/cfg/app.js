@@ -3,8 +3,8 @@
 	App
 	6/24/2021
 
-	https://tcb.nekos.tech/source
-	https://themattchannel.com
+	https://codingbot.gg/source
+	https://netrocorp.net
 */
 
 
@@ -14,8 +14,8 @@ const app = {
 
     version: {
         major: 5,
-        minor: 1,
-        revision: 1,
+        minor: 2,
+        revision: 0,
         buildType: "R",
         toString: function() {
             var major = app.version.major,
@@ -49,7 +49,7 @@ const app = {
     defaults: {
         // -- HEY!!!
         // -- WARNING :: THIS IS DANGEROUS | ONLY ACCESS DATA FROM MESSAGE. DO NOT ACCESS DATA FROM OTHER VARIABLES.
-        // -- It poses a major security risk and TMC Software is not responsible for that.
+        // -- It poses a major security risk and Netro Corporation is not responsible for that.
 
         join: {
             msg: "Hello and welcome %user% to the %server%!",
@@ -227,31 +227,9 @@ const app = {
 
             for (var attachment of attachments) {
                 var attachment = attachment[1]; // For some reason, doing it this way, we go into an array? [0] = id, [1] = MessageAttachment
-                var msgAttachURL = ((attachment.proxyURL == null || attachment.proxyURL == "") ? attachment.url : attachment.proxyURL),
-                    file = attachment.name;
-                var fileext = file.slice((file.lastIndexOf(".") - 1 >>> 0) + 2);
-                var filename = file.replace("." + fileext, "");
-                // someone tell me if there is a better write to write this.
 
-                var postURL = `${app.config.system.logURL}TCB_Post.php?rand=${app.functions.getTicks()}&type=logging&url=${msgAttachURL}&guildID=${message.guild.id}&channelID=${message.channel.id}&messageID=${message.id}&filename=${filename}&fileext=${fileext}&size=${attachment.size}&return=JSON`;
-                try {
-                    const res = await app.modules["node-fetch"](postURL);
-
-
-                    if (res.status != 200) {
-                        throw new Error(res.status);
-                    } else {
-                        const body = await res.json();
-                        if (body["return"]["success"] == "true" && body["return"]["error"] == "none")
-                            result["succeed"].push(`${app.config.system.logURL}${body["return"]["imgUrl"]}`);
-                        else
-                            result["failed"].push(`[WEBSERVER] ${body["return"]["error"]}`);
-                    };
-                } catch (err) {
-                    app.logger.error("SYS", "[EVENTS] [MESSAGE DELETE] Whoops! Something went wrong! Downloading the file went OOF!\n" + err.message);
-                    if (attachment.proxyURL != null) result["failed"].push(`${attachment}`);
-                    else result["failed"](`[MEDIA_PROXY] ${msgAttachURL}`);
-                };
+                // The logging API has been shutdown forever ago, so why have it?
+				result["succeed"].push(attachment.proxyURL); 
             };
 
             app.client.waitingForMessageToDelete = app.functions.removeItemAll(app.client.waitingForMessageToDelete, message.id);
@@ -291,6 +269,13 @@ const app = {
                 }]
             }, edit, true);
         },
+
+		// PATCH 2023-10-13
+		pomeloHandler: function(user) { // This helps get user#tag or username.
+			return user.discriminator && user.discriminator == "0" ? user.username : `${user.username}#${user.discriminator}`;
+		},
+		// END PATCH 2023-10-13
+		
         msgHandler: async function(message, options, action = 0, doReply = false, callback = null) { // action: 0 = Send, 1 = Edit
             var userSettings = (message.author) ? await app.DBs.userSettings.findOne({ where: { userID: message.author.id } }) : "English";
 
@@ -298,7 +283,7 @@ const app = {
                 if (options["author"] != null) {
                     var author = options["author"];
                     if (author.id)
-                        options.embeds[0]["author"] = { name: `${(app.lang.getLine((userSettings) ? userSettings.get("language") : "English", "Hello"))}, ${author.tag}!`, icon_url: author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) };
+                        options.embeds[0]["author"] = { name: `${(app.lang.getLine((userSettings) ? userSettings.get("language") : "English", "Hello"))}, ${app.functions.pomeloHandler(author)}!`, icon_url: author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) };
                     delete options["author"];
                 };
                 if (!options.embeds[0]["footer"]) options.embeds[0]["footer"] = { text: app.config.system.footerText }; // Install branding.exe

@@ -4,7 +4,7 @@
         "full_name": "English (en_US)",
         "description": "English - United States",
         "langCode": "en_US",
-        "translator": "TMC Software",
+        "translator": "Netro Corporation",
         "version": "1.0.0.0"
     },
     "translations": {
@@ -12,9 +12,9 @@
         "End-User Agreement failed to load. How does that even happen...": "End-User Agreement failed to load. How does that even happen...",
         "Before continuing, you must agree to the bot's End-User License Agreement.": "Before continuing, you must agree to the bot's End-User License Agreement.",
         "EULA": [
-            { "name": "**!! IMPORTANT !!**", "value": "Hey! Before you continue, please read the [End-User License Agreement](https://tcb.nekos.tech/eula)." },
-            { "name": "**This bot has a Terms of Service and Privacy Policy!**", "value": "Please also read the [Terms of Service](https://tcb.nekos.tech/terms) and [Privacy Policy](https://tcb.nekos.tech/privacy)!" },
-            { "name": "**By continuing...**", "value": "You're agreeing you've read the [End-User License Agreement](https://tcb.nekos.tech/eula), [Terms of Service](https://tcb.nekos.tech/terms), and [Privacy Policy](https://tcb.nekos.tech/privacy)!" }
+            { "name": "**!! IMPORTANT !!**", "value": "Hey! Before you continue, please read the [End-User License Agreement](https://codingbot.gg/eula)." },
+            { "name": "**This bot has a Terms of Service and Privacy Policy!**", "value": "Please also read the [Terms of Service](https://codingbot.gg/terms) and [Privacy Policy](https://codingbot.gg/privacy)!" },
+            { "name": "**By continuing...**", "value": "You're agreeing you've read the [End-User License Agreement](https://codingbot.gg/eula), [Terms of Service](https://codingbot.gg/terms), and [Privacy Policy](https://codingbot.gg/privacy)!" }
         ],
         "I agree to these terms.": "I agree to these terms.",
         "I disagree to these terms.": "I disagree to these terms.",

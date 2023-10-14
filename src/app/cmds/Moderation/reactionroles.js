@@ -259,7 +259,7 @@ module.exports = {
             } catch (Ex) {
                 app.functions.msgHandler(msg, {
                     embeds: [{
-                        author: { name: `Something happened, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
+                        author: { name: `Something happened, ${app.functions.pomeloHandler(message.author)}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
                         title: `${app.config.system.emotes.information} Reaction Roles - Setup`,
                         color: app.config.system.embedColors.red,
                         description: `Sadly, we ran into an error while setting up your reaction roles. Here's what we know: ${Ex.message}`

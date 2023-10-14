@@ -15,8 +15,8 @@ module.exports = {
             color: app.config.system.embedColors.green,
             fields: [
                 { name: "OwO? New server?!?", value: `Aw heck yeah!! Add me and become one of the ${app.client.guilds.cache.size} servers using TheCodingBot!` },
-                { name: "Add me to dat server!", value: `Add me via [Discord](https://discord.com/oauth2/authorize?scope=bot&client_id=${app.client.user.id}&permissions=8)` },
-                { name: "...is something wrong..?", value: "Join the [TMC Discord](https://discord.gg/HdKeWtV) for support, and much more!" },
+                { name: "Add me to dat server!", value: `Add me via [Discord](https://discord.com/oauth2/authorize?scope=bot&client_id=${app.client.user.id}&permissions=1644971945207)` },
+                { name: "...is something wrong..?", value: "Join the [Netro Corp Discord](https://discord.gg/HdKeWtV) for support, and much more!" },
         ]}]
     })
 }}

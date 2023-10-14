@@ -63,7 +63,7 @@ module.exports = async(app, message) => {
                     var AFKSettings = JSON.parse(user["AFKSettings"]);
                     if (message.mentions.has(user["userID"])) {
                         AFKSettings["mentions"]++;
-                        AFKpeeps.push(`${app.client.users.cache.get(user["userID"]).tag} ${app.lang.getLine(userSettings.get("language"), "has been AFK since")} ${app.functions.TStoHR(new Date().getTime() - AFKSettings["timestamp"])} ago${((AFKSettings["reason"]) != "." ? ": " + AFKSettings["reason"]: "")}`);
+                        AFKpeeps.push(`${app.functions.pomeloHandler(app.client.users.cache.get(user["userID"]))} ${app.lang.getLine(userSettings.get("language"), "has been AFK since")} ${app.functions.TStoHR(new Date().getTime() - AFKSettings["timestamp"])} ago${((AFKSettings["reason"]) != "." ? ": " + AFKSettings["reason"]: "")}`);
                         try { await app.DBs.userSettings.update({ AFKSettings: JSON.stringify(AFKSettings, null, "\t") }, { where: { userID: user["userID"] } }); } catch (Ex) {};
                     };
                 };

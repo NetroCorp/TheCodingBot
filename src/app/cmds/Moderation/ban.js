@@ -55,12 +55,12 @@ module.exports = {
 
             try {
                 if (await getBan(userID)) return BanError("That user is already banned!");
-                var banReason = message.author.tag + " " + ((reason) ? reason : "provided no reason for the ban.");
+                var banReason = app.functions.pomeloHandler(message.author) + " " + ((reason) ? reason : "provided no reason for the ban.");
                 message.guild.members.ban(userID, { reason: banReason }).then(() => {
                     var embed = {
                         title: `${app.config.system.emotes.success} ${(forced) ? "Force-" : ""}Ban Success!`,
                         color: app.config.system.embedColors.lime,
-                        description: `You know the rules and so do I, so say goodbye to ${user.tag}!`,
+                        description: `You know the rules and so do I, so say goodbye to ${app.functions.pomeloHandler(user)}!`,
                         fields: []
                     };
                     if (reason) embed.fields.push({ name: "Reason", value: ((reason) ? reason : "Missing reason yet this is here???") });

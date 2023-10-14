@@ -22,10 +22,10 @@ module.exports = async(app, oldMember, newMember) => {
     };
 
 
-    embed.fields.push({ name: "User", value: oldMember.user.tag, inline: true });
+    embed.fields.push({ name: "User", value: app.functions.pomeloHandler(oldMember.user), inline: true });
     embed.fields.push({ name: "ID", value: oldMember.user.id, inline: true });
 
-    if (oldMember.nickname !== newMember.nickname) // Check member nickname
+    if (oldMember.nickname != newMember.nickname) // Check member nickname
         embed.fields.push({ name: "Nickname", value: oldMember.nickname + " -> " + newMember.nickname });
 
     // This doesn't seem to fire correctly, so it's disabled until probably D.JSv14 when I can get server banners/avatars to work.
@@ -35,7 +35,7 @@ module.exports = async(app, oldMember, newMember) => {
     // if (oldMember.banner != newMember.banner) // Check member banner
     //     embed.fields.push({ name: "Banner", value: oldMember.banner + " -> " + newMember.banner, inline: true });
 
-    if (oldMember.roles != newMember.roles) { // Check member roles
+    if (oldMember.roles.cache.size != newMember.roles.cache.size) { // Check member roles
         var roleUpdated = app.functions.arrayDifference(oldMember.roles.cache.filter(r => r.id != guild.id).map(rF => rF.name), newMember.roles.cache.filter(r => r.id != guild.id).map(rF => rF.name))
         for (var i = 0; i < roleUpdated.length; i++) roleUpdated[i] = "`" + roleUpdated[i] + "`";
         if (oldMember.roles.cache.size > newMember.roles.cache.size) embed.fields.push({ name: "Roles Removed", value: roleUpdated.join(", ") || "Failed to get roles removed" }); // rip features
@@ -59,7 +59,7 @@ module.exports = async(app, oldMember, newMember) => {
             const { executor } = memberLog;
 
             if (executor.id != oldMember.user.id)
-                embed.fields.push({ name: "Updated by", value: `${executor.tag} (${executor.id})` })
+                embed.fields.push({ name: "Updated by", value: `${app.functions.pomeloHandler(executor)} (${executor.id})` })
             embed["thumbnail"] = executor;
         };
     }; // May be missing permissions to fetch audit log.

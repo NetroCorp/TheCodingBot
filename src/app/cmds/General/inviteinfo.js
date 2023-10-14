@@ -43,7 +43,7 @@ module.exports = {
                     if (invite["expires_at"]) embed.fields.push({ name: "Expires in", value: app.functions.TStoHR((new Date(invite["expires_at"]).getTime()) - new Date().getTime()), inline: true }); // expires_at Time minus the current Time
                     if (invite.inviter) {
                         var user = await app.client.users.cache.get(invite.inviter.id) || await app.client.users.fetch(invite.inviter.id, true);
-                        embed["author"] = { name: `Invite Created by ${user.tag} (${user.id})`, icon_url: user.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) };
+                        embed["author"] = { name: `Invite Created by ${app.functions.pomeloHandler(user)} (${user.id})`, icon_url: user.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) };
                     };
 
                     if (invite.guild.icon != null)

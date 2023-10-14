@@ -22,7 +22,7 @@ module.exports = async(app, newMember) => {
             if (!usedInvite) return { "msg": "I do not know how they joined" };
             const inviter = app.client.users.cache.get(usedInvite.inviter.id);
 
-            return { "inviter": { "tag": inviter.tag, "id": inviter.id }, "code": usedInvite.code, "uses": usedInvite.uses };
+            return { "inviter": { "tag": app.functions.pomeloHandler(inviter), "id": inviter.id }, "code": usedInvite.code, "uses": usedInvite.uses };
 
         } catch (Ex) {
             app.logger.error("DISCORD", `[guildMemberAdd] [GetInviteInfo] ${Ex.message}\n${Ex.stack}`);
@@ -54,7 +54,7 @@ module.exports = async(app, newMember) => {
             color: app.config.system.embedColors.green,
             description: `They are the ${newMemberNth} member.`,
             fields: [
-                { name: "Full Tag", value: newMember.user.tag, inline: true },
+                { name: "Full Tag", value: app.functions.pomeloHandler(newMember.user), inline: true },
                 { name: "ID", value: newMember.user.id, inline: true },
                 { name: "Created", value: new Date(newMember.user.createdTimestamp).toString() },
             ],

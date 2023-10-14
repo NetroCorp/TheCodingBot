@@ -139,7 +139,7 @@ module.exports = {
 
                     await app.functions.msgHandler(msg, {
                         embeds: [{
-                            author: { name: `Eep! Sorry about that, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
+                            author: { name: `Eep! Sorry about that, ${app.functions.pomeloHandler(message.author)}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
                             title: `${app.config.system.emotes.warning} Verification failed!`,
                             color: app.config.system.embedColors.orange,
                             description: `Here's what just happened: ${messages[Ex.message] ? messages[Ex.message][0] : messages["DEFAULT"][0]}.`,
@@ -215,7 +215,7 @@ module.exports = {
 
                                 await app.functions.msgHandler(msg, {
                                     embeds: [{
-                                        author: { name: `Whoop whoop, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
+                                        author: { name: `Whoop whoop, ${app.functions.pomeloHandler(message.author)}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
                                         title: `${app.config.system.emotes.success} Verified!`,
                                         color: app.config.system.embedColors.lime,
                                         description: `Here's what just happened: You successfully verified!\nHave fun and enjoy your stay!`

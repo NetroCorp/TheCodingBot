@@ -24,7 +24,7 @@ module.exports = {
                 if (!userSettings) throw new Error("No profile in database"); // How did they even do this command?
                 app.functions.msgHandler(msg, {
                     embeds: [{
-                        author: { name: `Welcome, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) },
+                        author: { name: `Welcome, ${app.functions.pomeloHandler(message.author)}!`, icon_url: message.author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) },
                         title: `${app.config.system.emotes.information} It's all about you!`,
                         color: app.config.system.embedColors.lime,
                         fields: [
@@ -58,7 +58,7 @@ module.exports = {
             } catch (Ex) {
                 app.functions.msgHandler(msg, {
                     embeds: [{
-                        author: { name: `Something happened, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
+                        author: { name: `Something happened, ${app.functions.pomeloHandler(message.author)}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
                         title: `${app.config.system.emotes.information} It's all about you!`,
                         color: app.config.system.embedColors.red,
                         description: `Sadly, we ran into an error while handling your profile. Here's what we know: ${Ex.message}`
@@ -73,7 +73,7 @@ module.exports = {
         async function errorDB(i, title) {
             await i.update({
                 embeds: [{
-                    author: { name: `Eep! Sorry about that, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
+                    author: { name: `Eep! Sorry about that, ${app.functions.pomeloHandler(message.author)}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
                     title: `${app.config.system.emotes.warning} ${app.lang.getLine(userSettings.get("language"), "User Settings")} - ${title}`,
                     color: app.config.system.embedColors.orange,
                     description: "Could not save your acknowledgement. Please try again.",
@@ -92,7 +92,7 @@ module.exports = {
                     i.deferUpdate();
                     await app.functions.msgHandler(msg, {
                         embeds: [{
-                            author: { name: `Change change change, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
+                            author: { name: `Change change change, ${app.functions.pomeloHandler(message.author)}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
                             title: `${app.config.system.emotes.question} ${app.lang.getLine(userSettings.get("language"), "User Settings")} - ${app.lang.getLine(userSettings.get("language"), "Change Settings")}`,
                             color: app.config.system.embedColors.purple,
                             description: "Alright - from the dropdown - what do you wish to change?"
@@ -124,7 +124,7 @@ module.exports = {
                     if (affectedRows > 0) {
                         await i.update({
                             embeds: [{
-                                author: { name: `At your request, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
+                                author: { name: `At your request, ${app.functions.pomeloHandler(message.author)}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
                                 title: `${app.config.system.emotes.success} ${app.lang.getLine(userSettings.get("language"), "User Settings")} - ${type}`,
                                 color: app.config.system.embedColors.lime,
                                 description: `${app.lang.getLine(userSettings.get("language"), "Here's what just happened")}: You successfully ${((i.customId === "optout") ? "dis" : "en")}abled analytics.`,
@@ -140,7 +140,7 @@ module.exports = {
                     if (affectedRows > 0) {
                         await i.update({
                             embeds: [{
-                                author: { name: `We're sad to see you go, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
+                                author: { name: `We're sad to see you go, ${app.functions.pomeloHandler(message.author)}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
 
                                 title: `${app.config.system.emotes.success} ${app.lang.getLine(userSettings.get("language"), "User Settings")} - Delete Account`,
                                 color: app.config.system.embedColors.lime,
@@ -202,7 +202,7 @@ module.exports = {
 
                             await app.functions.msgHandler(msg, {
                                 embeds: [{
-                                    author: { name: `Change change change, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
+                                    author: { name: `Change change change, ${app.functions.pomeloHandler(message.author)}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
                                     title: `${app.config.system.emotes.question} ${app.lang.getLine(userSettings.get("language"), "User Settings")} -${app.lang.getLine(userSettings.get("language"), "Change Language")}`,
                                     color: app.config.system.embedColors.purple,
                                     description: "Neat, choose from the dropdown your new language!"
@@ -222,7 +222,7 @@ module.exports = {
                         } else if (val == "prefix") {
                             await app.functions.msgHandler(msg, {
                                 embeds: [{
-                                    author: { name: `Change change change, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
+                                    author: { name: `Change change change, ${app.functions.pomeloHandler(message.author)}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
                                     title: `${app.config.system.emotes.question} ${app.lang.getLine(userSettings.get("language"), "User Settings")} - ${app.lang.getLine(userSettings.get("language"), "Change Prefix")}`,
                                     color: app.config.system.embedColors.purple,
                                     description: "Great! What should that new prefix be?\n*NOTE: If you enter a space, it will only take the first part before the space). Example: `a prefix` -> `a`*"
@@ -263,7 +263,7 @@ module.exports = {
                             if (affectedRows > 0) {
                                 await i.update({
                                     embeds: [{
-                                        author: { name: `Whoop whoop, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
+                                        author: { name: `Whoop whoop, ${app.functions.pomeloHandler(message.author)}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
 
                                         title: `${app.config.system.emotes.success} ${app.lang.getLine(userSettings.get("language"), "User Settings")} - ${app.lang.getLine(userSettings.get("language"), "Change Language")}`,
                                         color: app.config.system.embedColors.lime,
@@ -302,7 +302,7 @@ module.exports = {
                     if (affectedRows > 0) {
                         await app.functions.msgHandler(msg, {
                             embeds: [{
-                                author: { name: `Whoop whoop, ${message.author.tag}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
+                                author: { name: `Whoop whoop, ${app.functions.pomeloHandler(message.author)}!`, icon_url: message.author.displayAvatarURL({ format: "png", dynamic: true, size: 1024 }) },
 
                                 title: `${app.config.system.emotes.success} ${app.lang.getLine(userSettings.get("language"), "User Settings")} - ${app.lang.getLine(userSettings.get("language"), "Change Prefix")}`,
                                 color: app.config.system.embedColors.lime,

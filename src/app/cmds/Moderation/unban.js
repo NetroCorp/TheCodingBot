@@ -46,12 +46,12 @@ module.exports = {
             if (guildMember || !await getBan(userID)) return UnbanError("That user is not banned!");
 
             try {
-                var unbanReason = message.author.tag + " " + ((reason) ? reason : "provided no reason for the unban.");
+                var unbanReason = app.functions.pomeloHandler(message.author) + " " + ((reason) ? reason : "provided no reason for the unban.");
                 message.guild.members.unban(userID, unbanReason).then(() => {
                     var embed = {
                         title: `${app.config.system.emotes.success} Unban Success!`,
                         color: app.config.system.embedColors.lime,
-                        description: `Unhammered the user, ${user.tag}!`,
+                        description: `Unhammered the user, ${app.functions.pomeloHandler(user)}!`,
                         fields: []
                     };
                     if (reason) embed.fields.push({ name: "Reason", value: ((reason) ? reason : "Missing reason yet this is here???") });

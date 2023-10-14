@@ -16,7 +16,7 @@ module.exports = {
 
 
         var embed = {
-                author: { name: `Bomb sent by ${sender.tag}`, icon_url: sender.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) },
+                author: { name: `Bomb sent by ${app.functions.pomeloHandler(sender)}`, icon_url: sender.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) },
                 color: app.config.system.embedColors.blue,
                 fields: [
                     { name: "BOOM!", value: `${target} has been kaboom'd!` },

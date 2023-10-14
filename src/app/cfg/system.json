@@ -1,7 +1,7 @@
 {
     "footerText": "APPNAME, © Netro Corporation 2018-currYear.",
     "commandState": "Enabled",
-    "defaultPrefix": "tB/",
+    "defaultPrefix": "t/",
     "rotatingStatus": {
         "statuses": [
             "Playing with svrcount servers!",
@@ -64,9 +64,17 @@
             "Listening to Matt's Keyboard AMSR",
             "Listening to *wholesome sounds*",
             "Listening to Kobaryo - Cartoon Candy",
-            "Listening to Tyler, the Creator - SWEET / I THOUGHT YOU WANTED TO DANCE",
             "Listening to Mitsukiyo - Rolling Beat",
-            "Listening to Rick Astley - Never Gonna Give You Up"
+            "Listening to Rick Astley - Never Gonna Give You Up",
+			"Listening to BilliumMoto - Line of Gold",
+			"Listening to C418 - Cat",
+			"Listening to C418 - Dog",
+			"Listening to Street - Song of Truth",
+			"Listening to ∴ ［yueni］ - Darling! アブダク∵ Me! (feat. MIMI)",
+			"Listening to Aice Room, Nor - FUTURE DASH",
+			"Listening to Flite - We Are One",
+			"Listening to Akira Complex, Such - Consequence of Nature",
+			"Listening to Camellia, Akira Complex - Reality Distortion"
 
         ],
         "timeInSec": 180,
@@ -137,7 +145,6 @@
 
     },
 
-    "logURL": "https://tcb.nekos.tech/bot/",
     "imgAPI": "https://api.netrocorp.net/v1/imgs/",
 
 

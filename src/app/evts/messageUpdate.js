@@ -20,7 +20,7 @@ module.exports = async(app, omessage, nmessage) => {
 
     await app.functions.msgHandler(logChannel, {
         embeds: [{
-            author: { name: `Message by ${omessage.author.tag} (${ omessage.author.id}) edited.`, icon_url: omessage.author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) },
+            author: { name: `Message by ${app.functions.pomeloHandler(omessage.author)} (${ omessage.author.id}) edited.`, icon_url: omessage.author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }) },
             color: app.config.system.embedColors.yellow,
             description: `Message ID: ${omessage.id} | [Go to message](https://discord.com/channels/${omessage.guild.id}/${omessage.channel.id}/${omessage.id})`,
             fields: [

@@ -13,7 +13,7 @@
         "coding",
         "tcb"
     ],
-    "author": "TMC Software",
+    "author": "Netro Corporation",
     "license": "MIT",
     "dependencies": {
         "@discordjs/voice": "^0.6.0",

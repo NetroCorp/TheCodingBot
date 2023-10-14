@@ -72,7 +72,7 @@ module.exports = async(app, oldRole, newRole) => {
         if (roleLog) {
             const { executor } = roleLog;
 
-            embed.fields.push({ name: "Updated by", value: `${executor.tag} (${executor.id})` })
+            embed.fields.push({ name: "Updated by", value: `${app.functions.pomeloHandler(executor)} (${executor.id})` })
             embed["thumbnail"] = executor;
         };
     }; // May be missing permissions to fetch audit log.

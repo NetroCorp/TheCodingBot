@@ -35,7 +35,7 @@ module.exports = async(app, oldChannel) => {
         if (channelLog) {
             const { executor } = channelLog;
 
-            embed.fields.push({ name: "Deleted by", value: `${executor.tag} (${executor.id})` })
+            embed.fields.push({ name: "Deleted by", value: `${app.functions.pomeloHandler(executor)} (${executor.id})` })
             embed["thumbnail"] = executor;
         };
     }; // May be missing permissions to fetch audit log.

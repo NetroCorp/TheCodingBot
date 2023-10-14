@@ -28,7 +28,7 @@ module.exports = async(app, messages) => {
             };
         };
 
-        var temp = `[${message.id} | ${app.functions.convertTimestamp(message.createdTimestamp, true, true)}] ${message.author.tag}: ${message.content}`;
+        var temp = `[${message.id} | ${app.functions.convertTimestamp(message.createdTimestamp, true, true)}] ${app.functions.pomeloHandler(message.author)}: ${message.content}`;
         if (message.attachments.size > 0) {
             temp = temp +
                 ((msgAttachments.succeed.length > 0) ? `\n\tAttachments: ${msgAttachments.succeed.join("\n")}` : "") +

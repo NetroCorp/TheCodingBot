@@ -68,7 +68,7 @@ module.exports = async(app, message) => {
             };
         });
 
-        collector.on('end', async(collected) => {
+        collector.on("end", async(collected) => {
             if (collected.size < 1) {
                 app.functions.msgHandler(msg, {
                     embeds: [{

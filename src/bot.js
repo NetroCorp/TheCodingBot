@@ -8,8 +8,8 @@
 	to open-source his bot projects?
 	Yeah, I know crazy. wait.. why am I talking third-person again?
 
-	https://tcb.nekos.tech/source
-	https://themattchannel.com
+	https://codingbot.gg/source
+	https://netrocorp.net
 */
 
 var logger;
@@ -227,7 +227,8 @@ async function bot(debug) {
     const { Client } = app.modules["discord.js"];
     const client = new Client({
         partials: ["MESSAGE", "CHANNEL", "REACTION", "GUILD_MEMBER", "USER"],
-        intents: 32767 // btw, this forces discord.js to do ALL intents. not recommended.
+        // intents: 32767 // btw, this forces discord.js to do ALL intents. not recommended.
+        intents: 98047 // all intents excluding presence
     });
     app.client = client;
     if (debug) console.log(` > New Discord Client created.`);
@@ -238,7 +239,6 @@ async function bot(debug) {
     try { lastMessageID = await app.modules.fs.readFileSync(process.cwd() + "/cache/restart.tmp", "utf8"); } catch (Ex) {};
     if (lastMessageID != null) app.lastMessageID = lastMessageID;
     try { app.modules.fs.unlinkSync(process.cwd() + "/cache/restart.tmp"); } catch (Ex) {};
-
     if (debug) console.log(` > Cheked If Restart completed.`);
 
 
@@ -299,7 +299,7 @@ async function bot(debug) {
         if (Ex.message.includes("Cannot read properties of undefined (reading 'discord')"))
             app.logger.error("SYS", "Hey, you probably forgot to follow the README!\nYou need to ensure 'tokendata.json.example' to 'tokendata.json'.\nIf you've done this, please ensure your JSON is not broken.\nIf it's not, please open an issue on the GitHub.");
         else if (Ex.stack.includes("DISALLOWED_INTENTS"))
-            app.logger.error("SYS", "Hey, you need to allow intents for your bot!\nIntents required: 'PRESENCE', 'SERVER MEMBERS', 'MESSAGE CONTENT'.\nPlease view the README for more information and how to enable intents for " + app.name + ".\nIf you've done this, please open an issue on the GitHub.");
+            app.logger.error("SYS", "Hey, you need to allow intents for your bot!\nIntents required: 'SERVER MEMBERS', 'MESSAGE CONTENT'.\nPlease view the README for more information and how to enable intents for " + app.name + ".\nIf you've done this, please open an issue on the GitHub.");
         else
             app.logger.error("SYS", "I could not connect to Discord. Sorry about that.\nI can't provide much help, but if this issue is caused by programming not by you, please open a GitHub issue with the following information:\n" + Ex);
         process.exit(-1); // I mean ig this is a good thing to do?
