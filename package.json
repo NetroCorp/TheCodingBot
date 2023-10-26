@@ -1,0 +1,32 @@
+{
+  "name": "thecodingbot",
+  "version": "6.0.0",
+  "description": "TheCodingBot - a Discord Bot.",
+  "main": "src/index.js",
+  "scripts": {
+    "prod": "node .",
+    "debug": "nodemon --trace-warnings .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NetroCorp/TheCodingBot.git"
+  },
+  "author": "Netro Corporation",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NetroCorp/TheCodingBot/issues"
+  },
+  "homepage": "https://github.com/NetroCorp/TheCodingBot#readme",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "dependencies": {
+    "discord.js": "^14.12.1",
+    "dotenv": "^16.3.1",
+    "i18next": "^23.2.11",
+    "mysql2": "^3.5.1",
+    "node-fetch": "^3.3.2",
+    "sequelize": "^6.32.1"
+  }
+}

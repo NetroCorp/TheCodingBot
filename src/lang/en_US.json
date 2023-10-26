@@ -1,0 +1,25 @@
+{
+	"meta": {
+		"translators": [ "thecodingguy" ],
+		"version": "2023.08.13"
+	},
+	"translation": {
+		"hello_world": {
+			"title": "Hello world!",
+			"description": "Hello world! I am running on %FULLVER%!"
+		},
+		"eval": {
+			"title": "Eval"
+		},
+		"invite": {
+			"title": "Add me to your server!",
+			"description": "Want to add me to your server? No worries, just [click/tap here](%INVITELINK%) and enjoy!"
+		},
+		"hug": {
+			"title": "Hug",
+			"description": "%EXECUTOR% hugs %TARGET%!",
+			"description_self": "Aw.. %EXECUTOR% here is a personal hug from me!",
+			"description_bot": "Thanks %EXECUTOR%, here is a personal hug back from me!"
+		}
+	}
+}
