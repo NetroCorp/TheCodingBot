@@ -40,14 +40,18 @@ module.exports = (app) => {
         await app.functions.RPSSystem(app, "start"); // Start RPSUpdater
 
         // PATCH 2023-10-13
+		// This patch actually is a bit weird.
+		// I have no plans to really fix it tbh. v5 is a dumpster fire.
+		// ~ TheCodingGuy, 2023-12-20
         const fixCache = async() => {
-            await app.client.guilds.fetch(true, true);
+            await app.client.guilds.fetch(true, true).catch(() => {});
             await app.client.guilds.cache.forEach(async g => {
-                await g.members.fetch(true, true);
-                await g.roles.fetch(true, true);
-                await g.channels.fetch(true, true);
+                await g.members.fetch(true, true).catch(() => {});
+                await g.roles.fetch(true, true).catch(() => {});
+                await g.channels.fetch(true, true).catch(() => {});
             });
         };
+		fixCache();
         setInterval(fixCache, (60 * 30) * 1000); // This should patch the fact about cache firing randomly. Refreshes every 30 minutes.
         // END PATCH 2023-10-13
 

@@ -42,6 +42,7 @@ This guide will assume you've left `app` in `src` (the way it should be).
 | 5.1.0   | 4/2/2022     |
 | 5.1.1   | 1/4/2023     |
 | 5.2.0   | 10/13/2023   |
+| 5.2.1   | 12/20/2023   |
 
 ## Contributing
 Pull requests for emergency patches are welcome. Otherwise, pull requests will not be merged.

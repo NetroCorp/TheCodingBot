@@ -42,7 +42,7 @@ module.exports = async(app, oldMember, newMember) => {
         else if (oldMember.roles.cache.size < newMember.roles.cache.size) embed.fields.push({ name: "Roles Added", value: roleUpdated.join(", ") || "Failed to get roles added" }); // ooo features
     };
 
-    if (embed.fields.length < 3) return; // Since we aren't subscribing to all updates, stop here if it was something else non-related to what we have.
+    if (embed.fields.length < 4) return; // Since we aren't subscribing to all updates, stop here if it was something else non-related to what we have.
 
     embed.fields.push({ name: "Updated At", value: new Date().toString() })
 
