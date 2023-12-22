@@ -14,7 +14,7 @@ module.exports = {
         var reason = args.slice(0).join(" ") || "";
         var AFKSettings = {
             "timestamp": new Date().getTime(),
-            "reason": reason,
+            "reason": reason ? reason.replace(/[<@&>]/g, '') : null, // hotfix because apparently user & role pings are possible.
             "mentions": 0
         };
 
